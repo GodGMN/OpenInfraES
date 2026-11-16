@@ -38,3 +38,7 @@ sism.json
 r.json
 w.txt
 a.xml
+
+# Restos de pruebas en la raiz: solo el visor es HTML versionado
+/*.html
+!/mapa.html
