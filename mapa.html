@@ -57,8 +57,8 @@
   #btn-tema { width:26px; height:26px;
     border:1px solid var(--borde); background:transparent; color:var(--suave); border-radius:2px;
     cursor:pointer; font-size:12px; display:grid; place-items:center; transition:.15s; }
-  #btn-tema:hover, #btn-fuentes:hover, #btn-enlace:hover { color:var(--cian); border-color:var(--borde-fuerte); }
-  #btn-fuentes, #btn-enlace { width:26px; height:26px; border:1px solid var(--borde);
+  #btn-tema:hover, #btn-fuentes:hover, #btn-enlace:hover, #btn-estado:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+  #btn-fuentes, #btn-enlace, #btn-estado { width:26px; height:26px; border:1px solid var(--borde);
     background:transparent; color:var(--suave); border-radius:2px; cursor:pointer; font-size:12px;
     display:grid; place-items:center; }
 
@@ -184,6 +184,22 @@
   #fuentes .cadena .fl { color:var(--cian); }
   #fuentes .cadena .nota { display:block; margin-top:5px; font-size:11px; color:var(--tenue); }
 
+  #velo2 { position:fixed; inset:0; z-index:2000; background:rgba(3,6,10,.78); display:none;
+    align-items:center; justify-content:center; padding:24px; }
+  #velo2.on { display:flex; }
+  #sis { width:min(680px,100%); max-height:86vh; overflow:auto; background:var(--panel-solido);
+    border:1px solid var(--borde-fuerte); border-radius:3px; padding:20px 22px;
+    box-shadow:0 30px 90px rgba(0,0,0,.7); }
+  #sis h2 { margin:0 0 3px; font-size:15px; letter-spacing:.1em; text-transform:uppercase; }
+  #sis .nota { color:var(--suave); font-size:12.2px; margin-bottom:16px; line-height:1.5; }
+  #sis .cerrar { float:right; background:transparent; border:1px solid var(--borde); color:var(--suave);
+    border-radius:2px; width:26px; height:26px; cursor:pointer; }
+  .barra { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
+  .barra .n { width:150px; font-size:11.8px; text-align:right; color:var(--suave); flex:0 0 auto; }
+  .barra .b { height:15px; border-radius:1px; flex:0 0 auto; }
+  .barra .v { font-family:var(--mono); font-size:10.6px; color:var(--tinta); white-space:nowrap; }
+  .barra .p { font-family:var(--mono); font-size:10.2px; color:var(--tenue); }
+
   /* ---------- opacidad ---------- */
   #opacidad { display:flex; align-items:center; gap:8px; padding:8px 15px 0; }
   #opacidad label { font-family:var(--mono); font-size:9.4px; letter-spacing:.12em;
@@ -209,6 +225,7 @@
     <div class="marca"><span class="punto-vivo"></span><h1>Infraestructura España</h1></div>
     <div class="sub" id="sub-hud">—</div>
     <div class="acciones-hud">
+      <button id="btn-estado" title="Generación del día (API REE)">⚡</button>
       <button id="btn-fuentes" title="Fuentes y fecha de los datos">ⓘ</button>
       <button id="btn-enlace" title="Copiar enlace a esta vista">⧉</button>
       <button id="btn-tema" title="Cambiar tema">◐</button>
@@ -234,6 +251,13 @@
   <div class="nota" id="fuentes-nota">Cargando…</div>
   <table><thead><tr><th>Capa</th><th>Fuente</th><th>Actualizado</th><th>Licencia</th><th class="c">Registros</th></tr></thead>
   <tbody id="fuentes-tabla"></tbody></table>
+</div></div>
+
+<div id="velo2"><div id="sis">
+  <button class="cerrar" id="cerrar-sis">×</button>
+  <h2>Generación del día</h2>
+  <div class="nota" id="sis-nota">Cargando…</div>
+  <div id="sis-barras"></div>
 </div></div>
 
 <div id="estado">
@@ -730,7 +754,34 @@ function pintarFuentes() {
 $("#btn-fuentes").addEventListener("click", () => { pintarFuentes(); $("#velo").classList.add("on"); });
 $("#cerrar-fuentes").addEventListener("click", () => $("#velo").classList.remove("on"));
 $("#velo").addEventListener("click", e => { if (e.target.id === "velo") $("#velo").classList.remove("on"); });
-document.addEventListener("keydown", e => { if (e.key === "Escape") $("#velo").classList.remove("on"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("#velo").classList.remove("on"); $("#velo2").classList.remove("on"); } });
+
+/* ---------------- generación del día (API REE) ---------------- */
+function pintarSis() {
+  fetch("datos/ree_estado.json").then(r => r.json()).then(d => {
+    const gen = (d.series && d.series.generacion) || [];
+    const total = (gen.find(x => x.titulo.toLowerCase().startsWith("generación total")) || {}).valor || 0;
+    const filas = gen.filter(x => !x.titulo.toLowerCase().startsWith("generación total"))
+      .sort((a, b) => b.valor - a.valor);
+    const max = filas.length ? filas[0].valor : 1;
+    $("#sis-barras").innerHTML = filas.map(x => {
+      const pct = total ? (100 * x.valor / total) : 0;
+      const neg = x.valor < 0;
+      const ancho = neg ? 3 : Math.max(2, (x.valor / max) * 300);
+      return `<div class="barra"><span class="n">${x.titulo}</span>` +
+        `<span class="b" style="width:${ancho}px;background:${neg ? "#4a5c70" : (x.color || "#22d3ee")}"></span>` +
+        `<span class="v">${nf(x.valor)} MWh</span>` +
+        `<span class="p">${neg ? "consumo propio" : pct.toFixed(1) + "%"}</span></div>`;
+    }).join("");
+    $("#sis-nota").innerHTML = `Día <b>${d.fecha}</b> · total <b>${nf(total)} MWh</b> · ` +
+      `fuente: REE apidatos (sin clave). La API pública solo sirve <b>agregados diarios</b>: ` +
+      `el tiempo real (horario o cada 5 minutos) devuelve error 400 hoy. ` +
+      `Para generación por planta o previsión hace falta token de ENTSO-E o ESIOS.`;
+  }).catch(() => { $("#sis-nota").textContent = "No se pudo cargar datos/ree_estado.json"; });
+}
+$("#btn-estado").addEventListener("click", () => { pintarSis(); $("#velo2").classList.add("on"); });
+$("#cerrar-sis").addEventListener("click", () => $("#velo2").classList.remove("on"));
+$("#velo2").addEventListener("click", e => { if (e.target.id === "velo2") $("#velo2").classList.remove("on"); });
 
 /* ---------------- opacidad global ---------------- */
 $("#op").addEventListener("input", e => {
