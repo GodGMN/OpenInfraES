@@ -102,6 +102,9 @@ const ETIQ = { categoria:"Tipo", operador:"Operador", municipio:"Municipio", dem
   Nombre_terminal:"Terminal", Tipo_terminal:"Tipo", Codigo_terminal:"Código", Aeropuerto:"Aeropuerto",
   Codigo_ICAO:"OACI", Orientacion:"Orientación", Distancia_max:"Longitud de pista (m)",
   Nombre_plataforma:"Plataforma", Direccion:"Dirección", Rotulo:"Rótulo", Venta_al_publico:"Venta al público",
+  Coord1:"Longitud", Coord2:"Latitud", Valido_desde:"Válido desde", Valido_hasta:"Válido hasta",
+  Hidrogeno:"Hidrógeno", Biodiesel:"Biodiésel", Bioetanol:"Bioetanol", Gas_natural_licuado:"GNL",
+  Gas_natural_comprimido:"GNC", Gases_licuados_del_petroleo:"GLP", Municipio:"Municipio",
   Elemento_portuario:"Elemento portuario", voltage:"Tensión (V)", operator:"Operador", line_type:"Tipo de línea",
   circuits:"Circuitos", osm_id:"OSM" };
 
@@ -122,6 +125,10 @@ function ficha(p, c) {
       if (k === "hidroelectrico") valor = v ? "Sí" : "No";
       if (k === "voltage" && Number(v) > 1000) valor = (Number(v) / 1000) + " kV";
       if (typeof v === "boolean") valor = v ? "Sí" : "No";
+      // fechas epoch en milisegundos -> fecha corta
+      if (typeof v === "number" && v > 1e11 && v < 3e12) {
+        valor = new Date(v).toLocaleDateString("es-ES", { day:"2-digit", month:"2-digit", year:"numeric" });
+      }
       h += '<tr><td class="k">' + etiqueta + '</td><td class="v">' + nf(valor) + "</td></tr>";
     });
     h += "</table>";
