@@ -3,131 +3,236 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Red eléctrica de España — OpenInfraES</title>
+<title>Infraestructura energética e hidráulica de España — OpenInfraES</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-  :root { --tinta:#0f1c2e; --suave:#5a6b80; --borde:#e3e8ef; --acento:#0b6fb8; }
-  * { box-sizing: border-box; }
-  html, body { margin:0; height:100%; font-family: "Segoe UI", Inter, Arial, sans-serif; color:var(--tinta); }
-  #mapa { position:absolute; inset:0; background:#f5f7fa; }
-  #panel { position:absolute; z-index:1000; top:14px; left:14px; width:288px; background:#fff;
-           border:1px solid var(--borde); border-radius:12px; padding:14px 15px;
-           box-shadow:0 6px 24px rgba(15,28,46,.10); font-size:13px; }
-  #panel h1 { margin:0 0 2px; font-size:16px; letter-spacing:-.2px; }
-  #panel .sub { color:var(--suave); font-size:11.5px; margin-bottom:11px; line-height:1.35; }
-  fieldset { border:0; border-top:1px solid var(--borde); margin:10px 0 0; padding:9px 0 0; }
+  :root { --tinta:#0f1c2e; --suave:#5a6b80; --borde:#e3e8ef; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; font-family:"Segoe UI", Inter, Arial, sans-serif; color:var(--tinta); }
+  #mapa { position:absolute; inset:0; background:#eef2f6; }
+  #panel { position:absolute; z-index:1000; top:14px; left:14px; width:300px; max-height:calc(100% - 28px);
+           overflow:auto; background:#fff; border:1px solid var(--borde); border-radius:12px;
+           padding:14px 15px; box-shadow:0 6px 24px rgba(15,28,46,.10); font-size:13px; }
+  #panel h1 { margin:0 0 2px; font-size:15.5px; letter-spacing:-.2px; }
+  #panel .sub { color:var(--suave); font-size:11.5px; margin-bottom:10px; line-height:1.35; }
+  fieldset { border:0; border-top:1px solid var(--borde); margin:9px 0 0; padding:8px 0 0; }
   legend { font-size:10.5px; text-transform:uppercase; letter-spacing:1.1px; color:var(--suave); padding:0 4px 0 0; }
   label { display:flex; align-items:center; gap:7px; padding:2.5px 0; cursor:pointer; }
-  .swatch { width:11px; height:11px; border-radius:3px; flex:0 0 auto; }
-  #cifras { margin-top:11px; padding-top:9px; border-top:1px solid var(--borde); color:var(--suave); font-size:11.5px; line-height:1.5; }
+  .sw { width:12px; height:12px; border-radius:3px; flex:0 0 auto; }
+  .sw.linea { height:4px; border-radius:2px; }
+  #cifras { margin-top:10px; padding-top:9px; border-top:1px solid var(--borde); color:var(--suave);
+            font-size:11.5px; line-height:1.55; }
   #cifras b { color:var(--tinta); }
   .leaflet-popup-content { font-size:12.5px; line-height:1.45; margin:10px 12px; }
-  .leaflet-popup-content b { display:block; margin-bottom:3px; }
+  .leaflet-popup-content b { display:block; margin-bottom:2px; }
+  select { width:100%; padding:5px 6px; border:1px solid var(--borde); border-radius:7px;
+           font-family:inherit; font-size:12px; color:var(--tinta); background:#fbfcfe; }
 </style>
 </head>
 <body>
 <div id="mapa"></div>
+
 <div id="panel">
-  <h1>Red eléctrica de España</h1>
-  <div class="sub">Transporte 220–400 kV y parque de generación. Datos: OpenStreetMap y REE/ELECTRA.</div>
+  <h1>Infraestructura de España</h1>
+  <div class="sub">Red eléctrica, gas, hidráulica y desalación. Cartografía: IGN.</div>
 
   <fieldset>
-    <legend>Tensión</legend>
-    <label><input type="checkbox" data-tension="400000" checked><span class="swatch" style="background:#b91c1c"></span>400 kV</label>
-    <label><input type="checkbox" data-tension="220000" checked><span class="swatch" style="background:#1d4ed8"></span>220 kV</label>
-    <label><input type="checkbox" data-tension="66000"><span class="swatch" style="background:#6d6d6d"></span>otros</label>
+    <legend>Cartografía base</legend>
+    <select id="base">
+      <option value="IGNBaseTodo">Mapa base IGN</option>
+      <option value="IGNBase-gris">Mapa base IGN (gris)</option>
+      <option value="IGNBaseOrto">Ortofoto (PNOA)</option>
+      <option value="ign-nofondo">IGN sin fondo</option>
+      <option value="osm">OpenStreetMap</option>
+    </select>
+  </fieldset>
+
+  <fieldset>
+    <legend>Red eléctrica</legend>
+    <label><input type="checkbox" data-capa="l400" checked><span class="sw linea" style="background:#b91c1c"></span>400 kV</label>
+    <label><input type="checkbox" data-capa="l220" checked><span class="sw linea" style="background:#1d4ed8"></span>220 kV</label>
   </fieldset>
 
   <fieldset>
     <legend>Generación</legend>
-    <label><input type="checkbox" id="ver-plantas"><span class="swatch" style="background:#16a34a"></span>Plantas</label>
-    <label><input type="checkbox" id="etiquetas">Nombres de subestación</label>
+    <label><input type="checkbox" data-capa="hidro" checked><span class="sw" style="background:#0891b2"></span>Centrales hidráulicas</label>
+    <label><input type="checkbox" data-capa="gasgen"><span class="sw" style="background:#7c3aed"></span>Generación de gas (CCGT)</label>
+    <label><input type="checkbox" data-capa="resto"><span class="sw" style="background:#16a34a"></span>Resto del parque</label>
   </fieldset>
 
-  <div id="cifras">Cargando datos…</div>
+  <fieldset>
+    <legend>Gas</legend>
+    <label><input type="checkbox" data-capa="gasoductos" checked><span class="sw linea" style="background:#a16207"></span>Gasoductos</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Agua</legend>
+    <label><input type="checkbox" data-capa="desaladoras" checked><span class="sw" style="background:#0e7490"></span>Desaladoras</label>
+    <label><input type="checkbox" data-capa="presas"><span class="sw" style="background:#64748b"></span>Presas y embalses</label>
+  </fieldset>
+
+  <div id="cifras">Cargando capas…</div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const COLOR = { 400000:"#b91c1c", 220000:"#1d4ed8", 66000:"#6b7280" };
-const colorTension = v => COLOR[v] || "#6d6d6d";
+/* ---------- cartografia: WMTS del IGN (sin clave) ---------- */
+const IGN = (capa, formato) =>
+  "https://www.ign.es/wmts/ign-base?request=GetTile&service=WMTS&version=1.0.0" +
+  "&layer=" + capa + "&style=default&tilematrixset=GoogleMapsCompatible" +
+  "&tilematrix={z}&tilerow={y}&tilecol={x}&format=" + formato;
 
-const mapa = L.map("mapa", { zoomControl:true, preferCanvas:true }).setView([40.2, -3.6], 7);
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "&copy; colaboradores de OpenStreetMap · datos: OSM/REE", maxZoom: 19
-}).addTo(mapa);
+const BASES = {
+  IGNBaseTodo:    { url: IGN("IGNBaseTodo", "image/png"),          attr: "© IGN España — Mapa Base" },
+  "IGNBase-gris": { url: IGN("IGNBase-gris", "image/png"),         attr: "© IGN España — Mapa Base" },
+  IGNBaseOrto:    { url: IGN("IGNBaseOrto", "image/jpeg"),         attr: "© IGN España — PNOA" },
+  "ign-nofondo":  { url: IGN("IGNBaseTodo-nofondo", "image/png"),  attr: "© IGN España" },
+  osm:            { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: "© colaboradores de OpenStreetMap" }
+};
 
-let capaLineas = L.layerGroup().addTo(mapa);
-let capaPlantas = L.layerGroup();
-let lineas = null, plantas = null;
+const mapa = L.map("mapa", { zoomControl:true, preferCanvas:true, minZoom:5 })
+  .setView([40.2, -3.6], 7);
 
+let capaBase = null;
+function ponerBase(clave) {
+  const b = BASES[clave] || BASES.IGNBaseTodo;
+  if (capaBase) mapa.removeLayer(capaBase);
+  capaBase = L.tileLayer(b.url, {
+    attribution: b.attr + " · datos: OSM / REE / MITECO",
+    maxNativeZoom: 18, maxZoom: 19, crossOrigin: true
+  }).addTo(mapa);
+  capaBase.bringToBack();
+}
+ponerBase("IGNBaseTodo");
+document.getElementById("base").addEventListener("change", e => ponerBase(e.target.value));
+
+/* ---------- capas de datos ---------- */
+const COLOR = { 400000:"#b91c1c", 220000:"#1d4ed8" };
+const capas = {};
+const conteo = {};
 const nf = n => n.toLocaleString("es-ES");
 
-function dibujarLineas() {
-  capaLineas.clearLayers();
-  const activos = new Set([...document.querySelectorAll("[data-tension]")]
-    .filter(c => c.checked).map(c => Number(c.dataset.tension)));
-  let n = 0;
-  lineas.eachLayer(l => {
-    const v = l.feature.properties.voltage;
-    const visible = activos.has(v) || (activos.has(66000) && ![400000,220000].includes(v));
-    if (visible) { capaLineas.addLayer(l); n++; }
-  });
-  actualizarCifras(n);
+const ETIQUETA = {
+  l400:"tramos 400 kV", l220:"tramos 220 kV", hidro:"centrales hidráulicas",
+  gasgen:"plantas de gas", resto:"otras plantas", gasoductos:"tramos de gasoducto",
+  desaladoras:"desaladoras", presas:"presas"
+};
+
+function grupo(nombre, enMapa) {
+  const g = L.layerGroup();
+  if (enMapa) g.addTo(mapa);
+  capas[nombre] = g;
+  return g;
 }
 
-function actualizarCifras(nLineas) {
-  document.getElementById("cifras").innerHTML =
-    `<b>${nf(nLineas)}</b> tramos de línea visibles<br>` +
-    `<b>${nf(plantas ? plantas.getLayers().length : 0)}</b> plantas (ocultas) · ` +
-    `<b>${nf(PLANTAS_MW)} MW</b> instalados`;
+function cargar(url, fn) {
+  return fetch(url)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(fn)
+    .catch(e => console.warn("sin " + url + " (" + e.message + ")"));
 }
 
-let PLANTAS_MW = 0;
-
-Promise.all([
-  fetch("datos/lineas_hv.geojson").then(r => r.json()),
-  fetch("datos/plantas.geojson").then(r => r.json())
-]).then(([gl, gp]) => {
-  lineas = L.geoJSON(gl, {
-    style: f => ({ color: colorTension(f.properties.voltage), weight: f.properties.voltage === 400000 ? 2.4 : 1.4, opacity: f.properties.voltage === 400000 ? .95 : .75 }),
-    onEachFeature: (f, layer) => {
-      const p = f.properties;
-      layer.bindPopup(`<b>${p.name || "Línea sin nombre"}</b>` +
-        `${p.voltage ? (p.voltage/1000) + " kV · " : ""}${p.line_type || ""}${p.circuits ? " · " + p.circuits + " circuito(s)" : ""}` +
-        `<br>${p.operator || "operador sin declarar"}` +
-        `<br><a href="https://www.openstreetmap.org/way/${p.osm_id}" target="_blank" rel="noopener">OSM ${p.osm_id}</a>`);
-    }
+/* red de transporte */
+cargar("datos/lineas_hv.geojson", gl => {
+  grupo("l400", true); grupo("l220", true);
+  gl.features.forEach(f => {
+    const v = f.properties.voltage;
+    const clave = v === 400000 ? "l400" : v === 220000 ? "l220" : null;
+    if (!clave) return;
+    const coords = f.geometry.coordinates.map(c => [c[1], c[0]]);
+    L.polyline(coords, {
+      color: COLOR[v], weight: v === 400000 ? 2.2 : 1.2, opacity: v === 400000 ? .9 : .65
+    }).bindPopup("<b>" + (f.properties.name || "Línea sin nombre") + "</b>" +
+      (v / 1000) + " kV · " + (f.properties.line_type || "") +
+      "<br>" + (f.properties.operator || "operador sin declarar"))
+      .addTo(capas[clave]);
+    conteo[clave] = (conteo[clave] || 0) + 1;
   });
-  capaLineas.addLayer(lineas);
-
-  plantas = L.geoJSON(gp, {
-    pointToLayer: (f, latlng) => {
-      const mw = f.properties.installed_capacity_mw || 0;
-      PLANTAS_MW += mw;
-      return L.circleMarker(latlng, {
-        radius: Math.max(2.2, Math.min(9, Math.sqrt(mw) / 1.6)),
-        fillColor: "#16a34a", fillOpacity: .55, color: "#0b7a39", weight: .6
-      });
-    },
-    onEachFeature: (f, layer) => {
-      const p = f.properties;
-      layer.bindPopup(`<b>${p.name || "sin nombre"}</b>` +
-        `${p.technology_normalized || ""} · ${nf(Math.round(p.installed_capacity_mw || 0))} MW` +
-        `<br>${p.municipality || ""}${p.province ? " (" + p.province + ")" : ""}` +
-        (p.owner ? `<br>${p.owner}` : ""));
-    }
-  });
-  capaPlantas.addLayer(plantas);
-  dibujarLineas();
-}).catch(e => {
-  document.getElementById("cifras").textContent = "No se pudieron cargar los GeoJSON: " + e.message;
+  pintarCifras();
 });
 
-document.querySelectorAll("[data-tension]").forEach(c => c.addEventListener("change", dibujarLineas));
-document.getElementById("ver-plantas").addEventListener("change", e => {
-  e.target.checked ? mapa.addLayer(capaPlantas) : mapa.removeLayer(capaPlantas);
+/* generacion */
+cargar("datos/plantas.geojson", gp => {
+  grupo("hidro", true); grupo("gasgen", false); grupo("resto", false);
+  gp.features.forEach(f => {
+    const p = f.properties, lon = f.geometry.coordinates[0], lat = f.geometry.coordinates[1];
+    const mw = p.installed_capacity_mw || 0, t = p.technology_normalized;
+    let clave, color;
+    if (t === "hydro" || t === "pumped_hydro") { clave = "hidro"; color = "#0891b2"; }
+    else if (t === "ccgt" || t === "fuel_gas") { clave = "gasgen"; color = "#7c3aed"; }
+    else { clave = "resto"; color = "#16a34a"; }
+    L.circleMarker([lat, lon], {
+      radius: Math.max(2, Math.min(8, Math.sqrt(mw) / 1.8)),
+      fillColor: color, fillOpacity: .62, color: "#ffffff", weight: .5
+    }).bindPopup("<b>" + (p.name || "sin nombre") + "</b>" +
+      (t || "") + " · " + nf(Math.round(mw)) + " MW<br>" + (p.municipality || "") +
+      (p.province ? " (" + p.province + ")" : ""))
+      .addTo(capas[clave]);
+    conteo[clave] = (conteo[clave] || 0) + 1;
+  });
+  pintarCifras();
 });
+
+/* gas */
+cargar("datos/gasoductos.geojson", gg => {
+  grupo("gasoductos", true);
+  gg.features.forEach(f => {
+    const coords = f.geometry.coordinates.map(c => [c[1], c[0]]);
+    L.polyline(coords, { color: "#a16207", weight: 1.5, opacity: .8 })
+      .bindPopup("<b>" + (f.properties.nombre || "Gasoducto") + "</b>" +
+        (f.properties.operador || "operador sin declarar") +
+        (f.properties.presion ? "<br>presión: " + f.properties.presion : ""))
+      .addTo(capas.gasoductos);
+    conteo.gasoductos = (conteo.gasoductos || 0) + 1;
+  });
+  pintarCifras();
+});
+
+/* agua */
+cargar("datos/desaladoras.geojson", gd => {
+  grupo("desaladoras", true);
+  gd.features.forEach(f => {
+    const lon = f.geometry.coordinates[0], lat = f.geometry.coordinates[1];
+    L.circleMarker([lat, lon], { radius: 4.5, fillColor: "#0e7490", fillOpacity: .85, color: "#fff", weight: .8 })
+      .bindPopup("<b>" + (f.properties.nombre || "Desaladora") + "</b>" +
+        (f.properties.operador || "") +
+        (f.properties.capacidad_m3_dia ? "<br>" + f.properties.capacidad_m3_dia : ""))
+      .addTo(capas.desaladoras);
+    conteo.desaladoras = (conteo.desaladoras || 0) + 1;
+  });
+  pintarCifras();
+});
+
+cargar("datos/presas.geojson", gpr => {
+  grupo("presas", false);
+  gpr.features.forEach(f => {
+    const lon = f.geometry.coordinates[0], lat = f.geometry.coordinates[1];
+    L.circleMarker([lat, lon], { radius: 2.6, fillColor: "#64748b", fillOpacity: .7, color: "#fff", weight: .4 })
+      .bindPopup("<b>" + (f.properties.nombre || "Presa") + "</b>" +
+        (f.properties.uso || "") + (f.properties.altura_m ? "<br>" + f.properties.altura_m + " m" : ""))
+      .addTo(capas.presas);
+    conteo.presas = (conteo.presas || 0) + 1;
+  });
+  pintarCifras();
+});
+
+/* controles */
+document.querySelectorAll("[data-capa]").forEach(chk => {
+  chk.addEventListener("change", e => {
+    const c = e.target.dataset.capa;
+    if (!capas[c]) { capas[c] = L.layerGroup(); }
+    e.target.checked ? capas[c].addTo(mapa) : mapa.removeLayer(capas[c]);
+    pintarCifras();
+  });
+});
+
+function pintarCifras() {
+  const el = document.getElementById("cifras");
+  const visibles = [...document.querySelectorAll("[data-capa]")]
+    .filter(c => c.checked).map(c => c.dataset.capa).filter(c => conteo[c]);
+  if (!visibles.length) { el.textContent = "Sin capas activas."; return; }
+  el.innerHTML = visibles.map(c => "<b>" + nf(conteo[c]) + "</b> " + (ETIQUETA[c] || c)).join("<br>");
+}
 </script>
 </body>
 </html>

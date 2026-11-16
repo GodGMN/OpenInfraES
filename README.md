@@ -17,8 +17,48 @@ territorial).
 | `datos/agregado_plantas_tecnologia.csv` | plantas y MW por tecnología |
 | `datos/agregado_plantas_ccaa.csv` | plantas y MW por comunidad autónoma |
 | `datos/agregado_plantas_ccaa_tecnologia.csv` | el cruce de los dos anteriores |
-| `mapa.html` | visor propio (Leaflet) con filtros por tensión |
+| `mapa.html` | visor propio con cartografía **IGN** y capas conmutables |
+| `datos/gasoductos.geojson` | gasoductos (`man_made=pipeline`, `substance=gas`) |
+| `datos/desaladoras.geojson` | plantas desaladoras (`desalination=yes`) |
+| `datos/presas.geojson` | presas y embalses (`waterway=dam`) |
 | `datos/conteos_osm_20261116.json` | foto completa de OSM en España (líneas, subestaciones, plantas) con fecha y endpoint |
+
+## Cartografía: IGN, no Leaflet
+
+El visor usa **Leaflet** como motor (es la librería que dibuja capas y popups) pero la cartografía de
+fondo es siempre del **IGN**, servida por su **WMTS público**, sin clave ni registro:
+
+```
+https://www.ign.es/wmts/ign-base?request=GetTile&service=WMTS&version=1.0.0
+  &layer=IGNBaseTodo&style=default&tilematrixset=GoogleMapsCompatible
+  &tilematrix={z}&tilerow={y}&tilecol={x}&format=image/png
+```
+
+Capas disponibles en el selector:
+
+| Capa | Qué es |
+|---|---|
+| `IGNBaseTodo` | mapa base oficial (por defecto) |
+| `IGNBase-gris` | mapa base en gris, para que los datos resalten |
+| `IGNBaseOrto` | ortofoto PNOA |
+| `IGNBaseTodo-nofondo` | solo topónimos y límites |
+| OSM | alternativa colaborativa |
+
+**Pitfall medido:** el WMTS del IGN devuelve **HTTP 200 con cuerpo vacío** si la petición no lleva
+`Accept: image/*` y `Referer`. Con `curl` "pelado" parece roto y no lo está; desde el navegador
+funciona siempre.
+
+## Capas del visor
+
+| Capa | Fuente | Elementos |
+|---|---|---|
+| 400 kV / 220 kV | OSM normalizado | 1.752 + 3.176 tramos |
+| Centrales hidráulicas | REE/ELECTRA (hidro y bombeo) | 1.387 |
+| Generación de gas (CCGT/fuel) | REE/ELECTRA | 49 |
+| Resto del parque | REE/ELECTRA | resto |
+| Gasoductos | OSM | ver `conteos_osm` |
+| Desaladoras | OSM | ver `conteos_osm` |
+| Presas y embalses | OSM | ver `conteos_osm` |
 
 ## La foto completa de OSM (16-11-2026)
 
