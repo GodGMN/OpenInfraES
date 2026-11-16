@@ -18,7 +18,8 @@
    "atribucion": "Obra derivada de BTN Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/parques-eolicos.geojson",
    "http": 200,
-   "bytes": 13372975
+   "bytes": 13372975,
+   "geometria_detalle": "Polygon(1382)"
   },
   {
    "id": "plantas-solares",
@@ -33,7 +34,8 @@
    "atribucion": "Obra derivada de BTN Continua CC-BY 4.0 ign.es · IDENA, Gobierno de Navarra (CC BY 4.0) · Institut Cartogràfic Valencià, Generalitat Valenciana (CC BY 4.0) · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/plantas-solares.geojson",
    "http": 200,
-   "bytes": 6476408
+   "bytes": 6476408,
+   "geometria_detalle": "Polygon(1330)"
   },
   {
    "id": "gas-regasificacion",
@@ -48,7 +50,8 @@
    "atribucion": "Fuente CORES (www.cores.es) · Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/gas-regasificacion.geojson",
    "http": 200,
-   "bytes": 32291
+   "bytes": 32291,
+   "geometria_detalle": "Point(7)"
   },
   {
    "id": "gas-almacenamiento",
@@ -56,14 +59,15 @@
    "grupo": "gas",
    "fichero": "gas-almacenamiento.geojson",
    "features": 5,
-   "geometria": "Point",
+   "geometria": "Point+Polygon",
    "verificado_a": "2026-08-09",
    "version": "1.0.0",
    "licencia": "CC-BY-4.0",
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/gas-almacenamiento.geojson",
    "http": 200,
-   "bytes": 19888
+   "bytes": 19888,
+   "geometria_detalle": "Point(3)+Polygon(2)"
   },
   {
    "id": "gas-interconexiones",
@@ -78,7 +82,8 @@
    "atribucion": "Fuente CORES (www.cores.es) · Obra derivada de DERA CC-BY 4.0 IECA-Junta de Andalucía · Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/gas-interconexiones.geojson",
    "http": 200,
-   "bytes": 49123
+   "bytes": 49123,
+   "geometria_detalle": "Point(6)"
   },
   {
    "id": "refinerias",
@@ -93,7 +98,8 @@
    "atribucion": "Fuente CORES (www.cores.es) · PRTR-España (MITECO) · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/refinerias.geojson",
    "http": 200,
-   "bytes": 33113
+   "bytes": 33113,
+   "geometria_detalle": "Point(10)"
   },
   {
    "id": "almacenamiento-petrolifero",
@@ -108,7 +114,8 @@
    "atribucion": "Origen de los datos: Comisión Nacional de los Mercados y la Competencia (CNMC) · Obra derivada del Nomenclátor Geográfico Básico y de las Redes de Transporte CC-BY 4.0 scne.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/almacenamiento-petrolifero.geojson",
    "http": 200,
-   "bytes": 672591
+   "bytes": 672591,
+   "geometria_detalle": "Point(133)"
   },
   {
    "id": "nuclear",
@@ -123,7 +130,8 @@
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/nuclear.geojson",
    "http": 200,
-   "bytes": 38088
+   "bytes": 38088,
+   "geometria_detalle": "Point(7)"
   },
   {
    "id": "residuos-radiactivos",
@@ -138,7 +146,8 @@
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/residuos-radiactivos.geojson",
    "http": 200,
-   "bytes": 77868
+   "bytes": 77868,
+   "geometria_detalle": "Point(14)"
   },
   {
    "id": "electricidad-interconexiones",
@@ -153,7 +162,8 @@
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/electricidad-interconexiones.geojson",
    "http": 200,
-   "bytes": 33573
+   "bytes": 33573,
+   "geometria_detalle": "Point(5)"
   },
   {
    "id": "red-electrica",
@@ -161,14 +171,15 @@
    "grupo": "sistema-electrico",
    "fichero": "red-electrica.geojson",
    "features": 659,
-   "geometria": "MultiLineString",
+   "geometria": "MultiLineString+Polygon",
    "verificado_a": "2026-08-07",
    "version": "1.0.1",
    "licencia": "CC-BY-4.0",
    "atribucion": "Obra derivada de BTN Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/red-electrica.geojson",
    "http": 200,
-   "bytes": 3457057
+   "bytes": 3457057,
+   "geometria_detalle": "MultiLineString(2)+Polygon(657)"
   },
   {
    "id": "conducciones-combustible",
@@ -183,7 +194,8 @@
    "atribucion": "Obra derivada de BTN Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/conducciones-combustible.geojson",
    "http": 200,
-   "bytes": 2949758
+   "bytes": 2949758,
+   "geometria_detalle": "MultiLineString(2)"
   },
   {
    "id": "generacion-electrica-provincia",
@@ -198,7 +210,8 @@
    "atribucion": "MITECO · Obra derivada de BDLJE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/generacion-electrica-provincia.geojson",
    "http": 200,
-   "bytes": 3889770
+   "bytes": 3889770,
+   "geometria_detalle": "MultiPolygon(52)"
   },
   {
    "id": "hidrogeno-produccion",
@@ -213,7 +226,8 @@
    "atribucion": "Comisión Europea (CINEA) · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/hidrogeno-produccion.geojson",
    "http": 200,
-   "bytes": 41280
+   "bytes": 41280,
+   "geometria_detalle": "Point(7)"
   },
   {
    "id": "agua-embalsada",
@@ -228,7 +242,8 @@
    "atribucion": "Ministerio para la Transición Ecológica y el Reto Demográfico · Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/agua-embalsada.geojson",
    "http": 200,
-   "bytes": 1081020
+   "bytes": 1081020,
+   "geometria_detalle": "Point(402)"
   },
   {
    "id": "desaladoras",
@@ -243,7 +258,8 @@
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · ABAQUA, Govern de les Illes Balears (CC BY) · Boletín Oficial de Canarias · Generalitat de Catalunya (DOGC) · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/desaladoras.geojson",
    "http": 200,
-   "bytes": 121394
+   "bytes": 121394,
+   "geometria_detalle": "Point(28)"
   },
   {
    "id": "hidrogeno-red",
@@ -251,14 +267,16 @@
    "grupo": "hidrogeno",
    "fichero": "hidrogeno-red.geojson",
    "features": 10,
-   "geometria": "MultiLineString",
+   "geometria": "LineString+MultiLineString+Point",
    "verificado_a": "2026-08-06",
    "version": "1.0.0",
    "licencia": "CC-BY-4.0",
    "atribucion": "Comisión Europea (CINEA) · Atlas Estratégico de España",
    "url": "https://atlas.eltercioviejo.com/datos/capas/hidrogeno-red.geojson",
    "http": 200,
-   "bytes": 156624
+   "bytes": 156624,
+   "geometria_detalle": "LineString(1)+MultiLineString(2)+Point(7)"
   }
- ]
+ ],
+ "_nota_geometria": "geometria = tipos distintos presentes; geometria_detalle = recuento por tipo. Una capa puede mezclar Point y Polygon (p.ej. gas-almacenamiento)."
 }

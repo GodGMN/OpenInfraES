@@ -68,7 +68,7 @@ declara versión, fecha de verificación y fuentes. Descarga: `scripts/atlas.py`
 
 | Capa | Elementos | Verificado a |
 |---|---:|---|
-| `red-electrica` | 659 | 2026-08-07 |
+| `red-electrica` | **657 subestaciones** (recintos) + **2 tendidos** (400 y 220 kV, IGN) | 2026-08-07 |
 | `agua-embalsada` | 402 | 2026-11-10 |
 | `desaladoras` | **28** | 2026-08-31 |
 | `refinerias` | 10 | 2026-08-09 |

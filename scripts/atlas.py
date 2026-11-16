@@ -53,7 +53,9 @@ def main():
             try:
                 gj = json.loads(cuerpo.decode("utf-8"))
                 n = len(gj.get("features", []))
-                tipo = (gj["features"][0]["geometry"]["type"] if gj.get("features") else "-")
+                # una capa puede mezclar tipos: recogerlos TODOS, no solo el de la primera feature
+                tipos = sorted({f["geometry"]["type"] for f in gj.get("features", []) if f.get("geometry")})
+                tipo = "+".join(tipos) if tipos else "-"
             except Exception:
                 n, tipo = 0, "?"
             recibo["capas"].append({"id": c["id"], "titulo": c.get("titulo"), "grupo": c.get("grupo"),
