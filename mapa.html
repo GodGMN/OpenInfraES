@@ -349,7 +349,13 @@ const OCULTAS = new Set(["slug","verif","id","fid","OBJECTID","objectid","claves
   "fecha_alta","nombre","name","descripcion","estado_registro","geo_fuente",
   "geo_precision","fecha_verificacion","categoria","tipo_osm"]);
 const esTecnico = k => /(_v|_f|__v|__f)$/.test(k);
-const ETIQ = { operador:"Operador", municipio:"Municipio", demarcacion:"Demarcación",
+const ETIQ = {
+  gasoleo_a:"Gasóleo A (€/l)", gasolina95:"Gasolina 95 (€/l)", gasolina98:"Gasolina 98 (€/l)",
+  gasoleo_premium:"Gasóleo Premium (€/l)", glp:"GLP (€/l)", gnc:"GNC (€/kg)", gnl:"GNL (€/kg)",
+  hidrogeno:"Hidrógeno (€/kg)", adblue:"AdBlue (€/l)", biodiesel:"Biodiésel (€/l)",
+  bioetanol:"Bioetanol (€/l)", rotulo:"Rótulo", direccion:"Dirección", horario:"Horario",
+  tipo_venta:"Tipo de venta", fecha_dato:"Fecha del dato",
+  operador:"Operador", municipio:"Municipio", demarcacion:"Demarcación",
   capacidad_hm3:"Capacidad (hm³)", agua_actual_hm3:"Agua embalsada (hm³)", fecha_dato:"Fecha del dato",
   hidroelectrico:"Hidroeléctrico", tecnologia_normalized:"Tecnología", installed_capacity_mw:"Potencia (MW)",
   province:"Provincia", Carretera:"Carretera", Tipo_de_via:"Tipo de vía", Titular:"Titular",
@@ -377,7 +383,7 @@ function fichaTren(p, c) {
 
 function ficha(p, c) {
   const titulo = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Aeropuerto || p.Carretera ||
-                 p.Rotulo || p.Direccion || p.Nombre_plataforma || "Sin nombre";
+                 p.Rotulo || p.rotulo || p.Direccion || p.direccion || p.Nombre_plataforma || "Sin nombre";
   const estado = [p.categoria, p.estado_registro, p.verif]
     .filter(v => v && !/^[A-Z0-9_]+$/.test(String(v))).join(" · ");
   let h = '<div class="ficha"><div class="ft">' + titulo + "</div>";
@@ -487,6 +493,9 @@ const CAPAS = [
     color:"#a78bfa", fichero:"datos/hermes/terminales-aeropuerto.geojson", peso:1, zoomMin:9 },
   { id:"intermodales", grupo:"Transporte", label:"Terminales mercancías", tipo:"punto", on:false,
     color:"#f59e0b", fichero:"datos/hermes/terminales-mercancias.geojson", radio:5 },
+  { id:"carburantes", grupo:"Tiempo real", label:"Carburantes (gasóleo A)", tipo:"punto", on:false,
+    color:"#22c55e", fichero:"datos/carburantes.geojson", radio:3.6, zoomMin:7,
+    escala:{ campo:"gasoleo_a", min:1.40, max:2.20, unidad:"€/l" } },
   { id:"estaciones-cercanias", grupo:"Tiempo real", label:"Estaciones Cercanías", tipo:"punto", on:false,
     color:"#a78bfa", fichero:"datos/estaciones-cercanias.geojson", radio:4.5, zoomMin:8 },
   { id:"trenes", grupo:"Tiempo real", label:"Trenes (GTFS-RT)", tipo:"punto", on:false, color:"#f43f5e",
@@ -561,6 +570,16 @@ async function consultarCaudal(p) {
   } catch (e) {
     caja.innerHTML = '<div class="cl">Caudal</div><div class="err">API no disponible ahora mismo</div>';
   }
+}
+
+/* escala de color para capas con magnitud: verde barato -> rojo caro */
+function colorEscala(v, e) {
+  if (v == null) return "#5a6b80";
+  const t = Math.max(0, Math.min(1, (v - e.min) / (e.max - e.min)));
+  const paradas = [[34,197,94],[163,230,53],[250,204,21],[249,115,22],[239,68,68]];
+  const x = t * (paradas.length - 1), i = Math.min(paradas.length - 2, Math.floor(x)), f = x - i;
+  const a = paradas[i], b = paradas[i + 1];
+  return "rgb(" + [0,1,2].map(k => Math.round(a[k] + (b[k] - a[k]) * f)).join(",") + ")";
 }
 
 const radioDe = (c, p) => {

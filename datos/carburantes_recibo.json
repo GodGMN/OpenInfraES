@@ -1,0 +1,16 @@
+{
+ "features": 11433,
+ "sin_precio": 89,
+ "fecha_dato": "16/11/2026 18:05:15",
+ "kb": 4718,
+ "fuente": "MITECO",
+ "fichero": "carburantes.geojson",
+ "gasoleo_a_medio": 1.825,
+ "gasoleo_a_min": 1.447,
+ "gasoleo_a_max": 2.199,
+ "gasolina95_medio": 1.606,
+ "con_glp": 0,
+ "con_gnc": 96,
+ "con_gnl": 55,
+ "con_hidrogeno": 2
+}

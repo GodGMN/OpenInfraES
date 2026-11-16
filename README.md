@@ -1,5 +1,13 @@
 # OpenInfraES — infraestructura eléctrica de España, en datos
 
+> **Índice del proyecto**: [`docs/PROYECTO.md`](docs/PROYECTO.md) — qué contiene, cómo está hecho,
+> licencias y límites conocidos. · [`docs/apis.md`](docs/apis.md) — qué API responde y cuál pide clave.
+> · [`docs/nap.md`](docs/nap.md) — estado del NAP de transporte.
+
+**28 capas · 6 grupos · ~7.400 objetos con las capas de por defecto.** Energía (red, generación, gas,
+agua) y transporte, con la fuente, la licencia y la fecha del dato a un clic.
+
+
 Repositorio de datos y visor de la **red de transporte eléctrica y del parque de generación español**,
 construido con fuentes abiertas y listo para reutilizar en otros proyectos (mapas, modelos, análisis
 territorial).
