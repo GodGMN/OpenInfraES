@@ -938,6 +938,10 @@ function pintarSis() {
         h += '<div class="nota-pie">Saldo con ' + ints.map(x => x[0] + " " +
              (x[1] >= 0 ? "+" : "") + nf(x[1])).join(" · ") + ' MW. Positivo = exporta.</div>';
       }
+      if (v.series.demanda && v.series.demanda.heredado) {
+        h += '<div class="nota-pie">Sin actualizar: el WAF de ESIOS bloqueó la descarga. ' +
+             'Último dato bueno de las ' + (v.series.demanda.hora || "") + '.</div>';
+      }
       h += '<div class="sis-sec">Generación del día (MWh)</div>';
     }
 

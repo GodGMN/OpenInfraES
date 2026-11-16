@@ -16,8 +16,13 @@ import argparse
 import datetime
 import json
 import os
+import sys
 import time
 import urllib.request
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from http_oficial import (SinDatos, SinPermiso, NoExiste, PeticionMala,
+                          ServidorCaido, BloqueoWAF, pide)
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEST = os.path.join(RAIZ, "datos")
@@ -51,11 +56,8 @@ ABIERTOS = {
 
 
 def trae(ind):
-    req = urllib.request.Request("%s/%s" % (BASE, ind),
-                                 headers={"Accept": "application/json",
-                                          "User-Agent": "OpenInfraES/1.0"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.loads(r.read())
+    """Un 200 con `values: []` es SIN DATOS, no una averia. El cliente lo distingue."""
+    return pide("%s/%s" % (BASE, ind), vacio_si=("indicator", "values"))
 
 
 def limpia(v):
@@ -74,9 +76,19 @@ def main():
     a = ap.parse_args()
     fecha = a.fecha or datetime.date.today().isoformat()
 
+    # Si el WAF bloquea, NO se pierde el dato bueno: se hereda el ultimo conocido
+    ruta_json = os.path.join(DEST, "ree_vivo.json")
+    previo = {}
+    if os.path.exists(ruta_json):
+        try:
+            previo = json.load(open(ruta_json, encoding="utf-8"))
+        except Exception:
+            previo = {}
+
     series = {}
     estado = {}
     fallos = []
+    heredados = []
     for ind, (clave, etiqueta, grupo) in ABIERTOS.items():
         try:
             d = trae(ind)["indicator"]
@@ -89,9 +101,19 @@ def main():
                              "hora": vals[-1][0], "valor": vals[-1][1],
                              "serie": vals[-72:]}   # últimas ~6 h a 5 min
             estado[clave] = vals[-1][1]
+        except (SinPermiso, NoExiste, PeticionMala, ServidorCaido, SinDatos, BloqueoWAF) as e:
+            fallos.append({"id": ind, "clave": clave, "tipo": e.tipo, "motivo": str(e)[:90]})
+            # herencia: conservar la serie anterior marcandola como tal
+            if clave in (previo.get("series") or {}):
+                v = dict(previo["series"][clave])
+                v["heredado"] = True
+                v["heredado_de"] = previo.get("actualizado")
+                series[clave] = v
+                estado[clave] = v.get("valor")
+                heredados.append(clave)
         except Exception as e:
-            fallos.append({"id": ind, "clave": clave, "motivo": str(e)[:90]})
-        time.sleep(0.35)
+            fallos.append({"id": ind, "clave": clave, "tipo": "otro", "motivo": str(e)[:90]})
+        time.sleep(1.1)
 
     salida = {
         "fecha": fecha,
@@ -101,8 +123,9 @@ def main():
         "estado": estado,
         "series": series,
         "fallos": fallos,
+        "heredados": heredados,
     }
-    ruta = os.path.join(DEST, "ree_vivo.json")
+    ruta = ruta_json
     json.dump(salida, open(ruta, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
     recibo = {
@@ -119,7 +142,9 @@ def main():
     json.dump(recibo, open(os.path.join(DEST, "ree_vivo_recibo.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
 
-    print("  %d de %d indicadores · %s" % (len(series), len(ABIERTOS), fecha))
+    vivos = len([k for k in series if k not in heredados])
+    print("  %d de %d con descarga fresca · %d heredados · %s"
+          % (vivos, len(ABIERTOS), len(heredados), fecha))
     for k in ("demanda", "eolica", "solar_fv", "hidro", "ciclo", "co2"):
         if k in series:
             v = series[k]

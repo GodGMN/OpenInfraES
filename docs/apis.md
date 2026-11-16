@@ -85,6 +85,40 @@ fichero de 0 bytes con 200 es un fallo silencioso, no un éxito.
 
 Ninguno cuesta dinero. Los dos primeros son un formulario.
 
+
+### El 403 de ESIOS no siempre es «falta de clave»
+
+Tras ~50 peticiones seguidas, **los 19 indicadores abiertos empezaron a devolver 403**. El cuerpo es
+siempre el mismo genérico:
+
+```json
+{"Status":403,"message":"Forbidden"}
+```
+
+La diferencia está en las **cabeceras**, no en el código ni en el cuerpo:
+
+```
+X-Cache: Error from cloudfront
+X-CDN: Imperva
+X-Iinfo: 57-10069179-10069185 NNNN CT(6 7 0) ...
+Set-Cookie: incap_ses_4558_1885724=...; visid_incap_1885724=...
+X-Amzn-ErrorType: ForbiddenException
+```
+
+Es un **WAF (Imperva detrás de CloudFront) bloqueando por comportamiento**, no un problema de
+credenciales. Consecuencias:
+
+- Los indicadores «abiertos» lo son **hasta que abusas**: el mismo endpoint da 200 y luego 403 según tus
+  últimas peticiones. Un barrido del catálogo entero dispara el bloqueo.
+- **Espaciar** las peticiones (~1 s) y no repetir el barrido. El bloqueo se levanta solo en minutos.
+- **No se pierde el dato bueno por un bloqueo**: `ree_vivo.py` lee el JSON anterior y, para lo que no
+  puede descargar, hereda la serie marcándola `heredado: true` con su hora. El visor avisa «sin
+  actualizar: último dato bueno de las HH:MM». Un panel con datos de hace 20 minutos declarados es
+  mejor que uno vacío o, peor, con ceros. Verificado: 18 series conservadas, 17 heredadas.
+- `scripts/http_oficial.py` lo distingue con la excepción `BloqueoWAF` (lee `X-CDN`, `X-Iinfo`,
+  `incap_ses`), separada de `SinPermiso`. Sin esa distinción, uno cree que le falta la clave cuando lo
+  que le falta es paciencia.
+
 ## ESIOS · qué indicadores están abiertos SIN token
 
 Probados los 29 que usa el MCP `ree-mcp`. **19 responden `200`** y 10 dan `403`.

@@ -194,6 +194,20 @@ internacional −4.492 MW (importando), bombeo neto +2.133 MW.
 
 Es el 65% de lo que enseña la visiona de REE, sin pedir permiso a nadie.
 
+## Lo que el repo original no tiene (y aquí sí)
+
+Al usarlo, `ree-mcp` falla en un aspecto que su código no contempla: **si la API bloquea, la herramienta
+devuelve un error y no hay dato**. Nosotros añadimos dos cosas que él no tiene:
+
+1. **Distingue `BloqueoWAF` de `SinPermiso`.** El 403 de ESIOS es idéntico en cuerpo para «falta clave» y
+   para «el WAF te ha cortado»; solo cambian las cabeceras (`X-CDN: Imperva`, `X-Iinfo`, `incap_ses`).
+   Confundirlos lleva a pedir una clave que no falta.
+2. **Herencia del dato bueno.** Si la descarga falla y hay una versión anterior, se conserva marcada
+   `heredado: true` con su hora, y la interfaz lo dice. El repo original devuelve `{"error": ...}` y el
+   usuario se queda sin panel.
+
+Está en `scripts/http_oficial.py` (cliente con las cinco distinciones) y `scripts/ree_vivo.py` (herencia).
+
 ## El siguiente paso lógico
 
 El mismo patrón sobre **embalses**: `get_embalse(nombre)`, `compare_semana_actual(embalse)`,
