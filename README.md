@@ -4,6 +4,7 @@
 
 | Documento | Qué encontrarás |
 |---|---|
+| [`docs/PATRON-MCP.md`](docs/PATRON-MCP.md) | **cómo convertir un recurso oficial en servidor MCP**, con el estudio medido de `ree-mcp` |
 | [`docs/BIBLIOTECA.md`](docs/BIBLIOTECA.md) | **para qué existe esto**: base de datos reutilizable y cómo crece con fichas enriquecidas |
 | [`docs/PROYECTO.md`](docs/PROYECTO.md) | qué es, qué contiene, cómo está hecho, rendimiento medido y límites |
 | [`docs/FUENTES.md`](docs/FUENTES.md) | **ficha por fuente oficial**: qué publica, URL, cómo se obtiene, licencia, frecuencia y limitaciones |

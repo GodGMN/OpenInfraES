@@ -1,0 +1,125 @@
+{
+ "fuente": "REE · ESIOS",
+ "url": "https://api.esios.ree.es/indicators",
+ "fecha": "2026-11-16",
+ "descargado": "2026-11-16T18:51:44",
+ "indicadores_ok": 18,
+ "indicadores_probados": 19,
+ "series": {
+  "demanda": {
+   "id": 2037,
+   "puntos": 72,
+   "ultimo": 35028.0,
+   "hora": "18:35"
+  },
+  "demanda_gen": {
+   "id": 10004,
+   "puntos": 72,
+   "ultimo": 35099.0,
+   "hora": "18:40"
+  },
+  "ciclo": {
+   "id": 2041,
+   "puntos": 72,
+   "ultimo": 5917.0,
+   "hora": "18:35"
+  },
+  "hidro": {
+   "id": 2042,
+   "puntos": 72,
+   "ultimo": 7201.0,
+   "hora": "18:35"
+  },
+  "eolica": {
+   "id": 2038,
+   "puntos": 72,
+   "ultimo": 13184.0,
+   "hora": "18:35"
+  },
+  "solar_fv": {
+   "id": 2044,
+   "puntos": 72,
+   "ultimo": 130.0,
+   "hora": "18:35"
+  },
+  "solar_ter": {
+   "id": 2045,
+   "puntos": 72,
+   "ultimo": 127.0,
+   "hora": "18:35"
+  },
+  "co2": {
+   "id": 10355,
+   "puntos": 72,
+   "ultimo": 0.07,
+   "hora": "18:40"
+  },
+  "exp_andorra": {
+   "id": 2068,
+   "puntos": 72,
+   "ultimo": 0.0,
+   "hora": "18:35"
+  },
+  "imp_andorra": {
+   "id": 2073,
+   "puntos": 72,
+   "ultimo": 37.0,
+   "hora": "18:35"
+  },
+  "exp_marruecos": {
+   "id": 2069,
+   "puntos": 72,
+   "ultimo": -875.0,
+   "hora": "18:35"
+  },
+  "imp_marruecos": {
+   "id": 2074,
+   "puntos": 72,
+   "ultimo": 0.0,
+   "hora": "18:35"
+  },
+  "exp_portugal": {
+   "id": 2070,
+   "puntos": 72,
+   "ultimo": 0.0,
+   "hora": "18:35"
+  },
+  "imp_portugal": {
+   "id": 2075,
+   "puntos": 72,
+   "ultimo": 1934.0,
+   "hora": "18:35"
+  },
+  "exp_francia": {
+   "id": 2071,
+   "puntos": 72,
+   "ultimo": -1646.0,
+   "hora": "18:35"
+  },
+  "imp_francia": {
+   "id": 2076,
+   "puntos": 72,
+   "ultimo": 0.0,
+   "hora": "18:35"
+  },
+  "bombeo_cons": {
+   "id": 2078,
+   "puntos": 72,
+   "ultimo": 0.0,
+   "hora": "18:35"
+  },
+  "bombeo_turb": {
+   "id": 2079,
+   "puntos": 72,
+   "ultimo": 2133.0,
+   "hora": "18:35"
+  }
+ },
+ "fallos": [
+  {
+   "id": 1294,
+   "clave": "solar_ter_pen",
+   "motivo": "HTTP Error 403: Forbidden"
+  }
+ ]
+}

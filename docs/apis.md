@@ -84,3 +84,41 @@ fichero de 0 bytes con 200 es un fallo silencioso, no un éxito.
 3. **NAP** — aclarar el header; 179 conjuntos de transporte público esperando.
 
 Ninguno cuesta dinero. Los dos primeros son un formulario.
+
+## ESIOS · qué indicadores están abiertos SIN token
+
+Probados los 29 que usa el MCP `ree-mcp`. **19 responden `200`** y 10 dan `403`.
+Se comprueba con `GET https://api.esios.ree.es/indicators/<id>` y cabecera `Accept: application/json`.
+
+| ID | Indicador | Sin token |
+|---|---|---|
+| 2037 | Demanda real nacional | **200** |
+| 10004 | Demanda real (suma de generación) | **200** |
+| 2038 | Eólica nacional | **200** |
+| 2041 | Ciclo combinado nacional | **200** |
+| 2042 | Hidráulica nacional | **200** |
+| 2044 | Solar fotovoltaica nacional | **200** |
+| 2045 | Solar térmica nacional | **200** |
+| 1294 | Solar térmica peninsular | **200** (sin valores hoy) |
+| 10355 | CO₂ asociado a la generación | **200** · tCO₂/MW |
+| 2068 / 2073 | Exportación / importación Andorra | **200** |
+| 2069 / 2074 | Exportación / importación Marruecos | **200** |
+| 2070 / 2075 | Exportación / importación Portugal | **200** |
+| 2071 / 2076 | Exportación / importación Francia | **200** |
+| 2078 / 2079 | Consumo / turbinado de bombeo | **200** |
+| 1293 | Demanda real peninsular (5 min) | 403 |
+| 1292 | Previsión de demanda | 403 |
+| 624 / 625 | Demanda máxima / mínima diaria | 403 |
+| 549 | Nuclear | 403 |
+| 547 | Carbón | 403 |
+| 548 | Fuel/gas | 403 |
+| 1295 | Solar FV peninsular | 403 |
+| 600 | Precio SPOT | 403 |
+| 1013 | Tarifa PVPC | 403 |
+
+- **Resolución real: 5 minutos.** La demanda nacional trae 224 valores al día.
+- **La unidad no viene en `unit`** (siempre `null`): está en `magnitud[]`. El 10355 declara `tCO2/MW`.
+- **La nuclear y el carbón abiertos en `apidatos` pero cerrados en ESIOS**: dos puertas distintas del
+  mismo organismo, con reglas distintas. Probar ambas antes de rendirse.
+- Conector: `scripts/ree_vivo.py` → `datos/ree_vivo.json` + recibo.
+

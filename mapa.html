@@ -253,6 +253,13 @@
     border-bottom-color:var(--borde) !important; width:29px !important; height:29px !important;
     line-height:29px !important; }
   .leaflet-bar a:hover { color:var(--cian) !important; }
+
+  .vivo-fila { display:flex; gap:10px; margin:6px 0 2px; }
+  .vivo-fila > span { flex:1; background:rgba(34,211,238,.07); border:1px solid rgba(34,211,238,.18);
+    border-radius:8px; padding:7px 9px; }
+  .vivo-fila b { display:block; font-size:15px; color:#22d3ee; font-variant-numeric:tabular-nums; }
+  .vivo-fila i { display:block; font-size:9.5px; font-style:normal; opacity:.6; margin-top:2px;
+    text-transform:uppercase; letter-spacing:.04em; }
 </style>
 </head>
 <body>
@@ -888,9 +895,52 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") { $("#velo")
 function pintarSis() {
   Promise.all([
     fetch("datos/ree_estado.json").then(r => r.json()).catch(() => null),
-    fetch("datos/esios_prevision.json").then(r => r.json()).catch(() => null)
-  ]).then(([d, p]) => {
+    fetch("datos/esios_prevision.json").then(r => r.json()).catch(() => null),
+    fetch("datos/ree_vivo.json").then(r => r.json()).catch(() => null)
+  ]).then(([d, p, v]) => {
     let h = "";
+
+    /* --- EN VIVO: indicadores abiertos de ESIOS, cada 5 min --- */
+    if (v && v.series) {
+      const COLMIX = { eolica: "#22d3ee", solar_fv: "#fbbf24", solar_ter: "#f59e0b",
+                       hidro: "#3b82f6", ciclo: "#a855f7", nuclear: "#ef4444" };
+      const est = v.estado || {};
+      const gen = Object.entries(v.series).filter(([k, x]) => x.grupo === "generacion");
+      const tot = gen.reduce((a, [, x]) => a + (x.valor || 0), 0);
+      h += '<div class="sis-cab"><span class="tot">' + nf(Math.round(est.demanda || 0)) + '</span>' +
+           '<span class="uni">MW de demanda ahora</span><span class="dia">' +
+           (v.series.demanda ? v.series.demanda.hora : "") + '</span></div>';
+      if (gen.length && tot > 0) {
+        h += '<div class="cabecera"><span class="n">Generando ahora</span><span class="track"></span>' +
+             '<span class="v">MW</span><span class="p">%</span></div>';
+        gen.sort((a, b) => b[1].valor - a[1].valor).forEach(([k, x]) => {
+          const pct = 100 * x.valor / tot;
+          h += '<div class="barra"><span class="n">' + x.etiqueta + '</span>' +
+               '<span class="track"><span class="b" style="width:' + Math.max(0.6, pct) +
+               '%;background:' + (COLMIX[k] || "#22d3ee") + '"></span></span>' +
+               '<span class="v">' + nf(Math.round(x.valor)) + '</span>' +
+               '<span class="p">' + pct.toFixed(1) + '%</span></div>';
+        });
+      }
+      // una linea: emisiones, intercambios netos, bombeo
+      const co2 = est.co2 != null ? est.co2.toFixed(3) + " tCO₂/MW" : "—";
+      const ints = ["francia", "portugal", "marruecos", "andorra"].map(p2 => {
+        const e = est["exp_" + p2] || 0, i = est["imp_" + p2] || 0;
+        return [p2, Math.round(e - i)];
+      }).filter(x => x[1] !== 0);
+      const netoInt = ints.reduce((a, x) => a + x[1], 0);
+      h += '<div class="sis-sec">Ahora mismo</div><div class="vivo-fila">' +
+           '<span><b>' + co2 + '</b><i>emisiones asociadas</i></span>' +
+           '<span><b>' + (netoInt >= 0 ? "+" : "") + nf(Math.round(netoInt)) + ' MW</b><i>saldo internacional</i></span>' +
+           '<span><b>' + nf(Math.round((est.bombeo_turb || 0) - (est.bombeo_cons || 0))) + ' MW</b><i>bombeo neto</i></span>' +
+           '</div>';
+      if (ints.length) {
+        h += '<div class="nota-pie">Saldo con ' + ints.map(x => x[0] + " " +
+             (x[1] >= 0 ? "+" : "") + nf(x[1])).join(" · ") + ' MW. Positivo = exporta.</div>';
+      }
+      h += '<div class="sis-sec">Generación del día (MWh)</div>';
+    }
+
     if (d && d.series && d.series.generacion) {
       const gen = d.series.generacion;
       const total = (gen.find(x => x.titulo.toLowerCase().startsWith("generación total")) || {}).valor || 0;
