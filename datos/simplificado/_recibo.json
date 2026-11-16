@@ -55,6 +55,33 @@
    "vertices_despues": 541,
    "ahorro_pct": 60.5,
    "kb": 59
+  },
+  {
+   "id": "agua-conducciones.geojson",
+   "tolerancia": 0.0008,
+   "features": 10895,
+   "vertices_antes": 209389,
+   "vertices_despues": 32459,
+   "ahorro_pct": 84.5,
+   "kb": 2868
+  },
+  {
+   "id": "edar.geojson",
+   "tolerancia": 0.0,
+   "features": 3034,
+   "vertices_antes": 3034,
+   "vertices_despues": 3034,
+   "ahorro_pct": 0.0,
+   "kb": 628
+  },
+  {
+   "id": "etap.geojson",
+   "tolerancia": 0.0,
+   "features": 1551,
+   "vertices_antes": 1551,
+   "vertices_despues": 1551,
+   "ahorro_pct": 0.0,
+   "kb": 317
   }
  ]
 }

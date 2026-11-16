@@ -319,6 +319,18 @@
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 994 con nombre"
   },
+  "agua-conducciones": {
+   "capa": "agua-conducciones",
+   "titulo": "Conducciones de agua",
+   "fuente": "OpenStreetMap",
+   "editor": "colaboradores de OSM",
+   "licencia": "ODbL 1.0",
+   "actualizado": "2026-11-16",
+   "descargado": "2026-11-16",
+   "features": 10895,
+   "url": "https://www.openstreetmap.org",
+   "metodo": "Overpass API (man_made=*) · 10895 con nombre"
+  },
   "carreteras": {
    "capa": "carreteras",
    "titulo": "Carreteras",
@@ -528,6 +540,30 @@
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant) · subconjunto: resto de tecnologias"
+  },
+  "trasvases": {
+   "capa": "trasvases",
+   "titulo": "Trasvases",
+   "fuente": "OpenStreetMap",
+   "editor": "colaboradores de OSM",
+   "licencia": "ODbL 1.0",
+   "actualizado": "2026-11-16",
+   "descargado": "2026-11-16",
+   "features": 118,
+   "url": "https://www.openstreetmap.org",
+   "metodo": "Overpass API (man_made=*) · name contiene 'trasvase'"
+  },
+  "canales": {
+   "capa": "canales",
+   "titulo": "Canales y acequias",
+   "fuente": "OpenStreetMap",
+   "editor": "colaboradores de OSM",
+   "licencia": "ODbL 1.0",
+   "actualizado": "2026-11-16",
+   "descargado": "2026-11-16",
+   "features": 10777,
+   "url": "https://www.openstreetmap.org",
+   "metodo": "Overpass API (man_made=*) · resto: canales de riego, acequias y aducciones"
   }
  },
  "simplificacion": {
@@ -584,7 +620,34 @@
    "vertices_despues": 541,
    "ahorro_pct": 60.5,
    "kb": 59
+  },
+  "agua-conducciones.geojson": {
+   "id": "agua-conducciones.geojson",
+   "tolerancia": 0.0008,
+   "features": 10895,
+   "vertices_antes": 209389,
+   "vertices_despues": 32459,
+   "ahorro_pct": 84.5,
+   "kb": 2868
+  },
+  "edar.geojson": {
+   "id": "edar.geojson",
+   "tolerancia": 0.0,
+   "features": 3034,
+   "vertices_antes": 3034,
+   "vertices_despues": 3034,
+   "ahorro_pct": 0.0,
+   "kb": 628
+  },
+  "etap.geojson": {
+   "id": "etap.geojson",
+   "tolerancia": 0.0,
+   "features": 1551,
+   "vertices_antes": 1551,
+   "vertices_despues": 1551,
+   "ahorro_pct": 0.0,
+   "kb": 317
   }
  },
- "total_capas": 42
+ "total_capas": 45
 }

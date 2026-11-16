@@ -23,6 +23,9 @@ CAPAS = [
     ("atlas/agua-embalsada.geojson", 0.0),     # puntos: nada que simplificar
     ("atlas/conducciones-combustible.geojson", 0.0008),
     ("atlas/hidrogeno-red.geojson", 0.0008),
+    ("agua-conducciones.geojson", 0.0008),
+    ("edar.geojson", 0.0),
+    ("etap.geojson", 0.0),
 ]
 
 

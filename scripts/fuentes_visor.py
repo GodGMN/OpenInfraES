@@ -187,6 +187,28 @@ def main():
             "url": OSM_RED["url"], "metodo": "%s · subconjunto: %s" % (OSM_RED["metodo"], filtro),
         }
 
+    # trasvases y canales comparten fichero pero no significado: misma fuente, distinto filtro
+    r_agua = osm_agua.get("agua-conducciones")
+    import re as _re
+    n_tras, n_can = None, None
+    ruta_agua = os.path.join(DATOS, "agua-conducciones.geojson")
+    if os.path.exists(ruta_agua):
+        _f = json.load(open(ruta_agua, encoding="utf-8"))["features"]
+        n_tras = sum(1 for x in _f if _re.search(r"trasvase|postrasvase",
+                                                 (x.get("properties") or {}).get("name") or "", _re.I))
+        n_can = len(_f) - n_tras
+    if r_agua:
+        for capa, titulo, filtro in (
+            ("trasvases", "Trasvases", "name contiene 'trasvase'"),
+            ("canales", "Canales y acequias", "resto: canales de riego, acequias y aducciones"),
+        ):
+            fuentes[capa] = {
+                "capa": capa, "titulo": titulo, "fuente": OSM["nombre"], "editor": OSM["editor"],
+                "licencia": OSM["licencia"], "actualizado": HOY, "descargado": HOY,
+                "features": n_tras if capa == "trasvases" else n_can, "url": OSM["url"],
+                "metodo": "%s · %s" % (OSM["metodo"], filtro),
+            }
+
     sim = leer("simplificado/_recibo.json", {})
     simpl = {os.path.basename(c["id"]): c for c in sim.get("capas", [])}
 

@@ -365,11 +365,15 @@ const CAPAS = [
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
     fichero:"datos/atlas/desaladoras.geojson", radio:6, atlas:"desaladoras", siempreIndividual:true },
   { id:"edar", grupo:"Agua", label:"EDAR (depuradoras)", tipo:"punto", on:false, color:"#a3e635",
-    fichero:"datos/edar.geojson", radio:4 },
+    fichero:"datos/edar.geojson", radio:3, opacidad:.45 },
   { id:"etap", grupo:"Agua", label:"ETAP (potabilizadoras)", tipo:"punto", on:false, color:"#22d3ee",
-    fichero:"datos/etap.geojson", radio:4.2 },
-  { id:"aguacond", grupo:"Agua", label:"Conducciones y trasvases", tipo:"linea", on:false, color:"#38bdf8",
-    fichero:"datos/agua-conducciones.geojson", peso:2, opacidad:.85 },
+    fichero:"datos/etap.geojson", radio:3.2, opacidad:.5 },
+  { id:"trasvases", grupo:"Agua", label:"Trasvases", tipo:"linea", on:false, color:"#f472b6",
+    fichero:"datos/simplificado/agua-conducciones.geojson", peso:3.4, opacidad:.98,
+    filtro:f => /trasvase|postrasvase/i.test(f.properties.name || "") },
+  { id:"canales", grupo:"Agua", label:"Canales y acequias", tipo:"linea", on:false, color:"#38bdf8",
+    fichero:"datos/simplificado/agua-conducciones.geojson", peso:1.1, opacidad:.5,
+    filtro:f => !/trasvase|postrasvase/i.test(f.properties.name || "") },
   { id:"h2", grupo:"Agua", label:"Producción de H₂", tipo:"punto", on:false, color:"#5eead4",
     fichero:"datos/atlas/hidrogeno-produccion.geojson", radio:6, atlas:"hidrogeno-produccion" },
 
@@ -706,7 +710,9 @@ document.querySelectorAll("[data-preset]").forEach(btn => {
     const p = btn.dataset.preset;
     document.querySelectorAll("[data-preset]").forEach(b => b.classList.toggle("on", b === btn));
     CAPAS.forEach(c => {
-      const on = (p === "todos") ? true : (c.grupo === p);
+      const SOLO_PRESET = { "Agua": new Set(["embalses", "desaladoras", "trasvases"]) };
+      const on = (p === "todos") ? true
+        : (SOLO_PRESET[p] ? SOLO_PRESET[p].has(c.id) : (c.grupo === p));
       const chk = document.querySelector('[data-capa="' + c.id + '"]');
       if (!chk || chk.checked === on) return;
       chk.checked = on;

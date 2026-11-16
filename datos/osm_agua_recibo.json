@@ -14,5 +14,13 @@
   "titulo": "ETAP (plantas potabilizadoras)",
   "fichero": "etap.geojson",
   "kb": 317
+ },
+ "agua-conducciones": {
+  "features": 10895,
+  "con_nombre": 10895,
+  "nombres": 1447,
+  "titulo": "Conducciones y trasvases de agua",
+  "fichero": "agua-conducciones.geojson",
+  "kb": 7282
  }
 }
