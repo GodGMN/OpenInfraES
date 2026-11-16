@@ -272,7 +272,7 @@
 
   </div>
   <div id="acciones">
-    <button id="btn-estado" title="Generación del día y previsión"><b>⚡</b>Datos</button>
+    <button id="btn-estado" title="Estado del sistema eléctrico: en vivo, del día y previsión"><b>⚡</b>Datos</button>
     <button id="btn-trenes" title="Trenes en tiempo real"><b>🚆</b>Trenes</button>
     <button id="btn-fuentes" title="Fuentes y fecha de los datos"><b>ⓘ</b>Fuentes</button>
     <button id="btn-enlace" title="Copiar enlace a esta vista"><b>⧉</b>Enlace</button>
@@ -302,7 +302,7 @@
 
 <div id="velo2"><div id="sis">
   <button class="cerrar" id="cerrar-sis">×</button>
-  <h2>Generación del día</h2>
+  <h2>Sistema eléctrico</h2>
   <div class="nota" id="sis-nota">Cargando…</div>
   <div id="sis-barras"></div>
 </div></div>
@@ -991,9 +991,9 @@ function pintarSis() {
       h += "</div>";
     }
     $("#sis-barras").innerHTML = h;
-    $("#sis-nota").innerHTML = "Generación: REE apidatos (agregado diario, API pública). " +
-      "Previsión: ESIOS (indicadores 460 y 541). " +
-      "Por planta y previsión por unidad requieren ENTSO-E.";
+    $("#sis-nota").innerHTML = "<b>En vivo</b>: ESIOS, indicadores abiertos sin clave, 5 min. " +
+      "<b>Del día</b>: REE apidatos (agregado diario). " +
+      "<b>Previsión</b>: ESIOS 460 y 541. Por planta requiere ENTSO-E.";
   });
 }
 $("#btn-estado").addEventListener("click", () => { pintarSis(); $("#velo2").classList.add("on"); });
