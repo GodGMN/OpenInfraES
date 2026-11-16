@@ -1,0 +1,60 @@
+{
+ "tolerancia_grados": 0.0008,
+ "nota": "0.0008 grados ~ 89 m en el paralelo 40",
+ "capas": [
+  {
+   "id": "lineas_hv.geojson",
+   "tolerancia": 0.0008,
+   "features": 4929,
+   "vertices_antes": 94045,
+   "vertices_despues": 19452,
+   "ahorro_pct": 79.3,
+   "kb": 1549
+  },
+  {
+   "id": "gasoductos.geojson",
+   "tolerancia": 0.0008,
+   "features": 678,
+   "vertices_antes": 36399,
+   "vertices_despues": 9310,
+   "ahorro_pct": 74.4,
+   "kb": 364
+  },
+  {
+   "id": "atlas/red-electrica.geojson",
+   "tolerancia": 0.0003,
+   "features": 659,
+   "vertices_antes": 26131,
+   "vertices_despues": 20516,
+   "ahorro_pct": 21.5,
+   "kb": 1511
+  },
+  {
+   "id": "atlas/agua-embalsada.geojson",
+   "tolerancia": 0.0,
+   "features": 402,
+   "vertices_antes": 402,
+   "vertices_despues": 402,
+   "ahorro_pct": 0.0,
+   "kb": 843
+  },
+  {
+   "id": "atlas/conducciones-combustible.geojson",
+   "tolerancia": 0.0008,
+   "features": 2,
+   "vertices_antes": 58362,
+   "vertices_despues": 19796,
+   "ahorro_pct": 66.1,
+   "kb": 432
+  },
+  {
+   "id": "atlas/hidrogeno-red.geojson",
+   "tolerancia": 0.0008,
+   "features": 10,
+   "vertices_antes": 1369,
+   "vertices_despues": 541,
+   "ahorro_pct": 60.5,
+   "kb": 59
+  }
+ ]
+}

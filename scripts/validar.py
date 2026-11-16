@@ -156,6 +156,19 @@ def main():
             if not os.path.exists(os.path.join(DATOS, "hermes", capa["id"] + ".geojson")):
                 error("falta datos/hermes/%s.geojson" % capa["id"])
 
+    # 4f. geometrias simplificadas del visor
+    rec = os.path.join(DATOS, "simplificado", "_recibo.json")
+    if not os.path.exists(rec):
+        error("falta datos/simplificado/_recibo.json (ejecuta scripts/simplificar.py)")
+    else:
+        r = json.load(open(rec, encoding="utf-8"))
+        tot_a = sum(c["vertices_antes"] for c in r["capas"])
+        tot_d = sum(c["vertices_despues"] for c in r["capas"])
+        if tot_d >= tot_a:
+            error("simplificar no reduce vertices (%d -> %d)" % (tot_a, tot_d))
+        print("  simplificado ............... %d -> %d vertices (-%.0f%%)"
+              % (tot_a, tot_d, 100 * (1 - tot_d / tot_a)))
+
     # 5. visor
     for f in ("mapa.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):
