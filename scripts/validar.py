@@ -142,6 +142,20 @@ def main():
             if not os.path.exists(os.path.join(DATOS, "atlas", u + ".geojson")):
                 error("falta datos/atlas/%s.geojson (lo usa el visor)" % u)
 
+    # 4e. capas de transporte (visor Hermes)
+    rh = os.path.join(DATOS, "hermes", "_recibo_hermes.json")
+    if not os.path.exists(rh):
+        error("falta datos/hermes/_recibo_hermes.json (ejecuta scripts/hermes.py)")
+    else:
+        rec = json.load(open(rh, encoding="utf-8"))
+        if len(rec.get("capas", [])) < 5:
+            error("recibo de Hermes: solo %d capas" % len(rec.get("capas", [])))
+        for capa in rec.get("capas", []):
+            if capa.get("features", 0) == 0:
+                error("hermes/%s: 0 features" % capa.get("id"))
+            if not os.path.exists(os.path.join(DATOS, "hermes", capa["id"] + ".geojson")):
+                error("falta datos/hermes/%s.geojson" % capa["id"])
+
     # 5. visor
     for f in ("mapa.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):

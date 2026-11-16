@@ -3,46 +3,57 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Infraestructura energética e hidráulica de España — OpenInfraES</title>
+<title>Infraestructura de España — OpenInfraES</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-  :root { --tinta:#0f1c2e; --suave:#5a6b80; --borde:#e3e8ef; }
+  :root { --tinta:#0f1c2e; --suave:#5a6b80; --borde:#e3e8ef; --fondo:#f8fafc; }
   * { box-sizing:border-box; }
   html, body { margin:0; height:100%; font-family:"Segoe UI", Inter, Arial, sans-serif; color:var(--tinta); }
   #mapa { position:absolute; inset:0; background:#eef2f6; }
-  #panel { position:absolute; z-index:1000; top:14px; left:14px; width:312px; max-height:calc(100% - 28px);
+  #panel { position:absolute; z-index:1000; top:14px; left:14px; width:318px; max-height:calc(100% - 28px);
            overflow:auto; background:#fff; border:1px solid var(--borde); border-radius:12px;
            padding:14px 15px; box-shadow:0 6px 24px rgba(15,28,46,.10); font-size:12.8px; }
   #panel h1 { margin:0 0 2px; font-size:15.5px; letter-spacing:-.2px; }
   #panel .sub { color:var(--suave); font-size:11.3px; margin-bottom:9px; line-height:1.35; }
   fieldset { border:0; border-top:1px solid var(--borde); margin:8px 0 0; padding:7px 0 0; }
   legend { font-size:10.3px; text-transform:uppercase; letter-spacing:1.1px; color:var(--suave); padding:0 4px 0 0; }
-  label { display:flex; align-items:center; gap:7px; padding:2.2px 0; cursor:pointer; }
+  label { display:flex; align-items:center; gap:7px; padding:2.6px 0; cursor:pointer; }
   label .n { margin-left:auto; color:#8fa0b5; font-size:10.8px; font-variant-numeric:tabular-nums; }
   .sw { width:12px; height:12px; border-radius:3px; flex:0 0 auto; }
   .sw.linea { height:4px; border-radius:2px; }
-  .sw.poli { border:1.5px solid currentColor; background:transparent; }
   #cifras { margin-top:9px; padding-top:8px; border-top:1px solid var(--borde); color:var(--suave);
             font-size:11.2px; line-height:1.5; }
   #cifras b { color:var(--tinta); }
-  .leaflet-popup-content { font-size:12.4px; line-height:1.45; margin:10px 12px; }
-  .leaflet-popup-content b { display:block; margin-bottom:2px; }
-  .leaflet-popup-content small { color:#5a6b80; }
   select { width:100%; padding:5px 6px; border:1px solid var(--borde); border-radius:7px;
            font-family:inherit; font-size:12px; color:var(--tinta); background:#fbfcfe; }
+  /* ficha del popup */
+  .leaflet-popup-content-wrapper { border-radius:10px; }
+  .leaflet-popup-content { margin:0; width:288px !important; font-size:12.4px; line-height:1.42; }
+  .ficha { padding:12px 13px; }
+  .ficha .ft { font-size:14px; font-weight:700; letter-spacing:-.2px; margin-bottom:1px; }
+  .ficha .fs { font-size:11px; color:var(--suave); text-transform:uppercase; letter-spacing:.6px; margin-bottom:7px; }
+  .ficha .fd { margin:0 0 9px; color:#33475e; font-size:11.8px; }
+  .ficha table { width:100%; border-collapse:collapse; font-size:11.6px; }
+  .ficha td { padding:2.5px 0; vertical-align:top; border-bottom:1px solid #f1f4f8; }
+  .ficha td.k { color:var(--suave); width:44%; padding-right:7px; }
+  .ficha td.v { font-weight:600; }
+  .ficha .links { margin-top:9px; display:flex; flex-wrap:wrap; gap:6px; }
+  .ficha .links a { background:var(--fondo); border:1px solid var(--borde); border-radius:6px;
+                    padding:3px 8px; font-size:11px; color:#0b6fb8; text-decoration:none; }
+  .ficha .links a:hover { background:#eef4fb; }
 </style>
 </head>
 <body>
 <div id="mapa"></div>
 <div id="panel">
   <h1>Infraestructura de España</h1>
-  <div class="sub">Red eléctrica, gas, nuclear y agua. Cartografía: IGN. Datos: OSM · REE · Atlas Estratégico.</div>
+  <div class="sub">Energía y transporte. Cartografía IGN · datos OSM, REE, Atlas, MITMA.</div>
   <fieldset>
     <legend>Cartografía base</legend>
     <select id="base">
       <option value="IGNBaseTodo">Mapa base IGN</option>
-      <option value="IGNBase-gris">Mapa base IGN (gris)</option>
-      <option value="IGNBaseOrto">Ortofoto (PNOA)</option>
+      <option value="IGNBase-gris">IGN gris (datos resaltados)</option>
+      <option value="IGNBaseOrto">Ortofoto PNOA</option>
       <option value="ign-nofondo">IGN sin fondo</option>
       <option value="osm">OpenStreetMap</option>
     </select>
@@ -54,111 +65,151 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* ---------------- cartografía IGN ---------------- */
-const IGN = (capa, fmt) =>
-  "https://www.ign.es/wmts/ign-base?request=GetTile&service=WMTS&version=1.0.0&layer=" + capa +
-  "&style=default&tilematrixset=GoogleMapsCompatible&tilematrix={z}&tilerow={y}&tilecol={x}&format=" + fmt;
-
+const IGN = (c, f) => "https://www.ign.es/wmts/ign-base?request=GetTile&service=WMTS&version=1.0.0&layer=" +
+  c + "&style=default&tilematrixset=GoogleMapsCompatible&tilematrix={z}&tilerow={y}&tilecol={x}&format=" + f;
 const BASES = {
-  IGNBaseTodo:    { url: IGN("IGNBaseTodo","image/png"),         attr:"© IGN España — Mapa Base" },
-  "IGNBase-gris": { url: IGN("IGNBase-gris","image/png"),        attr:"© IGN España — Mapa Base" },
-  IGNBaseOrto:    { url: IGN("IGNBaseOrto","image/jpeg"),        attr:"© IGN España — PNOA" },
+  IGNBaseTodo:    { url: IGN("IGNBaseTodo","image/png"),         attr:"© IGN España" },
+  "IGNBase-gris": { url: IGN("IGNBase-gris","image/png"),        attr:"© IGN España" },
+  IGNBaseOrto:    { url: IGN("IGNBaseOrto","image/jpeg"),        attr:"© IGN España / PNOA" },
   "ign-nofondo":  { url: IGN("IGNBaseTodo-nofondo","image/png"), attr:"© IGN España" },
   osm:            { url:"https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr:"© OpenStreetMap" }
 };
-
-const mapa = L.map("mapa", { zoomControl:true, preferCanvas:true, minZoom:5 }).setView([40.2,-3.6], 7);
+const mapa = L.map("mapa", { zoomControl:true, preferCanvas:true, minZoom:5,
+  renderer: L.canvas({ padding: 0.5, tolerance: 16 }) }).setView([40.2,-3.6], 7);
 let capaBase = null;
 function ponerBase(k) {
   const b = BASES[k] || BASES.IGNBaseTodo;
   if (capaBase) mapa.removeLayer(capaBase);
-  capaBase = L.tileLayer(b.url, { attribution: b.attr + " · datos: OSM / REE / Atlas Estratégico",
+  capaBase = L.tileLayer(b.url, { attribution: b.attr + " · datos: OSM / REE / Atlas / MITMA",
     maxNativeZoom:18, maxZoom:19, crossOrigin:true }).addTo(mapa);
   capaBase.bringToBack();
 }
 ponerBase("IGNBaseTodo");
 document.getElementById("base").addEventListener("change", e => ponerBase(e.target.value));
 
-/* ---------------- definición de capas ---------------- */
-const nf = n => n.toLocaleString("es-ES");
+/* ---------------- fichas ricas ---------------- */
+const nf = n => (typeof n === "number" ? n.toLocaleString("es-ES", {maximumFractionDigits:2}) : n);
+const OCULTAS = new Set(["slug","verif","id","fid","OBJECTID","objectid","claves","fuentes",
+  "fecha_alta","nombre","name","descripcion","estado_registro","geo_fuente",
+  "geo_precision","fecha_verificacion","categoria","tipo_osm"]);
+// los campos de verificacion por atributo (capacidad_hm3__v, ..._f) no se muestran como filas
+const esTecnico = k => /(_v|_f|__v|__f)$/.test(k);
+const ETIQ = { categoria:"Tipo", operador:"Operador", municipio:"Municipio", demarcacion:"Demarcación",
+  capacidad_hm3:"Capacidad (hm³)", agua_actual_hm3:"Agua embalsada (hm³)", fecha_dato:"Fecha del dato",
+  hidroelectrico:"Hidroeléctrico", estado_registro:"Estado", descripcion:"Descripción",
+  tecnologia_normalized:"Tecnología", installed_capacity_mw:"Potencia (MW)", province:"Provincia",
+  Carretera:"Carretera", Tipo_de_via:"Tipo de vía", Titular:"Titular", TENT:"Red TEN-T", Longitud:"Longitud (m)",
+  Nombre_terminal:"Terminal", Tipo_terminal:"Tipo", Codigo_terminal:"Código", Aeropuerto:"Aeropuerto",
+  Codigo_ICAO:"OACI", Orientacion:"Orientación", Distancia_max:"Longitud de pista (m)",
+  Nombre_plataforma:"Plataforma", Direccion:"Dirección", Rotulo:"Rótulo", Venta_al_publico:"Venta al público",
+  Elemento_portuario:"Elemento portuario", voltage:"Tensión (V)", operator:"Operador", line_type:"Tipo de línea",
+  circuits:"Circuitos", osm_id:"OSM" };
 
-function popupGenerico(p, extra) {
-  let h = "<b>" + (p.nombre || p.name || "sin nombre") + "</b>";
-  if (p.categoria) h += p.categoria;
-  if (p.operador) h += (p.categoria ? " · " : "") + p.operador;
-  if (p.municipio) h += "<br>" + p.municipio;
-  if (p.descripcion) h += "<br><small>" + String(p.descripcion).slice(0,140) + "</small>";
-  if (p.estado_registro) h += "<br><small>registro: " + p.estado_registro + "</small>";
-  return h + (extra || "");
+function ficha(p, c) {
+  const titulo = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Aeropuerto || p.Carretera ||
+                 p.Rotulo || p.Direccion || p.Nombre_plataforma || "Sin nombre";
+  let h = '<div class="ficha"><div class="ft">' + titulo + '</div>';
+  h += '<div class="fs">' + c.label + (p.categoria ? " · " + p.categoria : "") + '</div>';
+  if (p.descripcion) h += '<p class="fd">' + p.descripcion + '</p>';
+
+  const filas = Object.entries(p).filter(([k, v]) =>
+    v !== null && v !== "" && v !== undefined && !OCULTAS.has(k) && !esTecnico(k) && typeof v !== "object");
+  if (filas.length) {
+    h += "<table>";
+    filas.slice(0, 14).forEach(([k, v]) => {
+      const etiqueta = ETIQ[k] || k.replace(/_/g, " ");
+      let valor = v;
+      if (k === "hidroelectrico") valor = v ? "Sí" : "No";
+      if (k === "voltage" && Number(v) > 1000) valor = (Number(v) / 1000) + " kV";
+      if (typeof v === "boolean") valor = v ? "Sí" : "No";
+      h += '<tr><td class="k">' + etiqueta + '</td><td class="v">' + nf(valor) + "</td></tr>";
+    });
+    h += "</table>";
+  }
+
+  const enlaces = [];
+  if (p.slug && c.atlas) enlaces.push(['Ficha en el Atlas',
+    'https://atlas.eltercioviejo.com/ficha/' + c.atlas + '/' + p.slug + '/']);
+  if (p.osm_id) enlaces.push(['Ver en OpenStreetMap', 'https://www.openstreetmap.org/way/' + p.osm_id]);
+  if (p.geo_fuente) enlaces.push(['Fuente: ' + String(p.geo_fuente).slice(0, 42), null]);
+  if (enlaces.length) {
+    h += '<div class="links">';
+    enlaces.forEach(([txt, url]) => {
+      h += url ? '<a href="' + url + '" target="_blank" rel="noopener">' + txt + "</a>"
+               : '<span style="font-size:10.5px;color:#5a6b80">' + txt + "</span>";
+    });
+    h += "</div>";
+  }
+  return h + "</div>";
 }
 
+/* ---------------- capas (una por concepto: sin duplicados) ---------------- */
 const CAPAS = [
-  // ---- red eléctrica
-  { id:"l400", grupo:"Red eléctrica", label:"400 kV", tipo:"linea", on:true, color:"#b91c1c",
-    fichero:"datos/lineas_hv.geojson", peso:2.2, opacidad:.9,
-    filtro:f => f.properties.voltage === 400000,
-    popup:p => "<b>" + (p.name || "Línea 400 kV") + "</b>400 kV · " + (p.line_type||"") + "<br>" + (p.operator||"sin operador") },
-  { id:"l220", grupo:"Red eléctrica", label:"220 kV", tipo:"linea", on:true, color:"#1d4ed8",
+  { id:"l400", grupo:"Red eléctrica", label:"Líneas 400 kV", tipo:"linea", on:true, color:"#b91c1c",
+    fichero:"datos/lineas_hv.geojson", peso:2.4, opacidad:.92,
+    filtro:f => f.properties.voltage === 400000 },
+  { id:"l220", grupo:"Red eléctrica", label:"Líneas 220 kV", tipo:"linea", on:true, color:"#1d4ed8",
     fichero:"datos/lineas_hv.geojson", peso:1.4, opacidad:.75,
-    filtro:f => f.properties.voltage === 220000,
-    popup:p => "<b>" + (p.name || "Línea 220 kV") + "</b>220 kV · " + (p.line_type||"") + "<br>" + (p.operator||"sin operador") },
-  { id:"subestaciones", grupo:"Red eléctrica", label:"Subestaciones (Atlas)", tipo:"poligono", on:false, color:"#0f766e",
-    fichero:"datos/atlas/red-electrica.geojson", peso:1, popup:popupGenerico,
+    filtro:f => f.properties.voltage === 220000 },
+  { id:"subestaciones", grupo:"Red eléctrica", label:"Subestaciones", tipo:"poligono", on:false, color:"#0f766e",
+    fichero:"datos/atlas/red-electrica.geojson", peso:1, atlas:"red-electrica",
     filtro:f => f.properties.categoria === "subestacion" },
-  { id:"tendidos", grupo:"Red eléctrica", label:"Tendidos IGN", tipo:"linea", on:false, color:"#115e59",
-    fichero:"datos/atlas/red-electrica.geojson", peso:1.6, opacidad:.85, popup:popupGenerico,
-    filtro:f => f.properties.categoria === "tendido" },
-  { id:"inter-elec", grupo:"Red eléctrica", label:"Interconexiones", tipo:"punto", on:false, color:"#7c2d12",
-    fichero:"datos/atlas/electricidad-interconexiones.geojson", radio:6, popup:popupGenerico },
+  { id:"interelec", grupo:"Red eléctrica", label:"Interconexiones eléctricas", tipo:"punto", on:false,
+    color:"#7c2d12", fichero:"datos/atlas/electricidad-interconexiones.geojson", radio:7, atlas:"electricidad-interconexiones" },
 
-  // ---- generación
-  { id:"hidro", grupo:"Generación", label:"Hidráulicas", tipo:"punto", on:true, color:"#0891b2",
+  { id:"hidro", grupo:"Generación", label:"Centrales hidráulicas", tipo:"punto", on:true, color:"#0891b2",
     fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw",
-    filtro:f => ["hydro","pumped_hydro"].includes(f.properties.technology_normalized),
-    popup:p => "<b>" + (p.name||"") + "</b>" + (p.technology_normalized||"") + " · " + nf(Math.round(p.installed_capacity_mw||0)) + " MW<br>" + (p.municipality||"") },
-  { id:"gasgen", grupo:"Generación", label:"Gas (CCGT)", tipo:"punto", on:false, color:"#7c3aed",
+    filtro:f => ["hydro","pumped_hydro"].includes(f.properties.technology_normalized) },
+  { id:"nuclear", grupo:"Generación", label:"Centrales nucleares", tipo:"punto", on:true, color:"#6c5ce7",
+    fichero:"datos/atlas/nuclear.geojson", radio:8, atlas:"nuclear" },
+  { id:"gasgen", grupo:"Generación", label:"Ciclos combinados", tipo:"punto", on:false, color:"#7c3aed",
     fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw",
-    filtro:f => ["ccgt","fuel_gas"].includes(f.properties.technology_normalized),
-    popup:p => "<b>" + (p.name||"") + "</b>" + (p.technology_normalized||"") + " · " + nf(Math.round(p.installed_capacity_mw||0)) + " MW<br>" + (p.municipality||"") },
-  { id:"nuclear", grupo:"Generación", label:"Nuclear", tipo:"punto", on:true, color:"#6c5ce7",
-    fichero:"datos/atlas/nuclear.geojson", radio:7, popup:popupGenerico },
+    filtro:f => ["ccgt","fuel_gas"].includes(f.properties.technology_normalized) },
   { id:"resto", grupo:"Generación", label:"Resto del parque", tipo:"punto", on:false, color:"#16a34a",
     fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw",
-    filtro:f => !["hydro","pumped_hydro","ccgt","fuel_gas"].includes(f.properties.technology_normalized),
-    popup:p => "<b>" + (p.name||"") + "</b>" + (p.technology_normalized||"") + " · " + nf(Math.round(p.installed_capacity_mw||0)) + " MW" },
+    filtro:f => !["hydro","pumped_hydro","ccgt","fuel_gas"].includes(f.properties.technology_normalized) },
 
-  // ---- gas
-  { id:"gasoductos", grupo:"Gas", label:"Gasoductos (OSM)", tipo:"linea", on:true, color:"#a16207",
-    fichero:"datos/gasoductos.geojson", peso:1.5, opacidad:.8, popup:popupGenerico },
-  { id:"conducciones", grupo:"Gas", label:"Conducciones (Atlas)", tipo:"linea", on:false, color:"#78350f",
-    fichero:"datos/atlas/conducciones-combustible.geojson", peso:1.8, opacidad:.85, popup:popupGenerico },
+  { id:"gasoductos", grupo:"Gas", label:"Gasoductos", tipo:"linea", on:true, color:"#a16207",
+    fichero:"datos/gasoductos.geojson", peso:1.6, opacidad:.85 },
   { id:"regas", grupo:"Gas", label:"Regasificadoras", tipo:"punto", on:true, color:"#b45309",
-    fichero:"datos/atlas/gas-regasificacion.geojson", radio:6, popup:popupGenerico },
+    fichero:"datos/atlas/gas-regasificacion.geojson", radio:7, atlas:"gas-regasificacion" },
   { id:"gasalm", grupo:"Gas", label:"Almacenamiento de gas", tipo:"punto", on:false, color:"#92400e",
-    fichero:"datos/atlas/gas-almacenamiento.geojson", radio:5, popup:popupGenerico },
+    fichero:"datos/atlas/gas-almacenamiento.geojson", radio:6, atlas:"gas-almacenamiento" },
   { id:"refinerias", grupo:"Gas", label:"Refinerías", tipo:"punto", on:false, color:"#57534e",
-    fichero:"datos/atlas/refinerias.geojson", radio:5, popup:popupGenerico },
+    fichero:"datos/atlas/refinerias.geojson", radio:6, atlas:"refinerias" },
 
-  // ---- agua
-  { id:"desaladoras", grupo:"Agua", label:"Desaladoras (Atlas)", tipo:"punto", on:true, color:"#0e7490",
-    fichero:"datos/atlas/desaladoras.geojson", radio:5, popup:popupGenerico },
-  { id:"embalses", grupo:"Agua", label:"Embalses (Atlas)", tipo:"punto", on:false, color:"#0369a1",
-    fichero:"datos/atlas/agua-embalsada.geojson", radio:3.2, popup:popupGenerico },
-  { id:"presas", grupo:"Agua", label:"Presas (OSM)", tipo:"punto", on:false, color:"#64748b",
-    fichero:"datos/presas.geojson", radio:2.6, popup:popupGenerico },
+  { id:"embalses", grupo:"Agua", label:"Embalses", tipo:"punto", on:true, color:"#0369a1",
+    fichero:"datos/atlas/agua-embalsada.geojson", radio:4, atlas:"agua-embalsada" },
+  { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#0e7490",
+    fichero:"datos/atlas/desaladoras.geojson", radio:6, atlas:"desaladoras" },
+  { id:"h2", grupo:"Agua / H₂", label:"Producción de H₂", tipo:"punto", on:false, color:"#0f766e",
+    fichero:"datos/atlas/hidrogeno-produccion.geojson", radio:6, atlas:"hidrogeno-produccion" },
 
-  // ---- hidrógeno
-  { id:"h2", grupo:"Hidrógeno", label:"Producción H₂", tipo:"punto", on:false, color:"#0f766e",
-    fichero:"datos/atlas/hidrogeno-produccion.geojson", radio:5, popup:popupGenerico }
+  { id:"carreteras", grupo:"Transporte", label:"Carreteras del Estado", tipo:"linea", on:false, color:"#475569",
+    fichero:"datos/hermes/carreteras.geojson", peso:1.1, opacidad:.7 },
+  { id:"puertos", grupo:"Transporte", label:"Puertos de interés general", tipo:"punto", on:false, color:"#1e40af",
+    fichero:"datos/hermes/puertos-interes-general.geojson", radio:7 },
+  { id:"terminales-puerto", grupo:"Transporte", label:"Terminales portuarias", tipo:"poligono", on:false,
+    color:"#2563eb", fichero:"datos/hermes/terminales-portuarias.geojson", peso:1 },
+  { id:"terminales-aero", grupo:"Transporte", label:"Terminales de aeropuerto", tipo:"poligono", on:false,
+    color:"#7c3aed", fichero:"datos/hermes/terminales-aeropuerto.geojson", peso:1 },
+  { id:"intermodales", grupo:"Transporte", label:"Terminales de mercancías", tipo:"punto", on:false,
+    color:"#b45309", fichero:"datos/hermes/terminales-mercancias.geojson", radio:5 },
+  { id:"estaciones-gas", grupo:"Transporte", label:"Estaciones GNL/GNC/H₂", tipo:"punto", on:false,
+    color:"#15803d", fichero:"datos/hermes/estaciones-gas.geojson", radio:5,
+    // de las 11.485 estaciones de servicio solo interesan las de combustible alternativo
+    filtro:f => ["Gas_natural_licuado","Gas_natural_comprimido","Hidrogeno"]
+                 .some(k => f.properties[k] === "SI") }
 ];
 
 /* ---------------- motor ---------------- */
-const grupos = {}, capas = {}, conteo = {};
+const grupos = {}, capas = {}, conteo = {}, elementos = {};
 CAPAS.forEach(c => {
-  if (!grupos[c.grupo]) grupos[c.grupo] = [];
-  grupos[c.grupo].push(c);
+  (grupos[c.grupo] = grupos[c.grupo] || []).push(c);
   capas[c.id] = L.layerGroup();
   if (c.on) capas[c.id].addTo(mapa);
   conteo[c.id] = 0;
+  elementos[c.id] = [];
 });
 
 const panel = document.getElementById("grupos");
@@ -166,32 +217,35 @@ Object.entries(grupos).forEach(([nombre, lista]) => {
   const fs = document.createElement("fieldset");
   fs.innerHTML = "<legend>" + nombre + "</legend>" + lista.map(c =>
     `<label><input type="checkbox" data-capa="${c.id}" ${c.on ? "checked" : ""}>` +
-    `<span class="sw ${c.tipo === "linea" ? "linea" : c.tipo === "poligono" ? "poli" : ""}" ` +
-    `style="background:${c.tipo === "poligono" ? "transparent" : c.color};color:${c.color};` +
-    `${c.tipo === "linea" ? "background:" + c.color : ""}"></span>${c.label}` +
-    `<span class="n" id="n-${c.id}"></span></label>`
-  ).join("");
+    `<span class="sw ${c.tipo === "linea" ? "linea" : ""}" style="background:${c.tipo === "poligono" ? "transparent" : c.color};` +
+    `${c.tipo === "poligono" ? "border:1.5px solid " + c.color : ""}"></span>${c.label}` +
+    `<span class="n" id="n-${c.id}"></span></label>`).join("");
   panel.appendChild(fs);
 });
 
-function radioDe(c, p) {
-  if (c.magnitud) return Math.max(2, Math.min(9, Math.sqrt(p[c.magnitud] || 0) / 1.8));
-  return c.radio || 4.5;
-}
+const radioDe = (c, p) => c.magnitud ? Math.max(4.5, Math.min(10, Math.sqrt(p[c.magnitud] || 0) / 1.7))
+                                      : (c.radio || 5);
 
-CAPAS.forEach(c => {
-  fetch(c.fichero).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+/* carga bajo demanda: las capas apagadas no se descargan hasta que se encienden */
+function cargar(c) {
+  if (c.__cargada) return;
+  c.__cargada = true;
+  fetch(c.fichero)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(gj => {
       const feats = c.filtro ? gj.features.filter(c.filtro) : gj.features;
-      // L.geoJSON maneja Point, MultiPoint, LineString, MultiLineString, Polygon y MultiPolygon
       L.geoJSON({ type:"FeatureCollection", features:feats }, {
         pointToLayer: (f, latlng) => L.circleMarker(latlng, {
-          radius: radioDe(c, f.properties || {}),
-          fillColor: c.color, fillOpacity: .72, color: "#fff", weight: .7
+          radius: radioDe(c, f.properties || {}), fillColor:c.color, fillOpacity:.75,
+          color:"#fff", weight:1.1
         }),
-        style: () => ({ color: c.color, weight: c.peso || 1.3, opacity: c.opacidad || .8,
-                        fillColor: c.color, fillOpacity: (c.tipo === "poligono" ? .35 : .18) }),
-        onEachFeature: (f, layer) => layer.bindPopup(c.popup(f.properties || {}))
+        style: () => ({ color:c.color, weight:c.peso || 1.2, opacity:c.opacidad || .8,
+                        fillColor:c.color, fillOpacity:(c.tipo === "poligono" ? .35 : .15) }),
+        onEachFeature: (f, layer) => {
+          const p = f.properties || {};
+          elementos[c.id].push(layer);
+          layer.bindPopup(() => ficha(p, c), { maxWidth: 320, minWidth: 288, autoPanPadding: [24, 24] });
+        }
       }).addTo(capas[c.id]);
       conteo[c.id] = feats.length;
       const el = document.getElementById("n-" + c.id);
@@ -203,21 +257,49 @@ CAPAS.forEach(c => {
       if (el) el.textContent = "—";
       console.warn("capa no disponible:", c.id, e.message);
     });
-});
+}
+CAPAS.forEach(c => { if (c.on) cargar(c); });
 
 document.querySelectorAll("[data-capa]").forEach(chk => {
   chk.addEventListener("change", e => {
     const id = e.target.dataset.capa;
-    e.target.checked ? capas[id].addTo(mapa) : mapa.removeLayer(capas[id]);
+    if (e.target.checked) { cargar(CAPAS.find(x => x.id === id)); capas[id].addTo(mapa); }
+    else { mapa.removeLayer(capas[id]); }
     pintarCifras();
   });
 });
 
+/* API para enlazar desde fuera y para pruebas: OpenInfraES.abrir("embalses", 0) */
+window.OpenInfraES = {
+  abrir(capaId, i = 0, zoom = 11) {
+    if (!capas[capaId]) return "sin capa";
+    const chk = document.querySelector('[data-capa="' + capaId + '"]');
+    if (chk && !chk.checked) { chk.checked = true; capas[capaId].addTo(mapa); pintarCifras(); }
+    const def = CAPAS.find(x => x.id === capaId);
+    if (def) cargar(def);
+    const intentar = (n) => {
+      const ls = elementos[capaId] || [];
+      if (!ls.length) {
+        if (n > 0) return setTimeout(() => intentar(n - 1), 400);
+        return "capa vacia";
+      }
+      const l = ls[i] || ls[0];
+      const centro = l.getLatLng ? l.getLatLng() : (l.getBounds ? l.getBounds().getCenter() : null);
+      if (centro) mapa.setView(centro, zoom);
+      l.openPopup();
+      return "ok";
+    };
+    return intentar(18);
+  },
+  capas: () => Object.fromEntries(Object.entries(conteo))
+};
+
 function pintarCifras() {
   const el = document.getElementById("cifras");
   const vis = CAPAS.filter(c => document.querySelector(`[data-capa="${c.id}"]`)?.checked && conteo[c.id]);
-  if (!vis.length) { el.textContent = "Sin capas activas."; return; }
-  el.innerHTML = vis.slice(0, 9).map(c => "<b>" + nf(conteo[c.id]) + "</b> " + c.label.toLowerCase()).join(" · ");
+  el.innerHTML = vis.length
+    ? vis.slice(0, 8).map(c => "<b>" + nf(conteo[c.id]) + "</b> " + c.label.toLowerCase()).join(" · ")
+    : "Sin capas activas.";
 }
 </script>
 </body>

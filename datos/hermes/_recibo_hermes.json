@@ -1,0 +1,97 @@
+{
+ "fuente": "Visor Hermes — MITMA (mapas.fomento.gob.es)",
+ "licencia": "CC-BY-4.0 (scne.es)",
+ "servicio": "https://mapas.fomento.gob.es/arcgis/rest/services/",
+ "capas": [
+  {
+   "id": "puertos-interes-general",
+   "descripcion": "Puertos de interés general",
+   "servicio": "Hermes/0__PUERTOS",
+   "layer": 1,
+   "features": 45,
+   "props": [
+    "id",
+    "Nombre",
+    "Codigo",
+    "Elemento_portuario",
+    "AAPP",
+    "Codigo_AAPP"
+   ]
+  },
+  {
+   "id": "terminales-portuarias",
+   "descripcion": "Terminales portuarias",
+   "servicio": "Hermes/0__PUERTOS",
+   "layer": 3,
+   "features": 440,
+   "props": [
+    "id",
+    "Codigo_terminal",
+    "Nombre_terminal",
+    "Tipo_terminal",
+    "Codigo_secundario_puerto",
+    "Codigo_puerto"
+   ]
+  },
+  {
+   "id": "terminales-aeropuerto",
+   "descripcion": "Terminales de pasajeros",
+   "servicio": "Hermes/0__AEROPUERTOS",
+   "layer": 1,
+   "features": 102,
+   "props": [
+    "id_cod_terminal_pax",
+    "Codigo",
+    "Aeropuerto",
+    "Codigo_ICAO",
+    "Codigo_IATA",
+    "Superficie"
+   ]
+  },
+  {
+   "id": "pistas-aeropuerto",
+   "descripcion": "Pistas de aterrizaje",
+   "servicio": "Hermes/0__AEROPUERTOS",
+   "layer": 2,
+   "features": 56,
+   "props": [
+    "id_cod_pista",
+    "Codigo",
+    "Orientacion",
+    "Distancia_max",
+    "Ancho",
+    "Tipo_pista"
+   ]
+  },
+  {
+   "id": "terminales-mercancias",
+   "descripcion": "Terminales intermodales de mercancías",
+   "servicio": "Hermes/0__TERMINALES_INTERMODALES",
+   "layer": 1,
+   "features": 383,
+   "props": [
+    "id",
+    "Codigo",
+    "Nombre",
+    "Nombre_plataforma",
+    "Tipo_terminal",
+    "Clase_terminal_fc"
+   ]
+  },
+  {
+   "id": "estaciones-gas",
+   "descripcion": "Estaciones de servicio con GNL",
+   "servicio": "Hermes/7__COMBUSTIBLES_ALTERNATIVOS",
+   "layer": 457,
+   "features": 11485,
+   "props": [
+    "id",
+    "Direccion",
+    "Rotulo",
+    "Venta_al_publico",
+    "Municipio",
+    "Coord1"
+   ]
+  }
+ ]
+}
