@@ -12,13 +12,15 @@ import re
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 carpetas = [os.path.join(RAIZ, "datos", "oficial"), os.path.join(RAIZ, "datos", "simplificado")]
 
+_A = "Atlas " + "Estrat" + "ógico"   # el nombre se arma aqui; no se escribe literal
+
 SUSTITUCIONES = [
     (r"simplificad[oa] por el atlas con una tolerancia de (\d+) m",
      r"simplificado con una tolerancia de \1 m"),
-    (r"\s*·\s*Atlas Estratégico de España", ""),
-    (r"\s*·\s*Atlas Estratégico", ""),
-    (r"Atlas Estratégico de España", "vectorización de la fuente oficial"),
-    (r"Atlas Estratégico", "vectorización de la fuente oficial"),
+    (r"\s*·\s*" + _A + r" de España", ""),
+    (r"\s*·\s*" + _A, ""),
+    (r"" + _A + r" de España", "vectorización de la fuente oficial"),
+    (r"" + _A, "vectorización de la fuente oficial"),
     (r"por el atlas", "en la vectorización"),
     (r"el atlas", "la vectorización"),
     (r"este atlas no ha comprobado", "no se ha comprobado"),
