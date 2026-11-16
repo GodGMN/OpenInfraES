@@ -27,8 +27,8 @@ consciente: primero el dato y el motor, después el alojamiento.
 |---|---:|---|---|
 | Líneas 400 kV | 1.752 | OSM | ODbL |
 | Líneas 220 kV | 3.176 | OSM | ODbL |
-| Subestaciones | 657 | Atlas (BTN del IGN) | CC BY 4.0 |
-| Interconexiones | 5 | Atlas | CC BY 4.0 |
+| Subestaciones | 657 | IGN (BTN Continua) | CC BY 4.0 |
+| Interconexiones | 5 | REE | condiciones propias |
 
 ### Generación
 Hidráulicas (1.387), nucleares (7 reactores), ciclos combinados, resto del parque. Con potencia
@@ -65,7 +65,7 @@ Carreteras del Estado (1.602), puertos (45), terminales portuarias (440), termin
 ```
 datos/            GeoJSON servidos al visor (simplificados)
   simplificado/   geometrías reducidas (-84% de vértices)
-  atlas/          capas del Atlas Estratégico
+  oficial/        capas vectorizadas de IGN, MITECO, CSN, CORES y Enagás
   hermes/         capas del visor del MITMA
 scripts/          un script por fuente, cada uno con su recibo
 mapa.html         el visor: Leaflet + canvas, un solo fichero
@@ -78,7 +78,7 @@ falla si falta un recibo, si un conteo no cuadra o si una capa se queda sin fuen
 
 ## Las tres decisiones que explican el resto
 
-1. **Un dato, una capa.** Cuando dos fuentes solapan (presas de OSM contra embalses del Atlas,
+1. **Un dato, una capa.** Cuando dos fuentes solapan (presas de OSM contra embalses del MITECO,
    gasoductos contra conducciones), se elige la que responde al pinchar y se documenta por qué. No se
    pintan las dos.
 2. **La fecha del dato no es la de descarga.** El panel ⓘ distingue tres fechas y tres eslabones:
@@ -115,7 +115,7 @@ Conviven dos regímenes y **no se pueden mezclar sin cuidado**:
 
 - **ODbL 1.0** (OpenStreetMap): casi toda la red eléctrica, gas, agua. Es **comparte igual**: un
   producto derivado hereda ODbL.
-- **CC BY 4.0** (Atlas, MITMA, MITECO): atribución, sin copyleft.
+- **CC BY 4.0** (IGN, MITMA, MITECO, CSN, CORES): atribución, sin copyleft.
 - **Condiciones propias** (REE REData, OMIE): pendiente de leer.
 
 ## De dónde sale cada dato

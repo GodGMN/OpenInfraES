@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Cadenas de procedencia: quien produce el dato, quien lo publica y que fecha tiene cada cosa.
 
-La pregunta que resuelve: si el visor toma el dato del Atlas, y el Atlas lo toma del
+La pregunta que resuelve: si el visor toma un dato ya vectorizado que a su vez
 Boletín Hidrológico, ¿de cuándo es el dato? Aquí se separan tres fechas distintas:
 
   fecha_dato        cuando se midio el dato (la que declara el productor)
@@ -19,20 +19,20 @@ HOY = "2026-11-16"
 
 # capa -> (productor primario, como llega, nota)
 CADENAS = {
-    # --- Atlas Estrategico: los eslabones que el propio dato declara
-    "embalses": ("MITECO — Boletín Hidrológico (parte semanal)", "Atlas Estratégico",
-                 "El parte trae fecha propia en el campo fecha_dato; el Atlas la conserva."),
-    "subestaciones": ("IGN — BTN Continua (Base Topográfica Nacional)", "Atlas Estratégico",
+    # --- capas vectorizadas: los eslabones que el propio dato declara
+    "embalses": ("MITECO — Boletín Hidrológico (parte semanal)", "Descarga directa del organismo",
+                 "El parte trae fecha propia en el campo fecha_dato y se conserva tal cual."),
+    "subestaciones": ("IGN — BTN Continua (Base Topográfica Nacional)", "Descarga directa del organismo",
                       "El campo atribucion del dato dice: «Obra derivada de BTN Continua CC-BY 4.0 ign.es»."),
-    "desaladoras": ("MITECO / Acuamed (instalaciones declaradas)", "Atlas Estratégico",
-                    "El Atlas añade estado administrativo y verificación por registro."),
-    "nuclear": ("Consejo de Seguridad Nuclear / propietarios", "Atlas Estratégico",
+    "desaladoras": ("MITECO / Acuamed (instalaciones declaradas)", "Descarga directa del organismo",
+                    "El estado administrativo y la verificación se toman del registro del organismo."),
+    "nuclear": ("Consejo de Seguridad Nuclear / propietarios", "Descarga directa del organismo",
                 "Potencia y tecnología por reactor; el estado se verifica por registro."),
-    "regas": ("Enagás / operadores de planta", "Atlas Estratégico", ""),
-    "gasalm": ("Enagás / operadores", "Atlas Estratégico", ""),
-    "refinerias": ("Corporación de Reservas / operadores", "Atlas Estratégico", ""),
-    "interelec": ("REE — operador del sistema", "Atlas Estratégico", ""),
-    "h2": ("MITECO — Proyectos de Interés Común (PCI)", "Atlas Estratégico", ""),
+    "regas": ("Enagás / operadores de planta", "Descarga directa del organismo", ""),
+    "gasalm": ("Enagás / operadores", "Descarga directa del organismo", ""),
+    "refinerias": ("Corporación de Reservas / operadores", "Descarga directa del organismo", ""),
+    "interelec": ("REE — operador del sistema", "Descarga directa del organismo", ""),
+    "h2": ("MITECO — Proyectos de Interés Común (PCI)", "Descarga directa del organismo", ""),
     # --- capas propias de OpenInfraES
     "l400": ("Red Eléctrica de España (instalaciones) / mapeo OSM", "OpenInfraES ← OSM",
              "La tensión viene etiquetada en cada línea de OSM; no se cruza con REE."),
@@ -67,7 +67,7 @@ CADENAS = {
 }
 
 
-# ids del Atlas que comparten origen con su alias del visor
+# ids de origen que comparten organismo con su alias del visor
 ALIAS_INVERSO = {
     "gas-regasificacion": "regas",
     "gas-almacenamiento": "gasalm",

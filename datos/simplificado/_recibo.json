@@ -21,7 +21,7 @@
    "kb": 364
   },
   {
-   "id": "atlas/red-electrica.geojson",
+   "id": "oficial/red-electrica.geojson",
    "tolerancia": 0.0003,
    "features": 659,
    "vertices_antes": 26131,
@@ -30,7 +30,7 @@
    "kb": 1511
   },
   {
-   "id": "atlas/agua-embalsada.geojson",
+   "id": "oficial/agua-embalsada.geojson",
    "tolerancia": 0.0,
    "features": 402,
    "vertices_antes": 402,
@@ -39,7 +39,7 @@
    "kb": 843
   },
   {
-   "id": "atlas/conducciones-combustible.geojson",
+   "id": "oficial/conducciones-combustible.geojson",
    "tolerancia": 0.0008,
    "features": 2,
    "vertices_antes": 58362,
@@ -48,7 +48,7 @@
    "kb": 432
   },
   {
-   "id": "atlas/hidrogeno-red.geojson",
+   "id": "oficial/hidrogeno-red.geojson",
    "tolerancia": 0.0008,
    "features": 10,
    "vertices_antes": 1369,

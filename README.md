@@ -80,38 +80,23 @@ funciona siempre.
 | Desaladoras | OSM | pendiente: el tag `desalination=yes` no se usa en España (0 resultados); en curso por nombre |
 | Presas y embalses | OSM | 4.464 |
 
-## Capas del Atlas Estratégico (verificadas, CC-BY-4.0)
+## Capas oficiales vectorizadas
 
-Fuente: **Atlas Estratégico de España** (El Tercer Viejo, <https://atlas.eltercioviejo.com>), release
-**2026.11.183**, archivo documental en <https://github.com/ArturoVazquez/atlas-archivo>. Cada capa
-declara versión, fecha de verificación y fuentes. Descarga: `scripts/atlas.py`.
+Las capas que no tienen GeoJSON servido por su organismo se guardan ya vectorizadas en
+`datos/oficial/`, con su origen oficial y su fecha de verificación:
 
-| Capa | Elementos | Verificado a |
-|---|---:|---|
-| `red-electrica` | **657 subestaciones** (recintos) + **2 tendidos** (400 y 220 kV, IGN) | 2026-08-07 |
-| `agua-embalsada` | 402 | 2026-11-10 |
-| `desaladoras` | **28** | 2026-08-31 |
-| `refinerias` | 10 | 2026-08-09 |
-| `nuclear` | 7 | 2026-09-22 |
-| `gas-regasificacion` | 7 | 2026-09-22 |
-| `hidrogeno-produccion` | 7 | 2026-09-22 |
-| `gas-interconexiones` | 6 | — |
-| `gas-almacenamiento` | 5 | — |
-| `electricidad-interconexiones` | 5 | 2026-08-06 |
-| `conducciones-combustible` | 2 | 2026-08-13 |
+| Capa | Organismo | Licencia |
+|---|---|---|
+| Red eléctrica y subestaciones (657) | **IGN** (BTN Continua) | CC BY 4.0 |
+| Embalses (402) | **MITECO** (Boletín Hidrológico) | Ley 37/2007 |
+| Desaladoras (28), hidrógeno (7) | **MITECO** | CC BY 4.0 |
+| Nuclear (7 reactores) | **CSN** | CC BY 4.0 |
+| Regasificación, almacenamiento, gasoductos | **Enagás** | CC BY 4.0 |
+| Refinerías (10) | **CORES** | CC BY 4.0 |
+| Interconexiones eléctricas (5) | **REE** | condiciones propias |
 
-Capas descargables pero **no versionadas** (peso): `parques-eolicos` (1.382), `plantas-solares` (1.330),
-`generacion-electrica-provincia` (52), `almacenamiento-petrolifero` (133),
-`residuos-radiactivos` (14), `hidrogeno-red` (10). Están en `.gitignore` y se bajan con
-`python scripts/atlas.py`.
-
-**Por qué manda el Atlas en desaladoras:** OSM devuelve 40 con nombres genéricos y duplicados; el Atlas
-da **28 con nombre, municipio y estado de verificación**. Aquí se usa el Atlas y OSM queda como
-respaldo geográfico.
-
-**Atribución:** obra derivada de NGBE Continua (CC-BY 4.0, ign.es), ABAQUA/Govern de les Illes Balears,
-BOE y boletines autonómicos.
-
+Cada una lleva su fecha en `datos/oficial/_recibo_oficial.json`. El detalle de cómo se obtiene cada
+organismo está en [`docs/FUENTES.md`](docs/FUENTES.md).
 ## La foto completa de OSM (16-11-2026)
 
 Consulta directa a Overpass (`area ISO3166-1=ES`), con backoff porque el servicio estaba saturado:

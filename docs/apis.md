@@ -22,11 +22,10 @@ en [`FUENTES.md`](FUENTES.md). Aquí, solo el estado técnico y las trampas.
 | **REE** | `apidatos.ree.es/es/datos/demanda/evolucion?...&time_trunc=day` | demanda |
 | **MITECO** | `sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/` | 11.528 estaciones |
 | **MITMA** | `mapas.fomento.gob.es/arcgis/rest/services/Hermes/<servicio>/MapServer/<capa>/query?...&f=geojson` | carreteras, puertos, terminales |
-| **IGN** | `ign.es/wmts/ign-base?...` | teselas de cartografía |
+| **IGN** | `ign.es/wmts/ign-base?...` | teselas y capas BTN vectorizadas |
 | **Renfe** | `gtfsrt.renfe.com/vehicle_positions.pb` | 418 trenes |
 | **Renfe** | `data.renfe.com/api/3/action/package_show?id=estaciones-cercanias-<núcleo>` | estaciones por núcleo |
 | **EMSC-CSEM** | `seismicportal.eu/fdsnws/event/1/query?format=json&...` | 80 sismos en 7 días |
-| **IGN / BTN** | `atlas.eltercioviejo.com/datos/manifest.json` | 42 capas vectorizadas |
 
 ## 2. Responde con clave
 
@@ -69,9 +68,8 @@ en [`FUENTES.md`](FUENTES.md). Aquí, solo el estado técnico y las trampas.
 
 **EMSC usa `-1` como profundidad** para «superficie o desconocida».
 
-**El Atlas da el `fichero` relativo a `/datos/`**, no a la raíz: concatenarlo mal deja 17 capas en 404.
-Y algunas capas **mezclan geometrías**: `red-electrica` son 657 polígonos de subestación y 2 tendidos;
-hay que mirar `categoria`, no el tipo de la primera feature.
+**Algunas capas mezclan geometrías**: la de red eléctrica son 657 polígonos de subestación **y** 2
+tendidos; hay que mirar la propiedad `categoria`, no el tipo de la primera feature.
 
 ## 5. Un 200 no es una prueba
 

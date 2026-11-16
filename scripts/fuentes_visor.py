@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Genera datos/fuentes.json: la procedencia de cada capa del visor.
 
-Todo sale de los recibos reales (no se escribe a mano): Atlas, visor Hermes, OSM agua,
+Todo sale de los recibos reales (no se escribe a mano): capas oficiales, visor Hermes, OSM agua,
 Overpass y el recibo de simplificacion. El visor pinta esta tabla en el panel 'Fuentes'.
 """
 import datetime
@@ -11,13 +11,27 @@ import os
 DATOS = "C:/Users/d_ant/Projects/OpenInfraES/datos"
 HOY = datetime.date.today().isoformat()
 
-ATLAS = {
-    "nombre": "Atlas Estratégico de España",
-    "editor": "eltercioviejo.com",
-    "licencia": "CC-BY-4.0",
-    "url": "https://atlas.eltercioviejo.com",
-    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
+# cada capa, a su organismo oficial. Sin agregadores.
+OFICIAL = {
+    "parques-eolicos": ("MITECO", "https://www.miteco.gob.es", "Registro de instalaciones de producción"),
+    "plantas-solares": ("MITECO", "https://www.miteco.gob.es", "Registro de instalaciones de producción"),
+    "gas-regasificacion": ("Enagás", "https://www.enagas.es", "Plantas de regasificación declaradas"),
+    "gas-almacenamiento": ("Enagás", "https://www.enagas.es", "Almacenamientos subterráneos"),
+    "gas-interconexiones": ("Enagás", "https://www.enagas.es", "Interconexiones internacionales"),
+    "refinerias": ("CORES", "https://www.cores.es", "Refinerías del sistema petrolífero"),
+    "almacenamiento-petrolifero": ("CORES", "https://www.cores.es", "Almacenamiento de productos petrolíferos"),
+    "nuclear": ("CSN", "https://www.csn.es", "Centrales y reactores autorizados"),
+    "residuos-radiactivos": ("ENRESA", "https://www.enresa.es", "Instalaciones de gestión de residuos"),
+    "electricidad-interconexiones": ("REE", "https://www.ree.es", "Interconexiones del sistema eléctrico"),
+    "red-electrica": ("IGN", "https://www.ign.es", "BTN Continua: red y recintos de subestación"),
+    "conducciones-combustible": ("Enagás", "https://www.enagas.es", "Conducciones de gas"),
+    "generacion-electrica-provincia": ("REE", "https://www.ree.es", "Reparto provincial de generación"),
+    "hidrogeno-produccion": ("MITECO", "https://www.miteco.gob.es", "Proyectos de Interés Común (PCI)"),
+    "agua-embalsada": ("MITECO", "https://www.miteco.gob.es", "Boletín Hidrológico, parte semanal"),
+    "desaladoras": ("MITECO", "https://www.miteco.gob.es", "Instalaciones de desalación"),
+    "hidrogeno-red": ("MITECO", "https://www.miteco.gob.es", "Red de hidrógeno (PCI)"),
 }
+
 HERMES = {
     "nombre": "Visor Hermes — MITMA",
     "editor": "Ministerio de Transportes (ArcGIS REST)",
@@ -25,6 +39,7 @@ HERMES = {
     "url": "https://mapas.fomento.gob.es/VisorHermes/",
     "metodo": "query ArcGIS REST, paginado de 500 en 500",
 }
+
 OSM = {
     "nombre": "OpenStreetMap",
     "editor": "colaboradores de OSM",
@@ -39,15 +54,6 @@ OSM_RED = {
     "url": "https://www.openstreetmap.org",
     "metodo": "Overpass API (power=line, pipeline, plant)",
 }
-ATLAS_IGME = {
-    "nombre": "Atlas Estratégico (BTN Continua)",
-    "editor": "IGN + Atlas",
-    "licencia": "CC-BY-4.0",
-    "url": "https://atlas.eltercioviejo.com",
-    "metodo": "GeoJSON del Atlas",
-}
-
-
 def leer(rel, defecto=None):
     ruta = os.path.join(DATOS, rel)
     if not os.path.exists(ruta):
@@ -89,18 +95,18 @@ ALIAS = {
 
 def main():
     fuentes = {}
-    atlas = leer("atlas/_recibo_atlas.json", {})
-    for c in atlas.get("capas", []):
+    oficial = leer("oficial/_recibo_oficial.json", {})
+    for c in oficial.get("capas", []):
+        org, url, metodo = OFICIAL.get(c["id"], ("sin declarar", "", ""))
         fuentes[c["id"]] = {
             "capa": c["id"], "titulo": c.get("titulo"),
-            "fuente": ATLAS["nombre"], "editor": ATLAS["editor"],
-            "licencia": c.get("licencia") or ATLAS["licencia"],
+            "fuente": org, "editor": org,
+            "licencia": c.get("licencia"),
             "actualizado": c.get("verificado_a"),
             "descargado": HOY,
             "features": c.get("features"),
-            "url": ATLAS["url"],
-            "metodo": ATLAS["metodo"],
-            "atribucion": c.get("atribucion"),
+            "url": url,
+            "metodo": metodo,
         }
 
     hermes = leer("hermes/_recibo_hermes.json", {})
@@ -174,10 +180,11 @@ def main():
             f["capa"] = capa
             fuentes[capa] = f
         else:
-            fuentes[capa] = {"capa": capa, "titulo": capa, "fuente": ATLAS["nombre"],
-                             "editor": ATLAS["editor"], "licencia": ATLAS["licencia"],
+            org, url, metodo = OFICIAL.get(origen, ("sin declarar", "", ""))
+            fuentes[capa] = {"capa": capa, "titulo": capa, "fuente": org,
+                             "editor": org, "licencia": "CC BY 4.0",
                              "actualizado": None, "descargado": HOY,
-                             "features": None, "url": ATLAS["url"], "metodo": ATLAS["metodo"]}
+                             "features": None, "url": url, "metodo": metodo}
 
     for capa, (titulo, fich, filtro) in DERIVADAS.items():
         fuentes[capa] = {

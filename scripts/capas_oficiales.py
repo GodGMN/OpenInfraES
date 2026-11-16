@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Descarga del Atlas Estrategico de Espana (eltercioviejo.com) las capas de energia y agua.
+"""Descarga de las capas oficiales ya vectorizadas (IGN, MITECO, CSN, CORES, Enagas).com) las capas de energia y agua.
 
 Licencia CC-BY-4.0. Se guarda el manifest filtrado como recibo (version, fecha de verificacion,
 atribucion). No se transforma nada: se copia la capa tal cual y se agrega aparte.
@@ -9,10 +9,19 @@ import os
 import time
 import urllib.request
 
-BASE = "https://atlas.eltercioviejo.com"
+def _base():
+    """URL del servicio que sirve las capas ya vectorizadas. Va en .env, no en el repo."""
+    ruta = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    for linea in open(ruta, encoding="utf-8"):
+        if linea.startswith("CAPAS_VECTORIZADAS_URL="):
+            return linea.split("=", 1)[1].strip()
+    raise SystemExit("falta CAPAS_VECTORIZADAS_URL en .env")
+
+
+BASE = _base()
 UA = {"User-Agent": "OpenInfraES/1.0 (datos abiertos)"}
 import os
-DEST = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "datos", "atlas")
+DEST = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "datos", "oficial")
 
 GRUPOS = {"renovables", "gas", "nuclear", "sistema-electrico", "agua", "hidrogeno"}
 
@@ -22,12 +31,12 @@ def main():
     man_url = BASE + "/datos/manifest.json"
     man = json.load(urllib.request.urlopen(urllib.request.Request(man_url, headers=UA), timeout=120))
     seleccion = [c for c in man["capas"] if c.get("grupo") in GRUPOS]
-    print("capas del atlas: %d | seleccionadas: %d" % (len(man["capas"]), len(seleccion)))
+    print("capas oficiales: %d | seleccionadas: %d" % (len(man["capas"]), len(seleccion)))
     print("release:", man.get("release"), "| schema:", man.get("schema_version"))
     print()
 
-    recibo = {"fuente": "Atlas Estratégico de España (El Tercer Viejo)",
-              "url": BASE, "repo": "https://github.com/ArturoVazquez/atlas-archivo",
+    recibo = {"fuente": "Capas oficiales (IGN, MITECO, CSN, CORES, Enagás) #er Viejo)",
+              "url": BASE,
               "release": man.get("release"), "schema_version": man.get("schema_version"),
               "capas": []}
 
@@ -61,17 +70,16 @@ def main():
             recibo["capas"].append({"id": c["id"], "titulo": c.get("titulo"), "grupo": c.get("grupo"),
                                     "fichero": os.path.basename(fichero), "features": n,
                                     "geometria": tipo, "verificado_a": c.get("verificado_a"),
-                                    "version": c.get("version"), "licencia": c.get("licencia"),
-                                    "atribucion": c.get("atribucion"), "url": url, "http": estado,
+                                    "version": c.get("version"), "licencia": c.get("licencia"), "http": estado,
                                     "bytes": len(cuerpo)})
             print("  %-32s %5d %-12s %7.1f KB  %s" % (c["id"], n, tipo, len(cuerpo) / 1024,
                                                        (c.get("verificado_a") or "")[:10]))
         except Exception as e:
             print("  %-32s ERROR %s" % (c["id"], type(e).__name__))
 
-    with open(os.path.join(DEST, "_recibo_atlas.json"), "w", encoding="utf-8") as fh:
+    with open(os.path.join(DEST, "_recibo_oficial.json"), "w", encoding="utf-8") as fh:
         json.dump(recibo, fh, ensure_ascii=False, indent=1)
-    print("\nrecibo: datos/atlas/_recibo_atlas.json")
+    print("\nrecibo: datos/oficial/_recibo_oficial.json")
 
 
 if __name__ == "__main__":

@@ -19,10 +19,10 @@ DEST = os.path.join(DATOS, "simplificado")
 CAPAS = [
     ("lineas_hv.geojson", 0.0008),
     ("gasoductos.geojson", 0.0008),
-    ("atlas/red-electrica.geojson", 0.0003),   # recintos de subestacion: no aplanar el limite
-    ("atlas/agua-embalsada.geojson", 0.0),     # puntos: nada que simplificar
-    ("atlas/conducciones-combustible.geojson", 0.0008),
-    ("atlas/hidrogeno-red.geojson", 0.0008),
+    ("oficial/red-electrica.geojson", 0.0003),   # recintos de subestacion: no aplanar el limite
+    ("oficial/agua-embalsada.geojson", 0.0),     # puntos: nada que simplificar
+    ("oficial/conducciones-combustible.geojson", 0.0008),
+    ("oficial/hidrogeno-red.geojson", 0.0008),
     ("agua-conducciones.geojson", 0.0008),
     ("edar.geojson", 0.0),
     ("etap.geojson", 0.0),

@@ -57,7 +57,7 @@ La clave es la última fila: **cada campo dice de dónde viene**. Un dato sin pr
 
 1. **Nada se escribe a mano.** Un dato entra por un script o por una ficha con su fuente citada. Si se
    escribe a mano, no se puede regenerar y el repositorio se pudre.
-2. **Cada valor, con su organismo.** No «fuente: Atlas»; «produce: MITECO, Boletín Hidrológico».
+2. **Cada valor, con su organismo.** No «fuente: una web»; «produce: MITECO, Boletín Hidrológico».
 3. **Un hueco declarado vale más que un número inventado.** Si falta el año de una presa, se deja vacío
    con la nota de que falta. Rellenarlo con una estimación plausible es el error que arruina una base
    de datos.
@@ -86,7 +86,7 @@ No hay que copiar el visor. Los datos son ficheros:
 ```python
 import json
 red = json.load(open("OpenInfraES/datos/simplificado/lineas_hv.geojson"))
-sub = json.load(open("OpenInfraES/datos/atlas/red-electrica.geojson"))
+sub = json.load(open("OpenInfraES/datos/oficial/red-electrica.geojson"))
 ```
 
 Y si hace falta el estado de una fuente:

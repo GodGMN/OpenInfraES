@@ -336,7 +336,7 @@ function ponerBase(k) {
   const [nombre, url] = BASES[k] || BASES["IGNBase-gris"];
   if (capaBase) mapa.removeLayer(capaBase);
   capaBase = L.tileLayer(url, {
-    attribution: "© IGN · datos: OSM / REE / Atlas / MITMA",
+    attribution: "© IGN · datos: OSM / REE / MITMA / MITECO / CSN / CORES / Enagás",
     maxNativeZoom: 18, maxZoom: 19, crossOrigin: true,
     updateWhenIdle: false, keepBuffer: 4
   }).addTo(mapa);
@@ -409,7 +409,6 @@ function ficha(p, c) {
     h += "</table>";
   }
   const enlaces = [];
-  if (p.slug && c.atlas) enlaces.push(["Atlas", "https://atlas.eltercioviejo.com/ficha/" + c.atlas + "/" + p.slug + "/"]);
   if (p.osm_id) enlaces.push(["OpenStreetMap", "https://www.openstreetmap.org/way/" + p.osm_id]);
   if (c.apiCaudal) h += '<div class="caudal" id="caudal-box"><div class="cl">Caudal</div>' +
     '<div class="err">consultando…</div></div>';
@@ -441,17 +440,16 @@ const CAPAS = [
     fichero:"datos/simplificado/lineas_hv.geojson", peso:1.6, opacidad:.85, zoomMin:6.2,
     filtro:f => f.properties.voltage === 220000 },
   { id:"subestaciones", grupo:"Red eléctrica", label:"Subestaciones", tipo:"poligono", on:false, color:"#14e0c8",
-    fichero:"datos/simplificado/red-electrica.geojson", peso:1, atlas:"red-electrica", zoomMin:8,
+    fichero:"datos/simplificado/red-electrica.geojson", peso:1, zoomMin:8,
     filtro:f => f.properties.categoria === "subestacion" },
   { id:"interelec", grupo:"Red eléctrica", label:"Interconexiones", tipo:"punto", on:false,
-    color:"#e879f9", fichero:"datos/atlas/electricidad-interconexiones.geojson", radio:7,
-    atlas:"electricidad-interconexiones" },
+    color:"#e879f9", fichero:"datos/oficial/electricidad-interconexiones.geojson", radio:7 },
 
   { id:"hidro", grupo:"Generación", label:"Hidráulicas", tipo:"punto", on:true, color:"#22d3ee",
     fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw", radioMin:2.6, radioMax:9, opacidad:.62,
     filtro:f => ["hydro","pumped_hydro"].includes(f.properties.technology_normalized) },
   { id:"nuclear", grupo:"Generación", label:"Nucleares", tipo:"punto", on:true, color:"#c084fc",
-    fichero:"datos/atlas/nuclear.geojson", radio:9, atlas:"nuclear", siempreIndividual:true },
+    fichero:"datos/oficial/nuclear.geojson", radio:9, siempreIndividual:true },
   { id:"gasgen", grupo:"Generación", label:"Ciclos combinados", tipo:"punto", on:false, color:"#a78bfa",
     fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw",
     filtro:f => ["ccgt","fuel_gas"].includes(f.properties.technology_normalized) },
@@ -462,16 +460,16 @@ const CAPAS = [
   { id:"gasoductos", grupo:"Gas", label:"Gasoductos", tipo:"linea", on:true, color:"#fbbf24",
     fichero:"datos/simplificado/gasoductos.geojson", peso:1.7, opacidad:.85 },
   { id:"regas", grupo:"Gas", label:"Regasificadoras", tipo:"punto", on:true, color:"#fb923c",
-    fichero:"datos/atlas/gas-regasificacion.geojson", radio:7, atlas:"gas-regasificacion", siempreIndividual:true },
+    fichero:"datos/oficial/gas-regasificacion.geojson", radio:7, siempreIndividual:true },
   { id:"gasalm", grupo:"Gas", label:"Almacenamiento", tipo:"punto", on:false, color:"#d97706",
-    fichero:"datos/atlas/gas-almacenamiento.geojson", radio:6, atlas:"gas-almacenamiento" },
+    fichero:"datos/oficial/gas-almacenamiento.geojson", radio:6 },
   { id:"refinerias", grupo:"Gas", label:"Refinerías", tipo:"punto", on:false, color:"#94a3b8",
-    fichero:"datos/atlas/refinerias.geojson", radio:6, atlas:"refinerias" },
+    fichero:"datos/oficial/refinerias.geojson", radio:6 },
 
   { id:"embalses", grupo:"Agua", label:"Embalses", tipo:"punto", on:true, color:"#60a5fa",
-    fichero:"datos/simplificado/agua-embalsada.geojson", radio:2.4, opacidad:.45, atlas:"agua-embalsada" },
+    fichero:"datos/simplificado/agua-embalsada.geojson", radio:2.4, opacidad:.45 },
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
-    fichero:"datos/atlas/desaladoras.geojson", radio:6, atlas:"desaladoras", siempreIndividual:true },
+    fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
   { id:"edar", grupo:"Agua", label:"EDAR (depuradoras)", tipo:"punto", on:false, color:"#a3e635",
     fichero:"datos/edar.geojson", radio:3, opacidad:.45 },
   { id:"etap", grupo:"Agua", label:"ETAP (potabilizadoras)", tipo:"punto", on:false, color:"#22d3ee",
@@ -485,7 +483,7 @@ const CAPAS = [
   { id:"rios", grupo:"Agua", label:"Ríos (caudal en vivo)", tipo:"linea", on:false, color:"#7dd3fc",
     fichero:"datos/simplificado/rios.geojson", peso:1.6, opacidad:.8, apiCaudal:true },
   { id:"h2", grupo:"Agua", label:"Producción de H₂", tipo:"punto", on:false, color:"#5eead4",
-    fichero:"datos/atlas/hidrogeno-produccion.geojson", radio:6, atlas:"hidrogeno-produccion" },
+    fichero:"datos/oficial/hidrogeno-produccion.geojson", radio:6 },
 
   { id:"carreteras", grupo:"Transporte", label:"Carreteras del Estado", tipo:"linea", on:false, color:"#64748b",
     fichero:"datos/hermes/carreteras.geojson", peso:1.1, opacidad:.6, zoomMin:7.5 },
@@ -846,7 +844,7 @@ function pintarFuentes() {
     const act = f.actualizado || "—";
     return `<tr class="fila-f" data-f="${c.id}"><td><b>${c.label}</b><br><span class="lic">${c.grupo}</span></td>
       <td><b>${f.organismo || f.fuente || "—"}</b>${
-        (f.publica_via && f.publica_via !== f.organismo)
+        (f.publica_via && !String(f.organismo || "").includes(String(f.publica_via)))
           ? `<br><span class="lic">vía ${String(f.publica_via).slice(0, 30)}</span>` : ""}</td>
       <td>${act}</td>
       <td><span class="lic">${f.licencia || "—"}</span></td>
