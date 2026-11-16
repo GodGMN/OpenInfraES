@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red eléctrica de España — OpenInfraES</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root { --tinta:#0f1c2e; --suave:#5a6b80; --borde:#e3e8ef; --acento:#0b6fb8; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; font-family: "Segoe UI", Inter, Arial, sans-serif; color:var(--tinta); }
+  #mapa { position:absolute; inset:0; background:#f5f7fa; }
+  #panel { position:absolute; z-index:1000; top:14px; left:14px; width:288px; background:#fff;
+           border:1px solid var(--borde); border-radius:12px; padding:14px 15px;
+           box-shadow:0 6px 24px rgba(15,28,46,.10); font-size:13px; }
+  #panel h1 { margin:0 0 2px; font-size:16px; letter-spacing:-.2px; }
+  #panel .sub { color:var(--suave); font-size:11.5px; margin-bottom:11px; line-height:1.35; }
+  fieldset { border:0; border-top:1px solid var(--borde); margin:10px 0 0; padding:9px 0 0; }
+  legend { font-size:10.5px; text-transform:uppercase; letter-spacing:1.1px; color:var(--suave); padding:0 4px 0 0; }
+  label { display:flex; align-items:center; gap:7px; padding:2.5px 0; cursor:pointer; }
+  .swatch { width:11px; height:11px; border-radius:3px; flex:0 0 auto; }
+  #cifras { margin-top:11px; padding-top:9px; border-top:1px solid var(--borde); color:var(--suave); font-size:11.5px; line-height:1.5; }
+  #cifras b { color:var(--tinta); }
+  .leaflet-popup-content { font-size:12.5px; line-height:1.45; margin:10px 12px; }
+  .leaflet-popup-content b { display:block; margin-bottom:3px; }
+</style>
+</head>
+<body>
+<div id="mapa"></div>
+<div id="panel">
+  <h1>Red eléctrica de España</h1>
+  <div class="sub">Transporte 220–400 kV y parque de generación. Datos: OpenStreetMap y REE/ELECTRA.</div>
+
+  <fieldset>
+    <legend>Tensión</legend>
+    <label><input type="checkbox" data-tension="400000" checked><span class="swatch" style="background:#c1272d"></span>400 kV</label>
+    <label><input type="checkbox" data-tension="220000" checked><span class="swatch" style="background:#e58f00"></span>220 kV</label>
+    <label><input type="checkbox" data-tension="66000"><span class="swatch" style="background:#6d6d6d"></span>otros</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Generación</legend>
+    <label><input type="checkbox" id="ver-plantas" checked><span class="swatch" style="background:#16a34a"></span>Plantas</label>
+    <label><input type="checkbox" id="etiquetas">Nombres de subestación</label>
+  </fieldset>
+
+  <div id="cifras">Cargando datos…</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const COLOR = { 400000:"#c1272d", 220000:"#e58f00", 66000:"#6d6d6d" };
+const colorTension = v => COLOR[v] || "#6d6d6d";
+
+const mapa = L.map("mapa", { zoomControl:true, preferCanvas:true }).setView([40.2, -3.6], 6);
+L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+  attribution: "&copy; OpenStreetMap · CARTO · datos: OSM/REE", maxZoom: 18
+}).addTo(mapa);
+
+let capaLineas = L.layerGroup().addTo(mapa);
+let capaPlantas = L.layerGroup().addTo(mapa);
+let lineas = null, plantas = null;
+
+const nf = n => n.toLocaleString("es-ES");
+
+function dibujarLineas() {
+  capaLineas.clearLayers();
+  const activos = new Set([...document.querySelectorAll("[data-tension]")]
+    .filter(c => c.checked).map(c => Number(c.dataset.tension)));
+  let n = 0;
+  lineas.eachLayer(l => {
+    const v = l.feature.properties.voltage;
+    const visible = activos.has(v) || (activos.has(66000) && ![400000,220000].includes(v));
+    if (visible) { capaLineas.addLayer(l); n++; }
+  });
+  actualizarCifras(n);
+}
+
+function actualizarCifras(nLineas) {
+  document.getElementById("cifras").innerHTML =
+    `<b>${nf(nLineas)}</b> tramos de línea visibles<br>` +
+    `<b>${nf(plantas ? plantas.getLayers().length : 0)}</b> plantas · ` +
+    `<b>${nf(PLANTAS_MW)} MW</b> instalados`;
+}
+
+let PLANTAS_MW = 0;
+
+Promise.all([
+  fetch("datos/lineas_hv.geojson").then(r => r.json()),
+  fetch("datos/plantas.geojson").then(r => r.json())
+]).then(([gl, gp]) => {
+  lineas = L.geoJSON(gl, {
+    style: f => ({ color: colorTension(f.properties.voltage), weight: f.properties.voltage === 400000 ? 1.9 : 1.3, opacity: .85 }),
+    onEachFeature: (f, layer) => {
+      const p = f.properties;
+      layer.bindPopup(`<b>${p.name || "Línea sin nombre"}</b>` +
+        `${p.voltage ? (p.voltage/1000) + " kV · " : ""}${p.line_type || ""}${p.circuits ? " · " + p.circuits + " circuito(s)" : ""}` +
+        `<br>${p.operator || "operador sin declarar"}` +
+        `<br><a href="https://www.openstreetmap.org/way/${p.osm_id}" target="_blank" rel="noopener">OSM ${p.osm_id}</a>`);
+    }
+  });
+  capaLineas.addLayer(lineas);
+
+  plantas = L.geoJSON(gp, {
+    pointToLayer: (f, latlng) => {
+      const mw = f.properties.installed_capacity_mw || 0;
+      PLANTAS_MW += mw;
+      return L.circleMarker(latlng, {
+        radius: Math.max(2.2, Math.min(9, Math.sqrt(mw) / 1.6)),
+        fillColor: "#16a34a", fillOpacity: .55, color: "#0b7a39", weight: .6
+      });
+    },
+    onEachFeature: (f, layer) => {
+      const p = f.properties;
+      layer.bindPopup(`<b>${p.name || "sin nombre"}</b>` +
+        `${p.technology_normalized || ""} · ${nf(Math.round(p.installed_capacity_mw || 0))} MW` +
+        `<br>${p.municipality || ""}${p.province ? " (" + p.province + ")" : ""}` +
+        (p.owner ? `<br>${p.owner}` : ""));
+    }
+  });
+  capaPlantas.addLayer(plantas);
+  dibujarLineas();
+}).catch(e => {
+  document.getElementById("cifras").textContent = "No se pudieron cargar los GeoJSON: " + e.message;
+});
+
+document.querySelectorAll("[data-tension]").forEach(c => c.addEventListener("change", dibujarLineas));
+document.getElementById("ver-plantas").addEventListener("change", e => {
+  e.target.checked ? mapa.addLayer(capaPlantas) : mapa.removeLayer(capaPlantas);
+});
+</script>
+</body>
+</html>

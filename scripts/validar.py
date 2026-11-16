@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Arnes del repositorio OpenInfraES. Offline y sin dependencias.
+
+Comprueba:
+  1. Que existen los GeoJSON y los CSV agregados.
+  2. Que los agregados cuadran con los GeoJSON (segmentos y MW).
+  3. Que los conteos coinciden con los declarados por la fuente.
+  4. Que existe recibo de procedencia con URL.
+Sale 0 si todo esta en verde.
+"""
+import csv
+import json
+import os
+import sys
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATOS = os.path.join(RAIZ, "datos")
+errores = []
+
+
+def error(m):
+    errores.append(m)
+
+
+def leer_csv(nombre):
+    ruta = os.path.join(DATOS, nombre)
+    if not os.path.exists(ruta):
+        error("falta datos/%s" % nombre)
+        return []
+    with open(ruta, encoding="utf-8") as fh:
+        return list(csv.DictReader(fh))
+
+
+def main():
+    # 1. GeoJSON
+    lineas = plantas = None
+    for nombre in ("lineas_hv.geojson", "plantas.geojson"):
+        ruta = os.path.join(DATOS, nombre)
+        if not os.path.exists(ruta):
+            error("falta datos/%s (ejecuta scripts/descargar.py)" % nombre)
+            continue
+        d = json.load(open(ruta, encoding="utf-8"))
+        feats = d.get("features", [])
+        if len(feats) < 1000:
+            error("datos/%s: solo %d features" % (nombre, len(feats)))
+        if nombre.startswith("lineas"):
+            lineas = feats
+        else:
+            plantas = feats
+
+    # 2 y 3. agregados
+    agg_l = leer_csv("agregado_lineas.csv")
+    agg_t = leer_csv("agregado_plantas_tecnologia.csv")
+    agg_c = leer_csv("agregado_plantas_ccaa.csv")
+    agg_o = leer_csv("agregado_lineas_operador.csv")
+
+    if agg_l:
+        seg = sum(int(f["segmentos"]) for f in agg_l)
+        if lineas is not None and seg != len(lineas):
+            error("agregado_lineas: %d segmentos != %d features" % (seg, len(lineas)))
+        if seg != 4929:
+            error("agregado_lineas: %d segmentos != 4929 declarados" % seg)
+        kv = {}
+        for f in agg_l:
+            k = int(f["tension_kv"])
+            kv[k] = kv.get(k, 0) + int(f["segmentos"])
+        if kv.get(400000) != 1752:
+            error("400 kV: %s != 1752" % kv.get(400000))
+        if kv.get(220000) != 3176:
+            error("220 kV: %s != 3176" % kv.get(220000))
+
+    if agg_t:
+        mw = sum(float(f["mw"]) for f in agg_t)
+        n = sum(int(f["plantas"]) for f in agg_t)
+        if plantas is not None and n != len(plantas):
+            error("agregado_plantas: %d plantas != %d features" % (n, len(plantas)))
+        if n != 5797:
+            error("agregado_plantas: %d plantas != 5797 declaradas" % n)
+        if not (120000 < mw < 135000):
+            error("MW totales fuera de rango razonable: %.0f" % mw)
+
+    if agg_c and agg_t:
+        mw_c = sum(float(f["mw"]) for f in agg_c)
+        mw_t = sum(float(f["mw"]) for f in agg_t)
+        if abs(mw_c - mw_t) > 50:
+            error("MW por CCAA (%.0f) != MW por tecnologia (%.0f)" % (mw_c, mw_t))
+
+    if agg_o and agg_l:
+        seg_o = sum(int(f["segmentos"]) for f in agg_o)
+        seg_l = sum(int(f["segmentos"]) for f in agg_l)
+        if seg_o != seg_l:
+            error("agregado por operador (%d) != agregado por tension (%d)" % (seg_o, seg_l))
+
+    # 4. recibo
+    ruta = os.path.join(DATOS, "_procedencia.json")
+    if not os.path.exists(ruta):
+        error("falta datos/_procedencia.json (ejecuta scripts/descargar.py)")
+    else:
+        p = json.load(open(ruta, encoding="utf-8"))
+        for f in p.get("ficheros", []):
+            if not str(f.get("url", "")).startswith("http"):
+                error("_procedencia.json: %s sin URL" % f.get("fichero"))
+
+    # 5. visor
+    for f in ("mapa.html", "README.md"):
+        if not os.path.exists(os.path.join(RAIZ, f)):
+            error("falta %s" % f)
+
+    print("=" * 58)
+    print(" OPENINFRAES · VALIDADOR")
+    print("=" * 58)
+    print("  GeoJSON .............. %s lineas / %s plantas" %
+          (len(lineas) if lineas else "-", len(plantas) if plantas else "-"))
+    print("  CSV agregados ........ %d" % len([1 for f in os.listdir(DATOS) if f.endswith(".csv")]))
+    if errores:
+        print("-" * 58)
+        for e in errores:
+            print("  x " + e)
+        print(" RESULTADO: ROJO")
+        return 1
+    print(" RESULTADO: VERDE")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

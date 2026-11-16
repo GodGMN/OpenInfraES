@@ -1,0 +1,20 @@
+{
+ "capturado": "2026-11-16T10:30:44.777332+00:00",
+ "fuente": "spain-power-plants (OSM + REE/ELECTRA)",
+ "ficheros": [
+  {
+   "fichero": "lineas_hv.geojson",
+   "url": "https://raw.githubusercontent.com/ningunaparte/spain-power-plants/main/data/powerlines_hv_2026-05-14.geojson",
+   "http": 200,
+   "bytes": 3241692,
+   "features": 4929
+  },
+  {
+   "fichero": "plantas.geojson",
+   "url": "https://raw.githubusercontent.com/ningunaparte/spain-power-plants/main/data/plants_commercial_2026-05-19.geojson",
+   "http": 200,
+   "bytes": 2995780,
+   "features": 5797
+  }
+ ]
+}

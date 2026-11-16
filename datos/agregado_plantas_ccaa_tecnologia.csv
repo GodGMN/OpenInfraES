@@ -1,0 +1,107 @@
+comunidad,tecnologia,plantas,mw
+Andalucía,solar_pv,450,6482.1
+Andalucía,ccgt,7,5951.7
+Andalucía,wind,139,3540.3
+Andalucía,cogeneration,89,1160.0
+Andalucía,solar_thermal,22,1000.0
+Andalucía,hydro,88,623.3
+Andalucía,pumped_hydro,2,584.9
+Andalucía,coal,1,570.0
+Andalucía,other,1,4.5
+Aragón,wind,169,5605.3
+Aragón,solar_pv,128,2320.3
+Aragón,ccgt,2,1869.7
+Aragón,hydro,105,1241.8
+Aragón,cogeneration,44,570.5
+Aragón,pumped_hydro,2,308.0
+Aragón,other,1,0.8
+Baleares,fuel_gas,6,1806.6
+Baleares,solar_pv,45,120.8
+Baleares,cogeneration,9,88.5
+Baleares,wind,2,3.6
+Canarias,fuel_gas,11,2356.4
+Canarias,wind,88,514.4
+Canarias,solar_pv,41,114.9
+Canarias,cogeneration,3,41.9
+Canarias,hydro,3,1.5
+Cantabria,pumped_hydro,1,360.6
+Cantabria,cogeneration,16,298.0
+Cantabria,hydro,26,98.6
+Cantabria,wind,4,35.3
+Castilla y León,wind,244,7237.5
+Castilla y León,hydro,239,4153.5
+Castilla y León,solar_pv,300,2719.5
+Castilla y León,cogeneration,86,652.3
+Castilla y León,other,1,249.9
+Castilla-La Mancha,solar_pv,447,6141.0
+Castilla-La Mancha,wind,136,4718.8
+Castilla-La Mancha,nuclear,1,1003.4
+Castilla-La Mancha,ccgt,1,758.7
+Castilla-La Mancha,hydro,88,651.2
+Castilla-La Mancha,cogeneration,79,491.9
+Castilla-La Mancha,solar_thermal,7,349.4
+Castilla-La Mancha,pumped_hydro,2,220.0
+Castilla-La Mancha,other,1,50.0
+Cataluña,ccgt,4,3788.2
+Cataluña,nuclear,2,3032.8
+Cataluña,hydro,319,1921.2
+Cataluña,wind,46,1304.9
+Cataluña,cogeneration,148,1056.9
+Cataluña,pumped_hydro,1,439.8
+Cataluña,solar_pv,173,243.0
+Cataluña,solar_thermal,1,22.5
+Cataluña,other,1,0.2
+Ceuta,fuel_gas,1,90.8
+Comunidad Valenciana,ccgt,2,2853.5
+Comunidad Valenciana,pumped_hydro,1,1512.0
+Comunidad Valenciana,wind,35,1243.0
+Comunidad Valenciana,nuclear,1,1063.9
+Comunidad Valenciana,hydro,30,642.0
+Comunidad Valenciana,cogeneration,89,487.2
+Comunidad Valenciana,solar_pv,148,293.9
+Comunidad Valenciana,solar_thermal,2,50.0
+Comunidad Valenciana,fuel_gas,1,8.0
+Comunidad de Madrid,cogeneration,52,286.7
+Comunidad de Madrid,hydro,16,108.5
+Comunidad de Madrid,solar_pv,26,31.4
+Extremadura,solar_pv,232,6730.5
+Extremadura,hydro,26,2277.4
+Extremadura,nuclear,1,2017.1
+Extremadura,solar_thermal,17,849.0
+Extremadura,wind,2,88.9
+Extremadura,cogeneration,9,55.0
+Galicia,wind,162,3909.2
+Galicia,hydro,145,3730.0
+Galicia,ccgt,2,1247.0
+Galicia,cogeneration,74,660.0
+Galicia,other,1,39.6
+Galicia,solar_pv,7,6.7
+La Rioja,ccgt,1,784.7
+La Rioja,wind,13,448.1
+La Rioja,solar_pv,27,89.1
+La Rioja,hydro,30,52.4
+La Rioja,cogeneration,6,18.0
+Melilla,fuel_gas,1,75.6
+Melilla,cogeneration,1,2.2
+Navarra,wind,58,1556.3
+Navarra,ccgt,1,1222.3
+Navarra,solar_pv,65,294.0
+Navarra,hydro,110,236.7
+Navarra,cogeneration,38,186.7
+País Vasco,ccgt,3,1968.1
+País Vasco,cogeneration,67,587.8
+País Vasco,hydro,91,178.4
+País Vasco,wind,11,153.4
+País Vasco,solar_pv,11,37.0
+País Vasco,other,1,0.3
+Principado de Asturias,coal,2,1249.9
+Principado de Asturias,ccgt,2,854.2
+Principado de Asturias,hydro,41,805.7
+Principado de Asturias,wind,24,702.1
+Principado de Asturias,cogeneration,25,204.5
+Región de Murcia,ccgt,4,3263.7
+Región de Murcia,solar_pv,192,1547.0
+Región de Murcia,cogeneration,24,316.4
+Región de Murcia,wind,11,264.1
+Región de Murcia,hydro,21,34.5
+Región de Murcia,solar_thermal,2,31.4
