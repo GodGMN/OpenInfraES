@@ -31,3 +31,10 @@ datos/rios.geojson
 .env
 .env.*
 !.env.example
+
+# Restos de pruebas en la raiz
+*.csv
+sism.json
+r.json
+w.txt
+a.xml
