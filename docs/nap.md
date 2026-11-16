@@ -55,6 +55,21 @@ El resto de rutas probadas devuelven lo mismo: `/api/v3/api-docs`, `/api/openapi
 header correcto, no hay forma razonable de adivinarlo: hace falta que el NAP documente cómo se
 envía la clave.
 
+## Dónde está el acceso (y por qué no lo encuentras)
+
+No hay un botón de «obtener clave de API» porque **el NAP no está pensado para consultarse por API**.
+En `nap.transportes.gob.es/entidades-colaboradoras` solo hay una lista de entidades adheridas; las
+rutas de registro (`/registro`, `/alta`, `/signup`) devuelven **404** y el portal es una SPA sin API
+de consulta documentada.
+
+La lectura correcta es: el NAP es el punto donde los **operadores publican** sus datos (por eso se
+habla de «entidades colaboradoras»), y el ciudadano los consulta **por la web**, no por un endpoint.
+La clave que tienes no abre el catálogo por ninguna de las nueve formas probadas.
+
+Para usarlo de verdad haría falta **contacto con el NAP/MITMA** y que documenten el header. Mientras
+tanto, los datos de transporte se obtienen de cada operador: Renfe (GTFS-RT y estaciones), y los
+catálogos autonómicos y municipales.
+
 ## Lo que sí funciona: el catálogo nacional abierto
 
 Los mismos datos (y más) están en **datos.gob.es**, que es CKAN abierto y no pide nada:

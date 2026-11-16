@@ -221,6 +221,25 @@ def main():
                       % (OSM["metodo"], rr.get("tramos_osm", 0), rr.get("min_km", "")),
         }
 
+    # carburantes y sismos: recibo propio de cada script
+    import os as _os
+    for capa, fich, fuente, editor, lic, url, met in (
+        ("carburantes", "carburantes_recibo.json", "MITECO", "Secretaría de Estado de Energía",
+         "Reutilización con atribución (Ley 37/2007)",
+         "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/",
+         "GET al JSON de estaciones terrestres; coma decimal"),
+        ("sismos", "sismos_recibo.json", "EMSC-CSEM", "seismicportal.eu",
+         "abierta con atribución", "https://www.seismicportal.eu/fdsnws/event/1/query",
+         "FDSN query con bbox de Espana"),
+    ):
+        r = leer(fich, {})
+        if r:
+            fuentes[capa] = {"capa": capa, "titulo": capa.capitalize(), "fuente": fuente,
+                             "editor": editor, "licencia": lic,
+                             "actualizado": r.get("fecha_dato") or r.get("desde"),
+                             "descargado": HOY, "features": r.get("features"),
+                             "url": url, "metodo": met}
+
     sim = leer("simplificado/_recibo.json", {})
     simpl = {os.path.basename(c["id"]): c for c in sim.get("capas", [])}
 

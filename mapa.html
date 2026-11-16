@@ -274,7 +274,7 @@
   <div id="buscar"><input id="q" type="search" placeholder="Buscar instalación…" autocomplete="off"></div>
   <div id="resultados"></div>
   <div id="presets">
-    <button data-preset="todos">Todo</button>
+    <button data-preset="todos" title="Encender todo / apagar todo">Todo</button>
     <button data-preset="Red eléctrica">Eléctrico</button>
     <button data-preset="Gas">Gas</button>
     <button data-preset="Agua">Agua</button>
@@ -845,7 +845,9 @@ function pintarFuentes() {
     const n = conteo[c.id] || f.features;
     const act = f.actualizado || "—";
     return `<tr class="fila-f" data-f="${c.id}"><td><b>${c.label}</b><br><span class="lic">${c.grupo}</span></td>
-      <td>${f.fuente || "—"}<br><span class="lic">${f.editor || ""}</span></td>
+      <td><b>${f.organismo || f.fuente || "—"}</b>${
+        (f.publica_via && f.publica_via !== f.organismo)
+          ? `<br><span class="lic">vía ${String(f.publica_via).slice(0, 30)}</span>` : ""}</td>
       <td>${act}</td>
       <td><span class="lic">${f.licencia || "—"}</span></td>
       <td class="c">${n ? n.toLocaleString("es-ES") : "—"}</td></tr>`;
@@ -1008,11 +1010,18 @@ function aplicarUrl() {
 document.querySelectorAll("[data-preset]").forEach(btn => {
   btn.addEventListener("click", () => {
     const p = btn.dataset.preset;
-    document.querySelectorAll("[data-preset]").forEach(b => b.classList.toggle("on", b === btn));
+    // "Todo" es un interruptor segun el estado del propio boton, no segun los checkboxes
+    const yaActivo = btn.classList.contains("on");
+    document.querySelectorAll("[data-preset]").forEach(b => b.classList.toggle("on", b === btn && !(p === "todos" && yaActivo)));
     CAPAS.forEach(c => {
       const SOLO_PRESET = { "Agua": new Set(["embalses", "desaladoras", "trasvases"]) };
-      const on = (p === "todos") ? true
-        : (SOLO_PRESET[p] ? SOLO_PRESET[p].has(c.id) : (c.grupo === p));
+      // "Todo" es un interruptor: si ya estan todas, las apaga
+      let on;
+      if (p === "todos") {
+        on = !yaActivo;
+      } else {
+        on = SOLO_PRESET[p] ? SOLO_PRESET[p].has(c.id) : (c.grupo === p);
+      }
       const chk = document.querySelector('[data-capa="' + c.id + '"]');
       if (!chk || chk.checked === on) return;
       chk.checked = on;

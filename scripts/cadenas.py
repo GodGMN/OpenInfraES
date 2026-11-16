@@ -91,6 +91,22 @@ ALIAS_INVERSO = {
 }
 
 
+ORGANISMOS = {
+    "embalses": "MITECO", "subestaciones": "IGN", "desaladoras": "MITECO",
+    "nuclear": "CSN / propietarios", "regas": "Enagás", "gasalm": "Enagás",
+    "refinerias": "CORES", "interelec": "REE", "h2": "MITECO",
+    "l400": "REE / OSM", "l220": "REE / OSM", "gasoductos": "Enagás / OSM",
+    "hidro": "OSM / ELECTRA", "gasgen": "OSM", "resto": "OSM",
+    "carreteras": "MITMA", "puertos": "Puertos del Estado",
+    "terminales-puerto": "Autoridades portuarias", "terminales-aero": "Aena",
+    "intermodales": "Adif / Puertos", "estaciones-gas": "MITECO",
+    "edar": "OSM", "etap": "OSM", "trasvases": "OSM / confederaciones",
+    "canales": "OSM / confederaciones", "rios": "OSM + Open-Meteo (GloFAS)",
+    "agua-conducciones": "OSM", "sismos": "EMSC-CSEM", "trenes": "Renfe",
+    "estaciones-cercanias": "Renfe", "carburantes": "MITECO",
+}
+
+
 def main():
     ruta = os.path.join(DEST, "fuentes.json")
     d = json.load(open(ruta, encoding="utf-8"))
@@ -98,6 +114,8 @@ def main():
     for capa, v in d["capas"].items():
         clave = capa if capa in CADENAS else ALIAS_INVERSO.get(capa)
         prod, via, nota = CADENAS.get(clave, (None, None, None))
+        v["organismo"] = ORGANISMOS.get(capa) or (prod.split("—")[0].strip() if prod else None)
+        v["publica_via"] = v.get("editor")
         v["cadena"] = {
             "productor": prod or "no declarado por el editor",
             "publica": via or v.get("editor"),

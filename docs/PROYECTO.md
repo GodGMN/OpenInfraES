@@ -11,7 +11,7 @@ Un mapa de la infraestructura energética y de transporte de España que se pued
 mirar: cada capa declara su fuente, su licencia y la fecha del dato, y cada elemento abre una ficha
 con todos sus atributos.
 
-**Documentación**: este documento (visión general) · [`FUENTES.md`](FUENTES.md) — ficha por fuente
+**Documentación**: [`BIBLIOTECA.md`](BIBLIOTECA.md) — para qué existe el proyecto · este documento (visión general) · [`FUENTES.md`](FUENTES.md) — ficha por fuente
 oficial con licencia, frecuencia y limitaciones · [`apis.md`](apis.md) — estado técnico de cada API ·
 [`nap.md`](nap.md) — el NAP de transporte · [`../GUIA.md`](../GUIA.md) — reglas de trabajo.
 

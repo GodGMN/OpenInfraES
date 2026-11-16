@@ -14,6 +14,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de BTN Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "Propietarios de central / mapeo OSM + ELECTRA",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Propietarios de central / mapeo OSM + ELECTRA",
     "publica": "OpenInfraES ← OSM",
@@ -36,6 +38,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de BTN Continua CC-BY 4.0 ign.es · IDENA, Gobierno de Navarra (CC BY 4.0) · Institut Cartogràfic Valencià, Generalitat Valenciana (CC BY 4.0) · Atlas Estratégico de España",
+   "organismo": "Propietarios / mapeo OSM",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Propietarios / mapeo OSM",
     "publica": "OpenInfraES ← OSM",
@@ -58,6 +62,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Fuente CORES (www.cores.es) · Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "Enagás / operadores de planta",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Enagás / operadores de planta",
     "publica": "Atlas Estratégico",
@@ -80,6 +86,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "Enagás / operadores",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Enagás / operadores",
     "publica": "Atlas Estratégico",
@@ -102,6 +110,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Fuente CORES (www.cores.es) · Obra derivada de DERA CC-BY 4.0 IECA-Junta de Andalucía · Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "Enagás / mapeo OSM",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Enagás / mapeo OSM",
     "publica": "OpenInfraES ← OSM",
@@ -124,6 +134,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Fuente CORES (www.cores.es) · PRTR-España (MITECO) · Atlas Estratégico de España",
+   "organismo": "CORES",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Corporación de Reservas / operadores",
     "publica": "Atlas Estratégico",
@@ -146,6 +158,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Origen de los datos: Comisión Nacional de los Mercados y la Competencia (CNMC) · Obra derivada del Nomenclátor Geográfico Básico y de las Redes de Transporte CC-BY 4.0 scne.es · Atlas Estratégico de España",
+   "organismo": "Corporación de Reservas / operadores",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Corporación de Reservas / operadores",
     "publica": "Atlas Estratégico",
@@ -168,6 +182,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "CSN / propietarios",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Consejo de Seguridad Nuclear / propietarios",
     "publica": "Atlas Estratégico",
@@ -190,6 +206,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "Consejo de Seguridad Nuclear / propietarios",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Consejo de Seguridad Nuclear / propietarios",
     "publica": "Atlas Estratégico",
@@ -212,6 +230,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "REE",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "REE — operador del sistema",
     "publica": "Atlas Estratégico",
@@ -234,6 +254,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de BTN Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "IGN",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "IGN — BTN Continua (Base Topográfica Nacional)",
     "publica": "Atlas Estratégico",
@@ -256,6 +278,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de BTN Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "Enagás / mapeo OSM",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Enagás / mapeo OSM",
     "publica": "OpenInfraES ← OSM",
@@ -278,6 +302,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "MITECO · Obra derivada de BDLJE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "Propietarios de central / mapeo OSM + ELECTRA",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Propietarios de central / mapeo OSM + ELECTRA",
     "publica": "OpenInfraES ← OSM",
@@ -300,6 +326,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Comisión Europea (CINEA) · Atlas Estratégico de España",
+   "organismo": "MITECO",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "MITECO — Proyectos de Interés Común (PCI)",
     "publica": "Atlas Estratégico",
@@ -322,6 +350,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Ministerio para la Transición Ecológica y el Reto Demográfico · Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "MITECO",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "MITECO — Boletín Hidrológico (parte semanal)",
     "publica": "Atlas Estratégico",
@@ -344,6 +374,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · ABAQUA, Govern de les Illes Balears (CC BY) · Boletín Oficial de Canarias · Generalitat de Catalunya (DOGC) · Atlas Estratégico de España",
+   "organismo": "MITECO",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "MITECO / Acuamed (instalaciones declaradas)",
     "publica": "Atlas Estratégico",
@@ -366,6 +398,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Comisión Europea (CINEA) · Atlas Estratégico de España",
+   "organismo": "MITECO",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "MITECO — Proyectos de Interés Común (PCI)",
     "publica": "Atlas Estratégico",
@@ -387,6 +421,8 @@
    "features": 45,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__PUERTOS/1 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "Puertos del Estado / autoridades portuarias",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "Puertos del Estado / autoridades portuarias",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -408,6 +444,8 @@
    "features": 440,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__PUERTOS/3 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "Autoridades portuarias",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "Autoridades portuarias",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -429,6 +467,8 @@
    "features": 102,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__AEROPUERTOS/1 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "Aena",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "Aena",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -450,6 +490,8 @@
    "features": 56,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__AEROPUERTOS/2 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "Aena",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "Aena",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -471,6 +513,8 @@
    "features": 383,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__TERMINALES_INTERMODALES/1 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "Adif / Puertos del Estado",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "Adif / Puertos del Estado",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -492,6 +536,8 @@
    "features": 11485,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/7__COMBUSTIBLES_ALTERNATIVOS/457 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "MITECO",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "MITECO — registro de carburantes",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -513,6 +559,8 @@
    "features": 3034,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 1644 con nombre",
+   "organismo": "OSM",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Ayuntamientos / confederaciones (declarado en OSM)",
     "publica": "OpenInfraES ← OSM",
@@ -534,6 +582,8 @@
    "features": 1551,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 994 con nombre",
+   "organismo": "OSM",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Confederaciones / ayuntamientos (declarado en OSM)",
     "publica": "OpenInfraES ← OSM",
@@ -555,6 +605,8 @@
    "features": 10895,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 10895 con nombre",
+   "organismo": "OSM",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Confederaciones y comunidades de regantes (mapeo OSM)",
     "publica": "OpenInfraES ← OSM",
@@ -576,6 +628,8 @@
    "features": 1602,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "MITMA",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "MITMA — Inventario de la Red de Carreteras del Estado",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -597,6 +651,8 @@
    "features": 45,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__PUERTOS/1 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "Puertos del Estado",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "Puertos del Estado / autoridades portuarias",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -618,6 +674,8 @@
    "features": 440,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__PUERTOS/3 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "Autoridades portuarias",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "Autoridades portuarias",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -639,6 +697,8 @@
    "features": 102,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__AEROPUERTOS/1 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "Aena",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "Aena",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -660,6 +720,8 @@
    "features": 383,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__TERMINALES_INTERMODALES/1 — query ArcGIS REST, paginado de 500 en 500",
+   "organismo": "Adif / Puertos",
+   "publica_via": "Ministerio de Transportes (ArcGIS REST)",
    "cadena": {
     "productor": "Adif / Puertos del Estado",
     "publica": "Visor Hermes (ArcGIS REST)",
@@ -681,6 +743,8 @@
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant)",
+   "organismo": "REE / OSM",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Red Eléctrica de España (instalaciones) / mapeo OSM",
     "publica": "OpenInfraES ← OSM",
@@ -702,6 +766,8 @@
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant)",
+   "organismo": "REE / OSM",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Red Eléctrica de España (instalaciones) / mapeo OSM",
     "publica": "OpenInfraES ← OSM",
@@ -723,6 +789,8 @@
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant)",
+   "organismo": "Enagás / OSM",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Enagás / mapeo OSM",
     "publica": "OpenInfraES ← OSM",
@@ -744,6 +812,8 @@
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant)",
+   "organismo": "OSM / ELECTRA",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Propietarios de central / mapeo OSM + ELECTRA",
     "publica": "OpenInfraES ← OSM",
@@ -766,6 +836,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de BTN Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "IGN",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "IGN — BTN Continua (Base Topográfica Nacional)",
     "publica": "Atlas Estratégico",
@@ -788,6 +860,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "REE",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "REE — operador del sistema",
     "publica": "Atlas Estratégico",
@@ -810,6 +884,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Fuente CORES (www.cores.es) · Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "Enagás",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Enagás / operadores de planta",
     "publica": "Atlas Estratégico",
@@ -832,6 +908,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "Enagás",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "Enagás / operadores",
     "publica": "Atlas Estratégico",
@@ -854,6 +932,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Ministerio para la Transición Ecológica y el Reto Demográfico · Obra derivada de NGBE Continua CC-BY 4.0 ign.es · Atlas Estratégico de España",
+   "organismo": "MITECO",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "MITECO — Boletín Hidrológico (parte semanal)",
     "publica": "Atlas Estratégico",
@@ -876,6 +956,8 @@
    "url": "https://atlas.eltercioviejo.com",
    "metodo": "GeoJSON por capa desde atlas.eltercioviejo.com/datos/capas/",
    "atribucion": "Comisión Europea (CINEA) · Atlas Estratégico de España",
+   "organismo": "MITECO",
+   "publica_via": "eltercioviejo.com",
    "cadena": {
     "productor": "MITECO — Proyectos de Interés Común (PCI)",
     "publica": "Atlas Estratégico",
@@ -897,6 +979,8 @@
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant) · subconjunto: technology_normalized in (ccgt, fuel_gas)",
+   "organismo": "OSM",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Propietarios / mapeo OSM",
     "publica": "OpenInfraES ← OSM",
@@ -918,6 +1002,8 @@
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant) · subconjunto: resto de tecnologias",
+   "organismo": "OSM",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Propietarios / mapeo OSM",
     "publica": "OpenInfraES ← OSM",
@@ -939,6 +1025,8 @@
    "features": 26,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 118 tramos unidos en 26 trazos por scripts/unir_trasvases.py",
+   "organismo": "OSM / confederaciones",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Ministerio / confederaciones (trazado mapeado en OSM)",
     "publica": "OpenInfraES ← OSM",
@@ -960,6 +1048,8 @@
    "features": 10777,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · resto: canales de riego, acequias y aducciones",
+   "organismo": "OSM / confederaciones",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Confederaciones hidráulicas / comunidades de regantes",
     "publica": "OpenInfraES ← OSM",
@@ -981,6 +1071,8 @@
    "features": 260,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 14255 tramos agrupados, mínimo 12 km; caudal por Open-Meteo Flood (GloFAS)",
+   "organismo": "OSM + Open-Meteo (GloFAS)",
+   "publica_via": "colaboradores de OSM",
    "cadena": {
     "productor": "Confederaciones hidráulicas (geometría OSM)",
     "publica": "OpenInfraES ← OSM",
@@ -989,6 +1081,52 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
+   "fecha_descarga": "2026-11-16"
+  },
+  "carburantes": {
+   "capa": "carburantes",
+   "titulo": "Carburantes",
+   "fuente": "MITECO",
+   "editor": "Secretaría de Estado de Energía",
+   "licencia": "Reutilización con atribución (Ley 37/2007)",
+   "actualizado": "16/11/2026 18:05:15",
+   "descargado": "2026-11-16",
+   "features": 11433,
+   "url": "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/",
+   "metodo": "GET al JSON de estaciones terrestres; coma decimal",
+   "organismo": "MITECO",
+   "publica_via": "Secretaría de Estado de Energía",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "Secretaría de Estado de Energía",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": "16/11/2026 18:05:15",
+   "fecha_descarga": "2026-11-16"
+  },
+  "sismos": {
+   "capa": "sismos",
+   "titulo": "Sismos",
+   "fuente": "EMSC-CSEM",
+   "editor": "seismicportal.eu",
+   "licencia": "abierta con atribución",
+   "actualizado": "2026-11-09",
+   "descargado": "2026-11-16",
+   "features": 80,
+   "url": "https://www.seismicportal.eu/fdsnws/event/1/query",
+   "metodo": "FDSN query con bbox de Espana",
+   "organismo": "EMSC-CSEM",
+   "publica_via": "seismicportal.eu",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "seismicportal.eu",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": "2026-11-09",
    "fecha_descarga": "2026-11-16"
   }
  },
@@ -1086,13 +1224,13 @@
   "trasvases-union.geojson": {
    "id": "trasvases-union.geojson",
    "tolerancia": 0.0006,
-   "features": 13,
-   "vertices_antes": 3477,
-   "vertices_despues": 611,
-   "ahorro_pct": 82.4,
-   "kb": 20
+   "features": 8,
+   "vertices_antes": 3424,
+   "vertices_despues": 573,
+   "ahorro_pct": 83.3,
+   "kb": 18
   }
  },
- "total_capas": 46,
+ "total_capas": 48,
  "nota_cadena": "Cada capa declara productor (quien genera el dato), publica (quien lo sirve tal como lo consumimos) y consume (nosotros). Son tres fechas distintas: la del dato, la de publicación y la de descarga."
 }

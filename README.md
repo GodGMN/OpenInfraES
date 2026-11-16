@@ -4,6 +4,7 @@
 
 | Documento | Qué encontrarás |
 |---|---|
+| [`docs/BIBLIOTECA.md`](docs/BIBLIOTECA.md) | **para qué existe esto**: base de datos reutilizable y cómo crece con fichas enriquecidas |
 | [`docs/PROYECTO.md`](docs/PROYECTO.md) | qué es, qué contiene, cómo está hecho, rendimiento medido y límites |
 | [`docs/FUENTES.md`](docs/FUENTES.md) | **ficha por fuente oficial**: qué publica, URL, cómo se obtiene, licencia, frecuencia y limitaciones |
 | [`docs/apis.md`](docs/apis.md) | estado técnico de cada API, con los errores literales |
