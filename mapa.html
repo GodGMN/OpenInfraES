@@ -57,8 +57,8 @@
   #btn-tema { width:26px; height:26px;
     border:1px solid var(--borde); background:transparent; color:var(--suave); border-radius:2px;
     cursor:pointer; font-size:12px; display:grid; place-items:center; transition:.15s; }
-  #btn-tema:hover, #btn-fuentes:hover, #btn-enlace:hover, #btn-estado:hover { color:var(--cian); border-color:var(--borde-fuerte); }
-  #btn-fuentes, #btn-enlace, #btn-estado { width:26px; height:26px; border:1px solid var(--borde);
+  #btn-tema:hover, #btn-fuentes:hover, #btn-enlace:hover, #btn-estado:hover, #btn-trenes:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+  #btn-fuentes, #btn-enlace, #btn-estado, #btn-trenes { width:26px; height:26px; border:1px solid var(--borde);
     background:transparent; color:var(--suave); border-radius:2px; cursor:pointer; font-size:12px;
     display:grid; place-items:center; }
 
@@ -89,6 +89,9 @@
   .fila .n { margin-left:auto; font-family:var(--mono); font-size:10.8px; color:var(--tenue);
     font-variant-numeric:tabular-nums; }
   .fila.activa .n { color:var(--cian); }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  .spin { display:inline-block; width:10px; height:10px; border:1.5px solid var(--borde-fuerte);
+    border-top-color:var(--cian); border-radius:50%; animation:girar .7s linear infinite; vertical-align:-1px; }
 
   #pie { border-top:1px solid var(--borde); padding:10px 15px 11px; }
   #pie select { width:100%; background:transparent; color:var(--tinta);
@@ -187,18 +190,47 @@
   #velo2 { position:fixed; inset:0; z-index:2000; background:rgba(3,6,10,.78); display:none;
     align-items:center; justify-content:center; padding:24px; }
   #velo2.on { display:flex; }
-  #sis { width:min(680px,100%); max-height:86vh; overflow:auto; background:var(--panel-solido);
+  #sis { width:min(760px,100%); max-height:86vh; overflow:auto; background:var(--panel-solido);
     border:1px solid var(--borde-fuerte); border-radius:3px; padding:20px 22px;
     box-shadow:0 30px 90px rgba(0,0,0,.7); }
   #sis h2 { margin:0 0 3px; font-size:15px; letter-spacing:.1em; text-transform:uppercase; }
   #sis .nota { color:var(--suave); font-size:12.2px; margin-bottom:16px; line-height:1.5; }
   #sis .cerrar { float:right; background:transparent; border:1px solid var(--borde); color:var(--suave);
     border-radius:2px; width:26px; height:26px; cursor:pointer; }
-  .barra { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
-  .barra .n { width:150px; font-size:11.8px; text-align:right; color:var(--suave); flex:0 0 auto; }
-  .barra .b { height:15px; border-radius:1px; flex:0 0 auto; }
-  .barra .v { font-family:var(--mono); font-size:10.6px; color:var(--tinta); white-space:nowrap; }
-  .barra .p { font-family:var(--mono); font-size:10.2px; color:var(--tenue); }
+  .sis-cab { display:flex; align-items:baseline; gap:10px; margin:2px 0 14px; }
+  .sis-cab .tot { font-family:var(--mono); font-size:26px; color:var(--tinta); letter-spacing:-.5px; }
+  .sis-cab .uni { font-family:var(--mono); font-size:11px; color:var(--suave); }
+  .sis-cab .dia { margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--tenue); }
+  .barra { display:flex; align-items:center; gap:10px; margin-bottom:7px; font-size:12.6px; }
+  .cabecera { display:flex; gap:10px; font-family:var(--mono); font-size:9.4px; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--tenue); margin-bottom:6px; }
+  .cabecera .n { width:158px; flex:0 0 auto; }
+  .cabecera .track { flex:1 1 auto; }
+  .cabecera .v { width:78px; text-align:right; flex:0 0 auto; }
+  .cabecera .p { width:46px; text-align:right; flex:0 0 auto; }
+  .barra .track::after { content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(90deg, transparent 24.85%, rgba(125,155,180,.22) 25%, transparent 25.15%,
+      transparent 49.85%, rgba(125,155,180,.22) 50%, transparent 50.15%,
+      transparent 74.85%, rgba(125,155,180,.22) 75%, transparent 75.15%); }
+  .nota-pie { font-size:10.8px; color:var(--tenue); margin-top:9px; line-height:1.5; }
+  .prev .rango { display:flex; justify-content:space-between; font-family:var(--mono);
+    font-size:9.6px; color:var(--tenue); margin-top:4px; }
+  .barra .n { width:158px; color:var(--suave); flex:0 0 auto; }
+  .barra .track { flex:1 1 auto; height:19px; position:relative; background:rgba(125,155,180,.10); border-radius:2px; overflow:hidden; }
+  .barra .b { display:block; height:100%; border-radius:2px; }
+  .barra .v { width:78px; text-align:right; font-family:var(--mono); font-size:11.6px;
+    color:var(--tinta); font-variant-numeric:tabular-nums; flex:0 0 auto; }
+  .barra .p { width:46px; text-align:right; font-family:var(--mono); font-size:11px; color:var(--tenue); flex:0 0 auto; }
+  .sis-sec { font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--cian); margin:20px 0 10px; padding-top:14px; border-top:1px solid var(--borde); }
+  .prev { display:flex; gap:18px; }
+  .prev .caja { flex:1; min-width:0; }
+  .prev .t { font-size:11.8px; color:var(--suave); margin-bottom:6px; }
+  .prev .spark { display:flex; align-items:flex-end; gap:2px; height:78px; }
+  .prev .spark i { flex:1; background:var(--cian); opacity:.6; border-radius:1px 1px 0 0; min-height:2px; }
+  .prev .spark i.hoy { opacity:1; box-shadow:0 0 8px rgba(34,211,238,.6); }
+  .prev .m { font-family:var(--mono); font-size:15px; color:var(--tinta); margin-top:7px; }
+  .prev .m small { font-size:10.5px; color:var(--suave); }
 
   /* ---------- opacidad ---------- */
   #opacidad { display:flex; align-items:center; gap:8px; padding:8px 15px 0; }
@@ -225,7 +257,8 @@
     <div class="marca"><span class="punto-vivo"></span><h1>Infraestructura España</h1></div>
     <div class="sub" id="sub-hud">—</div>
     <div class="acciones-hud">
-      <button id="btn-estado" title="Generación del día (API REE)">⚡</button>
+      <button id="btn-trenes" title="Trenes en tiempo real (Renfe GTFS-RT)">🚆</button>
+      <button id="btn-estado" title="Generación del día y previsión">⚡</button>
       <button id="btn-fuentes" title="Fuentes y fecha de los datos">ⓘ</button>
       <button id="btn-enlace" title="Copiar enlace a esta vista">⧉</button>
       <button id="btn-tema" title="Cambiar tema">◐</button>
@@ -319,6 +352,21 @@ const ETIQ = { operador:"Operador", municipio:"Municipio", demarcacion:"Demarcac
   Biodiesel:"Biodiésel", Gas_natural_licuado:"GNL", Gas_natural_comprimido:"GNC",
   Gases_licuados_del_petroleo:"GLP", Nombre_plataforma:"Plataforma", voltage:"Tensión (V)",
   operator:"Operador", circuits:"Circuitos", Elemento_portuario:"Elemento portuario" };
+
+function fichaTren(p, c) {
+  const t = p.hora ? " a las " + p.hora + " UTC" : "";
+  let h = '<div class="ficha"><div class="ft">Tren ' + (p.tren || "—") + "</div>";
+  h += '<div class="fs">' + c.label + " — " + (p.ruta || "ruta sin dato") + "</div>";
+  h += "<table>";
+  if (p.etiqueta) h += '<tr><td class="k">Etiqueta</td><td class="v">' + p.etiqueta + "</td></tr>";
+  if (p.viaje) h += '<tr><td class="k">Viaje</td><td class="v">' + p.viaje + "</td></tr>";
+  if (p.velocidad_kmh) h += '<tr><td class="k">Velocidad</td><td class="v">' + nf(p.velocidad_kmh) + " km/h</td></tr>";
+  if (p.rumbo) h += '<tr><td class="k">Rumbo</td><td class="v">' + nf(Math.round(p.rumbo)) + "°</td></tr>";
+  h += "</table>";
+  h += '<div class="cf" style="margin-top:9px;font-size:10.6px;color:var(--tenue)">Posición' + t +
+       ". Instantánea de gtfsrt.renfe.com (feed abierto, sin clave). Se actualiza al recargar.</div></div>";
+  return h;
+}
 
 function ficha(p, c) {
   const titulo = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Aeropuerto || p.Carretera ||
@@ -432,6 +480,8 @@ const CAPAS = [
     color:"#a78bfa", fichero:"datos/hermes/terminales-aeropuerto.geojson", peso:1 },
   { id:"intermodales", grupo:"Transporte", label:"Terminales mercancías", tipo:"punto", on:false,
     color:"#f59e0b", fichero:"datos/hermes/terminales-mercancias.geojson", radio:5 },
+  { id:"trenes", grupo:"Tiempo real", label:"Trenes (GTFS-RT)", tipo:"punto", on:false, color:"#f43f5e",
+    fichero:"datos/trenes.geojson", radio:4.5, siempreIndividual:true, modoTren:true },
   { id:"estaciones-gas", grupo:"Transporte", label:"Estaciones GNL/GNC/H₂", tipo:"punto", on:false,
     color:"#4ade80", fichero:"datos/hermes/estaciones-gas.geojson", radio:5,
     filtro:f => ["Gas_natural_licuado","Gas_natural_comprimido","Hidrogeno"]
@@ -472,7 +522,7 @@ ponerBase("radar");
 /* ---------------- motor ---------------- */
 const POPUP = L.popup({ maxWidth: 348, minWidth: 302, autoPanPadding: [26, 26] });
 function abrirFicha(p, c, latlng) {
-  POPUP.setLatLng(latlng).setContent(ficha(p, c)).openOn(mapa);
+  POPUP.setLatLng(latlng).setContent(c.modoTren ? fichaTren(p, c) : ficha(p, c)).openOn(mapa);
   if (c.apiCaudal) consultarCaudal(p);
 }
 
@@ -528,7 +578,16 @@ function pintarPuntos(c) {
   const z = mapa.getZoom();
 
   if (c.siempreIndividual || z >= ZOOM_DETALLE) {
-    feats.forEach(f => {
+    // solo se crean los marcadores que caen en la vista (con margen): a zoom alto
+    // una capa de 3.000 puntos ocupaba el mapa entero y no se veía ninguno de fuera
+    const b = mapa.getBounds().pad(0.25);
+    const visibles = feats.filter(f => {
+      const g = f.geometry;
+      if (!g || !g.coordinates) return false;
+      const [lng, lat] = g.coordinates;
+      return lat >= b.getSouth() && lat <= b.getNorth() && lng >= b.getWest() && lng <= b.getEast();
+    });
+    (visibles.length ? visibles : feats).forEach(f => {
       const [lng, lat] = f.geometry.coordinates;
       const p = f.properties || {};
       const m = L.circleMarker([lat, lng], {
@@ -574,6 +633,8 @@ function pintarPuntos(c) {
 function cargar(c) {
   if (c.__cargada) return;
   c.__cargada = true;
+  const rot = document.getElementById("n-" + c.id);
+  if (rot) rot.innerHTML = '<i class="spin"></i>';
   fetch(c.fichero)
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(gj => {
@@ -635,6 +696,20 @@ document.querySelectorAll("[data-capa]").forEach(chk => {
 
 /* al cambiar de zoom, re-agrupar los puntos visibles (barato: solo los cargados) */
 let pendiente = null;
+let moverPendiente = null;
+mapa.on("moveend", () => {
+  if (mapa.getZoom() < ZOOM_DETALLE) return;
+  clearTimeout(moverPendiente);
+  moverPendiente = setTimeout(() => {
+    CAPAS.forEach(c => {
+      if (c.tipo !== "punto" || !c.__cargada || c.__cargando) return;
+      if (!document.querySelector(`[data-capa="${c.id}"]`)?.checked) return;
+      if (c.siempreIndividual && c.id !== "trenes") return;
+      pintarPuntos(c);
+    });
+  }, 220);
+});
+
 mapa.on("zoomend", () => {
   const z = mapa.getZoom();
   clearTimeout(pendiente);
@@ -758,30 +833,77 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") { $("#velo")
 
 /* ---------------- generación del día (API REE) ---------------- */
 function pintarSis() {
-  fetch("datos/ree_estado.json").then(r => r.json()).then(d => {
-    const gen = (d.series && d.series.generacion) || [];
-    const total = (gen.find(x => x.titulo.toLowerCase().startsWith("generación total")) || {}).valor || 0;
-    const filas = gen.filter(x => !x.titulo.toLowerCase().startsWith("generación total"))
-      .sort((a, b) => b.valor - a.valor);
-    const max = filas.length ? filas[0].valor : 1;
-    $("#sis-barras").innerHTML = filas.map(x => {
-      const pct = total ? (100 * x.valor / total) : 0;
-      const neg = x.valor < 0;
-      const ancho = neg ? 3 : Math.max(2, (x.valor / max) * 300);
-      return `<div class="barra"><span class="n">${x.titulo}</span>` +
-        `<span class="b" style="width:${ancho}px;background:${neg ? "#4a5c70" : (x.color || "#22d3ee")}"></span>` +
-        `<span class="v">${nf(x.valor)} MWh</span>` +
-        `<span class="p">${neg ? "consumo propio" : pct.toFixed(1) + "%"}</span></div>`;
-    }).join("");
-    $("#sis-nota").innerHTML = `Día <b>${d.fecha}</b> · total <b>${nf(total)} MWh</b> · ` +
-      `fuente: REE apidatos (sin clave). La API pública solo sirve <b>agregados diarios</b>: ` +
-      `el tiempo real (horario o cada 5 minutos) devuelve error 400 hoy. ` +
-      `Para generación por planta o previsión hace falta token de ENTSO-E o ESIOS.`;
-  }).catch(() => { $("#sis-nota").textContent = "No se pudo cargar datos/ree_estado.json"; });
+  Promise.all([
+    fetch("datos/ree_estado.json").then(r => r.json()).catch(() => null),
+    fetch("datos/esios_prevision.json").then(r => r.json()).catch(() => null)
+  ]).then(([d, p]) => {
+    let h = "";
+    if (d && d.series && d.series.generacion) {
+      const gen = d.series.generacion;
+      const total = (gen.find(x => x.titulo.toLowerCase().startsWith("generación total")) || {}).valor || 0;
+      const filas = gen.filter(x => !x.titulo.toLowerCase().startsWith("generación total"))
+        .sort((a, b) => b.valor - a.valor);
+      h += '<div class="sis-cab"><span class="tot">' + nf(total) + '</span>' +
+           '<span class="uni">MWh generados</span><span class="dia">' + d.fecha + '</span></div>' +
+           '<div class="cabecera"><span class="n">Tecnología</span><span class="track"></span>' +
+           '<span class="v">MWh</span><span class="p">%</span></div>';
+      filas.forEach(x => {
+        const pct = total ? (100 * x.valor / total) : 0;
+        const neg = x.valor < 0;
+        h += '<div class="barra"><span class="n">' + x.titulo + '</span>' +
+             '<span class="track"><span class="b" style="width:' + Math.max(neg ? 0.4 : 0.6, Math.abs(pct)) +
+             '%;background:' + (neg ? "#4a5c70" : (x.color || "#22d3ee")) + '"></span></span>' +
+             '<span class="v">' + nf(Math.round(x.valor)) + '</span>' +
+             '<span class="p">' + (neg ? "—" : pct.toFixed(1) + "%") + '</span></div>';
+      });
+      if (filas.some(x => x.valor < 0)) {
+        h += '<div class="nota-pie">Carbón en negativo es consumo propio de las centrales: ' +
+             'la generación neta puede ser menor que cero cuando el grupo está arrancando.</div>';
+      }
+    } else {
+      h += '<div class="barra">No se pudo cargar la generación del día.</div>';
+    }
+
+    if (p && p.series) {
+      h += '<div class="sis-sec">Previsión (ESIOS)</div><div class="prev">';
+      const series = [["prevision_demanda", "Demanda prevista", "MW"],
+                      ["prevision_eolica", "Eólica prevista", "MW"]];
+      series.forEach(([clave, titulo, uni]) => {
+        const ss = p.series[clave];
+        if (!ss || !ss.valores || !ss.valores.length) return;
+        const hoy = new Date().toISOString().slice(0, 10);
+        const vals = ss.valores.slice(-96);       // últimas 24 h en cuartos de hora
+        const max = Math.max(...vals.map(v => v.v || 0), 1);
+        const barras = vals.map(v =>
+          '<i style="height:' + Math.max(2, ((v.v || 0) / max) * 52) + 'px" title="' +
+          (v.t || "").slice(11, 16) + " · " + nf(v.v) + " " + uni + '"></i>').join("");
+        const ultimo = vals[vals.length - 1];
+        const ini = (vals[0].t || "").slice(11, 16), fin = (ultimo.t || "").slice(11, 16);
+        const pico = Math.max(...vals.map(v => v.v || 0));
+        h += '<div class="caja"><div class="t">' + titulo + '</div>' +
+             '<div class="spark">' + barras + '</div>' +
+             '<div class="rango"><span>' + ini + '</span><span>máx ' + nf(Math.round(pico)) + '</span><span>' + fin + '</span></div>' +
+             '<div class="m">' + nf(ultimo.v) + ' <small>' + uni + ' · último dato</small></div></div>';
+      });
+      h += "</div>";
+    }
+    $("#sis-barras").innerHTML = h;
+    $("#sis-nota").innerHTML = "Generación: REE apidatos (agregado diario, API pública). " +
+      "Previsión: ESIOS (indicadores 460 y 541). " +
+      "Por planta y previsión por unidad requieren ENTSO-E.";
+  });
 }
 $("#btn-estado").addEventListener("click", () => { pintarSis(); $("#velo2").classList.add("on"); });
 $("#cerrar-sis").addEventListener("click", () => $("#velo2").classList.remove("on"));
 $("#velo2").addEventListener("click", e => { if (e.target.id === "velo2") $("#velo2").classList.remove("on"); });
+
+/* ---------------- trenes en tiempo real ---------------- */
+$("#btn-trenes").addEventListener("click", () => {
+  const chk = document.querySelector('[data-capa="trenes"]');
+  if (!chk.checked) { chk.checked = true; cargar(CAPAS.find(x => x.id === "trenes")); capas["trenes"].addTo(mapa); }
+  else { mapa.removeLayer(capas["trenes"]); chk.checked = false; }
+  estado();
+});
 
 /* ---------------- opacidad global ---------------- */
 $("#op").addEventListener("input", e => {

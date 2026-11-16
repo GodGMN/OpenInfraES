@@ -82,10 +82,82 @@ Si necesitas tensión real por nudo, no hay atajo: se pide a REE o se mide.
 | **datos.gob.es** | catálogo CKAN: miles de datasets, muchos con API | sí |
 | **OpenStreetMap / Overpass** | infraestructura georreferenciada | sí, en uso |
 
-## 5. Qué pediría primero, por orden de valor
 
-1. **ENTSO-E** — es el único que da generación y previsión **por unidad**. Token por formulario, 10 min.
-2. **ESIOS** — precios y servicios de ajuste con el detalle que no da apidatos. Un correo.
-3. **AEMET** — para cruzar previsión meteorológica con producción renovable.
+## 6. ESIOS con token — lo que sí da (probado)
+
+Con token personal (guardado en `.env`, **nunca en el repo**), `api.esios.ree.es` responde y el
+catálogo tiene **1.982 indicadores**. Lo que sale:
+
+| Pregunta | Respuesta | Indicador |
+|---|---|---|
+| ¿Hay previsión? | **sí**, demanda y eólica peninsulares | **460** (diaria), **541** (eólica) |
+| ¿Hay generación por central? | **no**; solo «demanda en barras de central» | 1192 |
+| ¿Hay tensión de red en kV? | **no**. Los «niveles de tensión» son **tarifarios** (E0, E1, E2… peajes) | 1200-1205 |
+| ¿Hay caudal o aforo? | **no** | — |
+
+La consulta usa la cabecera `x-api-key` y devuelve cuartos de hora:
+
+```bash
+curl -H "x-api-key: $ESIOS_TOKEN"   "https://api.esios.ree.es/indicators/460?start_date=2026-11-15T00:00&end_date=2026-11-16T23:59"
+```
+
+**Conclusión:** ESIOS resuelve la previsión (`scripts/esios_prevision.py`). Para **por planta** sigue
+haciendo falta ENTSO-E. Para **tensión por nudo no hay nada**, ni con token.
+
+## 7. Renfe GTFS-Realtime — trenes en vivo, sin clave
+
+Tres feeds abiertos en `https://gtfsrt.renfe.com/`:
+
+| Fichero | Contenido | Medido |
+|---|---|---|
+| `vehicle_positions.pb` | posición de cada tren | **418 trenes** |
+| `trip_updates.pb` | retrasos y cambios de hora | 30 KB |
+| `alerts.pb` | incidencias de servicio | **98 alertas** |
+
+Formato **GTFS-Realtime** (Protocol Buffers), no JSON. Se lee con `gtfs-realtime-bindings`:
+
+```python
+from google.transit import gtfs_realtime_pb2 as pb
+feed = pb.FeedMessage(); feed.ParseFromString(open("vehicle_positions.pb","rb").read())
+```
+
+Dos trampas medidas: **`route_id` viene vacío** (la ruta está en la etiqueta, `C1-23551` → `C1`), y las
+alertas tienen `header_text` vacío aunque `description_text` sí trae el aviso.
+
+`scripts/trenes.py` descarga los tres y genera `datos/trenes.geojson`. Es una **instantánea**: el feed
+cambia cada minuto y el visor no se refresca solo.
+
+## 8. IDEE — el catálogo de todo lo geográfico de España
+
+**<https://www.idee.es>** es la Infraestructura de Datos Espaciales de España (CNIG). No es una API de
+datos: es un **catálogo de metadatos** con un CSW (Catalogue Service for the Web) y el registro de
+servicios INSPIRE.
+
+| Qué ofrece | Cómo |
+|---|---|
+| Catálogo CSW de fichas de datos | `https://www.idee.es/csw-codsi-idee/srv/spa/csw` (GetCapabilities responde) |
+| Servicios WMS/WMTS/WFS por tema | enlazados desde cada ficha |
+| Teselas de cartografía base | **son las del IGN que ya usa el visor** (`ign.es/wmts/ign-base`) |
+| Visor IDEE | para descubrir capas a mano |
+
+Lo que aporta de verdad a Prometeo: **es el índice** para encontrar la capa oficial de cualquier cosa
+(hidrografía, riesgo, ocupación del suelo, límites) y saber qué organismo la publica. El CSW exige un
+`GetRecords` con XML bien formado; en la prueba devolvió respuesta vacía con un filtro `AnyText`, así
+que la vía práctica es el visor y las fichas, no automatizar el CSW.
+
+## 9. AEMET — requiere clave, sin ella no hay avisos
+
+`opendata.aemet.es` devuelve **404 HTML** en todos los endpoints sin token, incluido
+`avisos_cap/ultimoelaborado/espana`. El alta es gratuita (registro con email) y da una clave por
+usuario. Sin ella, las alertas meteorológicas no se pueden automatizar: habría que leer el HTML de
+avisos, y eso sí se rompe solo.
+
+Pedirla es el paso pendiente para tener **alertas AEMET** en el mapa.
+
+## 10. Qué pediría primero, por orden de valor
+
+1. **ENTSO-E** — sigue siendo el único que da generación y previsión **por unidad**. 10 minutos.
+2. **AEMET** — el único bloqueo que queda para alertas meteorológicas. Registro gratuito.
+3. **IDEE** — no necesita clave: es para descubrir qué capa oficial existe antes de inventarla.
 
 Los tres son gratuitos. Ninguno se pide con tarjeta.
