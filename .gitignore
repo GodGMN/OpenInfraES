@@ -12,4 +12,7 @@ venv/
 # Temporales
 *.log
 *.tmp
-datos/_v1.png
+datos/_*.png
+datos/_*.svg
+*.json.tmp
+ine_ops.json
