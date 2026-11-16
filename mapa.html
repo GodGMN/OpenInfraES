@@ -45,6 +45,16 @@
   #hud::before { content:""; position:absolute; top:-1px; left:16px; right:16px; height:1px;
     background:linear-gradient(90deg,transparent,var(--borde-fuerte),transparent); }
   #cabeza { padding:15px 16px 12px; border-bottom:1px solid var(--borde); }
+  /* barra de acciones propia: fuera de la cabecera para no pisar el titulo */
+  #acciones { display:grid; grid-template-columns:repeat(5,1fr); gap:5px;
+    padding:9px 12px; border-bottom:1px solid var(--borde); }
+  #acciones button { display:flex; flex-direction:column; align-items:center; gap:3px;
+    border:1px solid var(--borde); background:transparent; color:var(--suave); border-radius:2px;
+    padding:6px 2px 5px; cursor:pointer; transition:.15s; font-family:var(--mono);
+    font-size:8.6px; letter-spacing:.06em; text-transform:uppercase; line-height:1.1; }
+  #acciones button b { font-size:14px; font-family:inherit; font-weight:400; line-height:1; }
+  #acciones button:hover { color:var(--cian); border-color:var(--borde-fuerte); background:rgba(34,211,238,.07); }
+  #acciones button.on { color:var(--fondo); background:var(--cian); border-color:var(--cian); }
   .marca { display:flex; align-items:center; gap:9px; }
   .punto-vivo { width:6px; height:6px; border-radius:50%; background:var(--cian);
     box-shadow:0 0 0 3px rgba(34,211,238,.15); animation:latido 2.6s ease-in-out infinite; }
@@ -53,14 +63,10 @@
     text-transform:uppercase; }
   #cabeza .sub { color:var(--suave); font-size:10.8px; letter-spacing:.06em; margin-top:6px;
     font-family:var(--mono); text-transform:uppercase; }
-  .acciones-hud { position:absolute; top:14px; right:14px; display:flex; gap:4px; }
   #btn-tema { width:26px; height:26px;
     border:1px solid var(--borde); background:transparent; color:var(--suave); border-radius:2px;
     cursor:pointer; font-size:12px; display:grid; place-items:center; transition:.15s; }
-  #btn-tema:hover, #btn-fuentes:hover, #btn-enlace:hover, #btn-estado:hover, #btn-trenes:hover { color:var(--cian); border-color:var(--borde-fuerte); }
-  #btn-fuentes, #btn-enlace, #btn-estado, #btn-trenes { width:26px; height:26px; border:1px solid var(--borde);
-    background:transparent; color:var(--suave); border-radius:2px; cursor:pointer; font-size:12px;
-    display:grid; place-items:center; }
+
 
   #presets { display:flex; flex-wrap:wrap; gap:4px; padding:9px 15px 0; }
   #presets button { flex:1 1 auto; min-width:0; border:1px solid var(--borde); background:transparent;
@@ -256,13 +262,14 @@
   <div id="cabeza">
     <div class="marca"><span class="punto-vivo"></span><h1>Infraestructura España</h1></div>
     <div class="sub" id="sub-hud">—</div>
-    <div class="acciones-hud">
-      <button id="btn-trenes" title="Trenes en tiempo real (Renfe GTFS-RT)">🚆</button>
-      <button id="btn-estado" title="Generación del día y previsión">⚡</button>
-      <button id="btn-fuentes" title="Fuentes y fecha de los datos">ⓘ</button>
-      <button id="btn-enlace" title="Copiar enlace a esta vista">⧉</button>
-      <button id="btn-tema" title="Cambiar tema">◐</button>
-    </div>
+
+  </div>
+  <div id="acciones">
+    <button id="btn-estado" title="Generación del día y previsión"><b>⚡</b>Datos</button>
+    <button id="btn-trenes" title="Trenes en tiempo real"><b>🚆</b>Trenes</button>
+    <button id="btn-fuentes" title="Fuentes y fecha de los datos"><b>ⓘ</b>Fuentes</button>
+    <button id="btn-enlace" title="Copiar enlace a esta vista"><b>⧉</b>Enlace</button>
+    <button id="btn-tema" title="Cambiar tema"><b>◐</b>Tema</button>
   </div>
   <div id="buscar"><input id="q" type="search" placeholder="Buscar instalación…" autocomplete="off"></div>
   <div id="resultados"></div>
@@ -421,10 +428,10 @@ const CAPAS = [
     fichero:"datos/simplificado/lineas_hv.geojson", peso:2.8, opacidad:.96,
     filtro:f => f.properties.voltage === 400000 },
   { id:"l220", grupo:"Red eléctrica", label:"Líneas 220 kV", tipo:"linea", on:true, color:"#3b82f6",
-    fichero:"datos/simplificado/lineas_hv.geojson", peso:1.6, opacidad:.85,
+    fichero:"datos/simplificado/lineas_hv.geojson", peso:1.6, opacidad:.85, zoomMin:6.2,
     filtro:f => f.properties.voltage === 220000 },
   { id:"subestaciones", grupo:"Red eléctrica", label:"Subestaciones", tipo:"poligono", on:false, color:"#14e0c8",
-    fichero:"datos/simplificado/red-electrica.geojson", peso:1, atlas:"red-electrica",
+    fichero:"datos/simplificado/red-electrica.geojson", peso:1, atlas:"red-electrica", zoomMin:8,
     filtro:f => f.properties.categoria === "subestacion" },
   { id:"interelec", grupo:"Red eléctrica", label:"Interconexiones", tipo:"punto", on:false,
     color:"#e879f9", fichero:"datos/atlas/electricidad-interconexiones.geojson", radio:7,
@@ -463,7 +470,7 @@ const CAPAS = [
     fichero:"datos/simplificado/trasvases-union.geojson", peso:3.4, opacidad:.98,
     filtro:f => /trasvase|postrasvase/i.test(f.properties.name || "") },
   { id:"canales", grupo:"Agua", label:"Canales y acequias", tipo:"linea", on:false, color:"#38bdf8",
-    fichero:"datos/simplificado/agua-conducciones.geojson", peso:1.1, opacidad:.5,
+    fichero:"datos/simplificado/agua-conducciones.geojson", peso:1.1, opacidad:.5, zoomMin:9,
     filtro:f => !/trasvase|postrasvase/i.test(f.properties.name || "") },
   { id:"rios", grupo:"Agua", label:"Ríos (caudal en vivo)", tipo:"linea", on:false, color:"#7dd3fc",
     fichero:"datos/simplificado/rios.geojson", peso:1.6, opacidad:.8, apiCaudal:true },
@@ -471,15 +478,17 @@ const CAPAS = [
     fichero:"datos/atlas/hidrogeno-produccion.geojson", radio:6, atlas:"hidrogeno-produccion" },
 
   { id:"carreteras", grupo:"Transporte", label:"Carreteras del Estado", tipo:"linea", on:false, color:"#64748b",
-    fichero:"datos/hermes/carreteras.geojson", peso:1.1, opacidad:.6 },
+    fichero:"datos/hermes/carreteras.geojson", peso:1.1, opacidad:.6, zoomMin:7.5 },
   { id:"puertos", grupo:"Transporte", label:"Puertos interés general", tipo:"punto", on:false, color:"#38bdf8",
     fichero:"datos/hermes/puertos-interes-general.geojson", radio:7 },
   { id:"terminales-puerto", grupo:"Transporte", label:"Terminales portuarias", tipo:"poligono", on:false,
-    color:"#3b82f6", fichero:"datos/hermes/terminales-portuarias.geojson", peso:1 },
+    color:"#3b82f6", fichero:"datos/hermes/terminales-portuarias.geojson", peso:1, zoomMin:9 },
   { id:"terminales-aero", grupo:"Transporte", label:"Terminales aeropuerto", tipo:"poligono", on:false,
-    color:"#a78bfa", fichero:"datos/hermes/terminales-aeropuerto.geojson", peso:1 },
+    color:"#a78bfa", fichero:"datos/hermes/terminales-aeropuerto.geojson", peso:1, zoomMin:9 },
   { id:"intermodales", grupo:"Transporte", label:"Terminales mercancías", tipo:"punto", on:false,
     color:"#f59e0b", fichero:"datos/hermes/terminales-mercancias.geojson", radio:5 },
+  { id:"estaciones-cercanias", grupo:"Tiempo real", label:"Estaciones Cercanías", tipo:"punto", on:false,
+    color:"#a78bfa", fichero:"datos/estaciones-cercanias.geojson", radio:4.5, zoomMin:8 },
   { id:"trenes", grupo:"Tiempo real", label:"Trenes (GTFS-RT)", tipo:"punto", on:false, color:"#f43f5e",
     fichero:"datos/trenes.geojson", radio:4.5, siempreIndividual:true, modoTren:true },
   { id:"estaciones-gas", grupo:"Transporte", label:"Estaciones GNL/GNC/H₂", tipo:"punto", on:false,
@@ -642,6 +651,7 @@ function cargar(c) {
       conteo[c.id] = feats.length;
       const el = document.getElementById("n-" + c.id);
       if (el) el.textContent = nf(feats.length);
+      if (c.zoomMin) aplicarZoomMin();
       document.querySelector('[data-fila="' + c.id + '"]').classList.add("activa");
 
       // indice para el buscador: nombre + coordenadas
@@ -726,6 +736,20 @@ mapa.on("zoomend", () => {
   }, 160);
 });
 
+/* ---------------- capas por nivel de zoom ----------------
+   A escala nacional una capa de 3.000 líneas no aporta y cuesta un redibujado entero.
+   Por debajo de su zoomMin se retira del mapa (sigue cargada: no vuelve a descargarse). */
+function aplicarZoomMin() {
+  const z = mapa.getZoom();
+  CAPAS.forEach(c => {
+    if (!c.zoomMin || !c.__cargada) return;
+    const chk = document.querySelector(`[data-capa="${c.id}"]`);
+    if (!chk || !chk.checked) return;
+    if (z >= c.zoomMin) { if (!mapa.hasLayer(capas[c.id])) capas[c.id].addTo(mapa); }
+    else if (mapa.hasLayer(capas[c.id])) mapa.removeLayer(capas[c.id]);
+  });
+}
+
 /* ---------------- estado ---------------- */
 function estado() {
   $("#s-zoom").textContent = mapa.getZoom().toFixed(2).replace(/\.00$/, "");
@@ -736,6 +760,7 @@ function estado() {
   $("#sub-hud").textContent = (BASES[sel.value] ? BASES[sel.value][0] : "") + " · " + nf(n) + " objetos";
 }
 mapa.on("zoomend moveend", estado);
+mapa.on("zoomend", aplicarZoomMin);
 mapa.on("mousemove", e => {
   $("#s-coord").textContent = e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4);
 });

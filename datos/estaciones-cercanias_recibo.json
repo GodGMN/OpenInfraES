@@ -1,0 +1,52 @@
+{
+ "features": 405,
+ "nucleos": [
+  {
+   "nucleo": "asturias",
+   "estaciones": 43
+  },
+  {
+   "nucleo": "bilbao",
+   "estaciones": 44
+  },
+  {
+   "nucleo": "cadiz",
+   "estaciones": 14
+  },
+  {
+   "nucleo": "madrid",
+   "estaciones": 93
+  },
+  {
+   "nucleo": "malaga",
+   "estaciones": 23
+  },
+  {
+   "nucleo": "murcia-alicante",
+   "estaciones": 26
+  },
+  {
+   "nucleo": "san-sebastian",
+   "estaciones": 30
+  },
+  {
+   "nucleo": "santander",
+   "estaciones": 27
+  },
+  {
+   "nucleo": "sevilla",
+   "estaciones": 33
+  },
+  {
+   "nucleo": "valencia",
+   "estaciones": 66
+  },
+  {
+   "nucleo": "zaragoza",
+   "estaciones": 6
+  }
+ ],
+ "sin_coordenada": 0,
+ "fuente": "data.renfe.com (CKAN abierto)",
+ "fichero": "estaciones-cercanias.geojson"
+}

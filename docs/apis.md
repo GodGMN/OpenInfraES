@@ -154,7 +154,45 @@ avisos, y eso sí se rompe solo.
 
 Pedirla es el paso pendiente para tener **alertas AEMET** en el mapa.
 
-## 10. Qué pediría primero, por orden de valor
+
+## 10. NAP de transporte y data.renfe.com
+
+**NAP** (`nap.transportes.gob.es`) es el punto de acceso nacional de datos de transporte: GTFS,
+DATEX II, aparcamientos, bicicleta pública. **Su API exige clave**: el catálogo CKAN responde
+literalmente `Api Key was not provided` (401). Se pide por registro en el propio portal.
+
+**data.renfe.com sí es abierto** y es CKAN puro, sin clave:
+
+```bash
+curl "https://data.renfe.com/api/3/action/package_list"
+curl "https://data.renfe.com/api/3/action/package_show?id=estaciones-cercanias-madrid"
+```
+
+Publica un paquete `estaciones-cercanias-<núcleo>` por núcleo, cada uno con un CSV de lat/lon.
+`scripts/estaciones_cercanias.py` los unifica:
+
+| Núcleo | Estaciones |
+|---|---:|
+| Madrid | 93 |
+| Valencia | 66 |
+| Bilbao | 44 |
+| Asturias | 43 |
+| Sevilla | 33 |
+| San Sebastián | 30 |
+| Santander | 27 |
+| Murcia-Alicante | 26 |
+| Málaga | 23 |
+| Cádiz | 14 |
+| Zaragoza | 6 |
+| **Total** | **405** |
+
+Trampas medidas: el separador del CSV cambia (`;` o `,`) según el fichero, y los paquetes usan
+`utf-8-sig` (con BOM). Sin eso, la primera columna se llama `﻿Nombre` y no encuentra el campo.
+
+**Sobre «sin sobrecargar la web»:** las 405 estaciones se descargan en 90 KB y solo al encender la
+capa. Con `zoomMin: 8` tampoco se dibujan a escala nacional.
+
+## 11. Qué pediría primero, por orden de valor
 
 1. **ENTSO-E** — sigue siendo el único que da generación y previsión **por unidad**. 10 minutos.
 2. **AEMET** — el único bloqueo que queda para alertas meteorológicas. Registro gratuito.
