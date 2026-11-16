@@ -103,7 +103,9 @@ ORGANISMOS = {
     "edar": "OSM", "etap": "OSM", "trasvases": "OSM / confederaciones",
     "canales": "OSM / confederaciones", "rios": "OSM + Open-Meteo (GloFAS)",
     "agua-conducciones": "OSM", "sismos": "EMSC-CSEM", "trenes": "Renfe",
-    "estaciones-cercanias": "Renfe", "carburantes": "MITECO",
+    "estaciones-cercanias": "Renfe", "carburantes": "MITECO", "demarcaciones": "MITECO",
+    "eolicos": "MITECO", "solares": "MITECO", "residuos": "ENRESA",
+    "petrolifero": "CORES", "h2red": "MITECO",
 }
 
 

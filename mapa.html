@@ -46,7 +46,7 @@
     background:linear-gradient(90deg,transparent,var(--borde-fuerte),transparent); }
   #cabeza { padding:15px 16px 12px; border-bottom:1px solid var(--borde); }
   /* barra de acciones propia: fuera de la cabecera para no pisar el titulo */
-  #acciones { display:grid; grid-template-columns:repeat(5,1fr); gap:5px;
+  #acciones { display:grid; grid-template-columns:repeat(6,1fr); gap:5px;
     padding:9px 12px; border-bottom:1px solid var(--borde); }
   #acciones button { display:flex; flex-direction:column; align-items:center; gap:3px;
     border:1px solid var(--borde); background:transparent; color:var(--suave); border-radius:2px;
@@ -169,21 +169,21 @@
   #velo { position:fixed; inset:0; z-index:2000; background:rgba(3,6,10,.78); display:none;
     align-items:center; justify-content:center; padding:24px; }
   #velo.on { display:flex; }
-  #fuentes { width:min(980px,100%); max-height:86vh; overflow:auto; background:var(--panel-solido);
+  #fuentes, #proyecto { width:min(980px,100%); max-height:86vh; overflow:auto; background:var(--panel-solido);
     border:1px solid var(--borde-fuerte); border-radius:3px; padding:20px 22px;
     box-shadow:0 30px 90px rgba(0,0,0,.7); }
-  #fuentes h2 { margin:0 0 3px; font-size:15px; letter-spacing:.1em; text-transform:uppercase; }
-  #fuentes .nota { color:var(--suave); font-size:11.6px; margin-bottom:14px; line-height:1.5; }
-  #fuentes table { width:100%; border-collapse:collapse; font-size:11.6px; }
-  #fuentes th { text-align:left; font-family:var(--mono); font-size:9.6px; letter-spacing:.14em;
+  #fuentes, #proyecto h2 { margin:0 0 3px; font-size:15px; letter-spacing:.1em; text-transform:uppercase; }
+  #fuentes, #proyecto .nota { color:var(--suave); font-size:11.6px; margin-bottom:14px; line-height:1.5; }
+  #fuentes, #proyecto table { width:100%; border-collapse:collapse; font-size:11.6px; }
+  #fuentes, #proyecto th { text-align:left; font-family:var(--mono); font-size:9.6px; letter-spacing:.14em;
     text-transform:uppercase; color:var(--tenue); border-bottom:1px solid var(--borde-fuerte);
     padding:0 8px 6px 0; position:sticky; top:0; background:var(--panel-solido); }
-  #fuentes td { padding:6px 8px 6px 0; border-bottom:1px solid var(--borde); vertical-align:top; }
+  #fuentes, #proyecto td { padding:6px 8px 6px 0; border-bottom:1px solid var(--borde); vertical-align:top; }
   #fuentes td.c { font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right; }
-  #fuentes a { color:var(--cian); text-decoration:none; }
-  #fuentes .cerrar { float:right; background:transparent; border:1px solid var(--borde);
+  #fuentes, #proyecto a { color:var(--cian); text-decoration:none; }
+  #fuentes, #proyecto .cerrar { float:right; background:transparent; border:1px solid var(--borde);
     color:var(--suave); border-radius:2px; width:26px; height:26px; cursor:pointer; }
-  #fuentes .cerrar:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+  #fuentes .cerrar:hover, #proyecto .cerrar:hover { color:var(--cian); border-color:var(--borde-fuerte); }
   #fuentes .lic { font-family:var(--mono); font-size:10px; color:var(--suave); }
   #fuentes tbody tr.fila-f { cursor:pointer; }
   #fuentes tbody tr.fila-f:hover { background:rgba(34,211,238,.06); }
@@ -260,6 +260,28 @@
   .vivo-fila b { display:block; font-size:15px; color:#22d3ee; font-variant-numeric:tabular-nums; }
   .vivo-fila i { display:block; font-size:9.5px; font-style:normal; opacity:.6; margin-top:2px;
     text-transform:uppercase; letter-spacing:.04em; }
+
+  /* --- panel de proyecto --- */
+  #proyecto { width:min(860px,100%); }
+  #proyecto .entrada { font-size:13px; line-height:1.7; color:var(--tinta);
+    border-left:2px solid var(--cian); padding-left:12px; margin:0 0 16px; }
+  #proyecto .cifras { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:0 0 18px; }
+  #proyecto .cifra { background:rgba(34,211,238,.06); border:1px solid rgba(34,211,238,.18);
+    border-radius:3px; padding:9px 10px; }
+  #proyecto .cifra b { display:block; font-size:17px; color:var(--cian);
+    font-variant-numeric:tabular-nums; line-height:1.1; }
+  #proyecto .cifra span { display:block; font-size:9.6px; color:var(--tenue);
+    text-transform:uppercase; letter-spacing:.06em; margin-top:3px; line-height:1.3; }
+  #proyecto h3 { font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--tenue); margin:20px 0 8px; font-weight:400; }
+  #proyecto ul { margin:0 0 14px; padding-left:16px; font-size:12px; line-height:1.65; color:var(--suave); }
+  #proyecto li { margin-bottom:5px; }
+  #proyecto li b, #proyecto p b { color:var(--tinta); }
+  #proyecto .organismos { display:flex; flex-wrap:wrap; gap:5px; margin:0 0 16px; }
+  #proyecto .org { font-family:var(--mono); font-size:10px; padding:3px 7px;
+    border:1px solid var(--borde-fuerte); border-radius:2px; color:var(--suave); }
+  #proyecto .pie-proy { margin-top:18px; padding-top:12px; border-top:1px solid var(--borde);
+    font-size:10.6px; color:var(--tenue); line-height:1.6; }
 </style>
 </head>
 <body>
@@ -276,6 +298,7 @@
     <button id="btn-trenes" title="Trenes en tiempo real"><b>🚆</b>Trenes</button>
     <button id="btn-fuentes" title="Fuentes y fecha de los datos"><b>ⓘ</b>Fuentes</button>
     <button id="btn-enlace" title="Copiar enlace a esta vista"><b>⧉</b>Enlace</button>
+    <button id="btn-proyecto" title="Qué es este proyecto y de dónde sale cada dato"><b>◈</b>Proyecto</button>
     <button id="btn-tema" title="Cambiar tema"><b>◐</b>Tema</button>
   </div>
   <div id="buscar"><input id="q" type="search" placeholder="Buscar instalación…" autocomplete="off"></div>
@@ -305,6 +328,72 @@
   <h2>Sistema eléctrico</h2>
   <div class="nota" id="sis-nota">Cargando…</div>
   <div id="sis-barras"></div>
+</div></div>
+
+<div id="velo3"><div id="proyecto">
+  <button class="cerrar" id="cerrar-proyecto">×</button>
+  <h2>Qué es esto</h2>
+
+  <p class="entrada">Una <b>base de datos de la infraestructura española</b> y el mapa para mirarla.
+  No es un visor con datos dentro: es el dato ordenado para poder volver a usarlo. Cada capa sabe de qué
+  organismo sale, de cuándo es y qué licencia tiene. Eso es lo que la hace reutilizable en cualquier otro
+  proyecto sin repetir el trabajo.</p>
+
+  <div class="cifras">
+    <div class="cifra"><b id="n-capas">—</b><span>capas</span></div>
+    <div class="cifra"><b id="n-obj">—</b><span>objetos</span></div>
+    <div class="cifra"><b>25</b><span>demarcaciones</span></div>
+    <div class="cifra"><b>10</b><span>organismos</span></div>
+  </div>
+
+  <h3>Qué se puede consultar</h3>
+  <ul>
+    <li><b>Energía</b> — red de 400 y 220 kV, 657 recintos de subestación, 7 reactores nucleares,
+    678 gasoductos, 7 regasificadoras, 5 almacenamientos, 10 refinerías, eólica y fotovoltaica.</li>
+    <li><b>Agua</b> — 402 embalses con capacidad y volumen del parte semanal, 28 desaladoras,
+    3.034 depuradoras, 1.551 potabilizadoras, 11 trazos de trasvase, 10.777 canales y 260 ríos con
+    caudal en vivo, dentro de sus <b>25 demarcaciones hidrográficas</b>.</li>
+    <li><b>Transporte</b> — 1.602 carreteras, 45 puertos, 440 terminales portuarias, 383 nodos de
+    mercancías, 405 estaciones de Cercanías y 418 trenes en circulación.</li>
+    <li><b>Sistema eléctrico</b> — demanda, mix de generación, emisiones, intercambios internacionales y
+    bombeo cada 5 minutos; el agregado del día y la previsión.</li>
+    <li><b>Riesgo</b> — sismos de la última semana y precios de 11.433 carburantes.</li>
+  </ul>
+
+  <h3>De dónde sale cada dato</h3>
+  <p class="nota">Solo se cita al organismo que produce el dato. No hay agregadores en la cadena.</p>
+  <div class="organismos">
+    <span class="org">MITECO</span><span class="org">IGN</span><span class="org">REE</span>
+    <span class="org">MITMA</span><span class="org">Enagás</span><span class="org">CORES</span>
+    <span class="org">CSN</span><span class="org">Renfe</span><span class="org">EMSC-CSEM</span>
+    <span class="org">OpenStreetMap</span>
+  </div>
+
+  <h3>Cómo crece</h3>
+  <ul>
+    <li><b>Fichas que se rellenan solas.</b> Una presa no es solo capacidad y volumen: falta el año de
+    construcción, quién la promovió, su expediente y el enlace a su confederación. Eso lo completa un
+    agente, campo a campo, y <b>cada valor declara su procedencia</b>.</li>
+    <li><b>Un hueco declarado vale más que un número inventado.</b> Si falta el año de una presa, se deja
+    vacío con su nota. Rellenarlo con una estimación plausible arruina la base entera.</li>
+    <li><b>Nada se escribe a mano.</b> Todo entra por un script o por una ficha con su fuente. Si se
+    escribe a mano, no se puede regenerar y el repositorio se pudre.</li>
+  </ul>
+
+  <h3>Las reglas</h3>
+  <ul>
+    <li>El dato y su fecha viajan juntos: <b>una cifra sin periodo no es un dato</b>.</li>
+    <li>Lo que el dato no permite se declara: el Tajo-Segura solo llega a Alarcón porque el resto no está
+    mapeado; el caudal de los ríos es <b>modelado</b>, no aforado.</li>
+    <li>Licencia por capa, y aviso cuando mezclar ODbL con CC BY obliga a compartir igual.</li>
+  </ul>
+
+  <div class="pie-proy">
+    El detalle de cada organismo —qué publica, su URL, cómo se obtiene, licencia y limitaciones— está en
+    el botón <b>ⓘ Fuentes</b>. El proyecto completo, con el estudio de cada fuente, vive en el repositorio
+    privado <b>Ntizar/OpenInfraES</b>.<br>
+    Hecho con ❤️ por David Antizar.
+  </div>
 </div></div>
 
 <div id="estado">
@@ -455,6 +544,15 @@ const CAPAS = [
   { id:"hidro", grupo:"Generación", label:"Hidráulicas", tipo:"punto", on:true, color:"#22d3ee",
     fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw", radioMin:2.6, radioMax:9, opacidad:.62,
     filtro:f => ["hydro","pumped_hydro"].includes(f.properties.technology_normalized) },
+  { id:"eolicos", grupo:"Generación", label:"Parques eólicos", tipo:"poligono", on:false,
+    color:"#5eead4", fichero:"datos/simplificado/parques-eolicos.geojson", opacidad:.22,
+    peso:1, zoomMin:7, popupTitulo:"nombre", etiqueta:"nombre" },
+  { id:"solares", grupo:"Generación", label:"Plantas solares", tipo:"poligono", on:false,
+    color:"#fbbf24", fichero:"datos/simplificado/plantas-solares.geojson", opacidad:.22,
+    peso:1, zoomMin:7, popupTitulo:"nombre", etiqueta:"nombre" },
+  { id:"residuos", grupo:"Generación", label:"Residuos radiactivos", tipo:"punto", on:false,
+    color:"#f472b6", fichero:"datos/simplificado/residuos-radiactivos.geojson", radio:6,
+    siempreIndividual:true, popupTitulo:"nombre" },
   { id:"nuclear", grupo:"Generación", label:"Nucleares", tipo:"punto", on:true, color:"#c084fc",
     fichero:"datos/oficial/nuclear.geojson", radio:9, siempreIndividual:true },
   { id:"gasgen", grupo:"Generación", label:"Ciclos combinados", tipo:"punto", on:false, color:"#a78bfa",
@@ -466,6 +564,12 @@ const CAPAS = [
 
   { id:"gasoductos", grupo:"Gas", label:"Gasoductos", tipo:"linea", on:true, color:"#fbbf24",
     fichero:"datos/simplificado/gasoductos.geojson", peso:1.7, opacidad:.85 },
+  { id:"petrolifero", grupo:"Gas", label:"Almacenamiento petrolífero", tipo:"punto", on:false,
+    color:"#94a3b8", fichero:"datos/simplificado/almacenamiento-petrolifero.geojson", radio:5,
+    siempreIndividual:true, popupTitulo:"nombre" },
+  { id:"h2red", grupo:"Gas", label:"Red de hidrógeno", tipo:"linea", on:false,
+    color:"#a78bfa", fichero:"datos/simplificado/hidrogeno-red.geojson", peso:2.4,
+    popupTitulo:"nombre" },
   { id:"regas", grupo:"Gas", label:"Regasificadoras", tipo:"punto", on:true, color:"#fb923c",
     fichero:"datos/oficial/gas-regasificacion.geojson", radio:7, siempreIndividual:true },
   { id:"gasalm", grupo:"Gas", label:"Almacenamiento", tipo:"punto", on:false, color:"#d97706",
@@ -475,6 +579,9 @@ const CAPAS = [
 
   { id:"embalses", grupo:"Agua", label:"Embalses", tipo:"punto", on:true, color:"#60a5fa",
     fichero:"datos/simplificado/agua-embalsada.geojson", radio:2.4, opacidad:.45 },
+  { id:"demarcaciones", grupo:"Agua", label:"Demarcaciones hidrográficas", tipo:"poligono", on:false,
+    color:"#0ea5e9", fichero:"datos/demarcaciones.geojson", opacidad:.10, peso:1.2, zoomMin:0,
+    popupTitulo:"nom_demar", etiqueta:"nom_demar" },
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
     fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
   { id:"edar", grupo:"Agua", label:"EDAR (depuradoras)", tipo:"punto", on:false, color:"#a3e635",
@@ -711,7 +818,7 @@ function cargar(c) {
         }
         L.geoJSON({ type:"FeatureCollection", features:feats }, {
           style: () => ({ color:c.color, weight:c.peso || 1.2, opacity:c.opacidad || .8,
-                          fillColor:c.color, fillOpacity:(c.tipo === "poligono" ? .3 : .12) }),
+                          fillColor:c.color, fillOpacity:(c.tipo === "poligono" ? (c.opacidad || .3) : .12) }),
           onEachFeature: (f, layer) => {
             elementos[c.id].push(layer);
             layer.on("click", e => { abrirFicha(f.properties, c, e.latlng); L.DomEvent.stopPropagation(e); });
@@ -731,16 +838,39 @@ CAPAS.forEach(c => { if (c.on) { capas[c.id].addTo(mapa); cargar(c); } });
 document.querySelectorAll("[data-capa]").forEach(chk => {
   chk.addEventListener("change", e => {
     const id = e.target.dataset.capa;
-    if (e.target.checked) { cargar(CAPAS.find(x => x.id === id)); capas[id].addTo(mapa); }
+    if (e.target.checked) {
+      const c = CAPAS.find(x => x.id === id);
+      cargar(c);
+      if (mapa.getZoom() >= (c.zoomMin || 0)) capas[id].addTo(mapa);
+    }
     else mapa.removeLayer(capas[id]);
     estado();
   });
 });
 
+
+/* ---------------- LOD: cada capa aparece a partir de su zoom ----------------
+   `zoomMin` estaba declarado en CAPAS y no se aplicaba en ningun sitio: con 36 capas
+   a zoom nacional se dibujaban 10.000 objetos y el mapa era ilegible. */
+function aplicarLOD() {
+  const z = mapa.getZoom();
+  CAPAS.forEach(c => {
+    const chk = document.querySelector(`[data-capa="${c.id}"]`);
+    if (!chk || !chk.checked) return;
+    const debe = z >= (c.zoomMin || 0);
+    const puesta = mapa.hasLayer(capas[c.id]);
+    if (debe && !puesta) capas[c.id].addTo(mapa);
+    else if (!debe && puesta) mapa.removeLayer(capas[c.id]);
+  });
+  estado();
+}
+
 /* al cambiar de zoom, re-agrupar los puntos visibles (barato: solo los cargados) */
 let pendiente = null;
 let moverPendiente = null;
+mapa.on("zoomend", aplicarLOD);
 mapa.on("moveend", () => {
+  aplicarLOD();
   if (mapa.getZoom() < ZOOM_DETALLE) return;
   clearTimeout(moverPendiente);
   moverPendiente = setTimeout(() => {
@@ -890,6 +1020,29 @@ $("#btn-fuentes").addEventListener("click", () => { pintarFuentes(); $("#velo").
 $("#cerrar-fuentes").addEventListener("click", () => $("#velo").classList.remove("on"));
 $("#velo").addEventListener("click", e => { if (e.target.id === "velo") $("#velo").classList.remove("on"); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") { $("#velo").classList.remove("on"); $("#velo2").classList.remove("on"); } });
+
+
+/* ---------------- panel de proyecto ---------------- */
+function pintarProyecto() {
+  fetch("datos/fuentes.json").then(r => r.json()).then(d => {
+    const capas = Object.keys(d.capas || {}).length;
+    const obj = Object.values(d.capas || {}).reduce((a, c) => a + (c.features || 0), 0);
+    const nc = document.getElementById("n-capas"), no = document.getElementById("n-obj");
+    if (nc) nc.textContent = capas;
+    if (no) no.textContent = obj > 9999 ? Math.round(obj / 1000) + "k" : obj;
+  }).catch(() => {});
+}
+document.getElementById("btn-proyecto").addEventListener("click", () => {
+  pintarProyecto(); document.getElementById("velo3").classList.add("on");
+});
+document.getElementById("cerrar-proyecto").addEventListener("click", () =>
+  document.getElementById("velo3").classList.remove("on"));
+document.getElementById("velo3").addEventListener("click", e => {
+  if (e.target.id === "velo3") e.target.classList.remove("on");
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") document.getElementById("velo3").classList.remove("on");
+});
 
 /* ---------------- generación del día (API REE) ---------------- */
 function pintarSis() {

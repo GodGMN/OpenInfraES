@@ -18,12 +18,12 @@ datos/_*.svg
 ine_ops.json
 
 # Capas oficiales pesadas: se descargan con scripts/capas_oficiales.py, no se versionan
-datos/atlas/parques-eolicos.geojson
-datos/atlas/plantas-solares.geojson
-datos/atlas/generacion-electrica-provincia.geojson
-datos/atlas/almacenamiento-petrolifero.geojson
-datos/atlas/residuos-radiactivos.geojson
-datos/atlas/hidrogeno-red.geojson
+datos/oficial/parques-eolicos.geojson
+datos/oficial/plantas-solares.geojson
+datos/oficial/generacion-electrica-provincia.geojson
+datos/oficial/almacenamiento-petrolifero.geojson
+datos/oficial/residuos-radiactivos.geojson
+datos/oficial/hidrogeno-red.geojson
 _mapa*.png
 datos/rios.geojson
 

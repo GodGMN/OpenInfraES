@@ -21,6 +21,51 @@
    "kb": 364
   },
   {
+   "id": "oficial/parques-eolicos.geojson",
+   "tolerancia": 0.0006,
+   "features": 1382,
+   "vertices_antes": 133844,
+   "vertices_despues": 31427,
+   "ahorro_pct": 76.5,
+   "kb": 3165
+  },
+  {
+   "id": "oficial/plantas-solares.geojson",
+   "tolerancia": 0.0006,
+   "features": 1330,
+   "vertices_antes": 40543,
+   "vertices_despues": 10886,
+   "ahorro_pct": 73.1,
+   "kb": 2881
+  },
+  {
+   "id": "oficial/generacion-electrica-provincia.geojson",
+   "tolerancia": 0.002,
+   "features": 52,
+   "vertices_antes": 64817,
+   "vertices_despues": 62791,
+   "ahorro_pct": 3.1,
+   "kb": 1583
+  },
+  {
+   "id": "oficial/residuos-radiactivos.geojson",
+   "tolerancia": 0.0,
+   "features": 14,
+   "vertices_antes": 14,
+   "vertices_despues": 14,
+   "ahorro_pct": 0.0,
+   "kb": 68
+  },
+  {
+   "id": "oficial/almacenamiento-petrolifero.geojson",
+   "tolerancia": 0.0,
+   "features": 133,
+   "vertices_antes": 133,
+   "vertices_despues": 133,
+   "ahorro_pct": 0.0,
+   "kb": 591
+  },
+  {
    "id": "oficial/red-electrica.geojson",
    "tolerancia": 0.0003,
    "features": 659,

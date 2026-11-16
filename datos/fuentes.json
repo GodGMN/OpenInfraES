@@ -830,6 +830,121 @@
    "fecha_publicacion": "2026-08-07",
    "fecha_descarga": "2026-11-16"
   },
+  "eolicos": {
+   "capa": "eolicos",
+   "titulo": "Parques eólicos",
+   "fuente": "MITECO",
+   "editor": "MITECO",
+   "licencia": "CC-BY-4.0",
+   "actualizado": "2026-08-07",
+   "descargado": "2026-11-16",
+   "features": 1382,
+   "url": "https://www.miteco.gob.es",
+   "metodo": "Registro de instalaciones de producción",
+   "organismo": "MITECO",
+   "publica_via": "MITECO",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "MITECO",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": "2026-08-07",
+   "fecha_descarga": "2026-11-16"
+  },
+  "solares": {
+   "capa": "solares",
+   "titulo": "Plantas solares (fotovoltaica y termosolar)",
+   "fuente": "MITECO",
+   "editor": "MITECO",
+   "licencia": "CC-BY-4.0",
+   "actualizado": "2026-08-21",
+   "descargado": "2026-11-16",
+   "features": 1330,
+   "url": "https://www.miteco.gob.es",
+   "metodo": "Registro de instalaciones de producción",
+   "organismo": "MITECO",
+   "publica_via": "MITECO",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "MITECO",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": "2026-08-21",
+   "fecha_descarga": "2026-11-16"
+  },
+  "residuos": {
+   "capa": "residuos",
+   "titulo": "Residuos radiactivos y ciclo del combustible",
+   "fuente": "ENRESA",
+   "editor": "ENRESA",
+   "licencia": "CC-BY-4.0",
+   "actualizado": "2026-09-22",
+   "descargado": "2026-11-16",
+   "features": 14,
+   "url": "https://www.enresa.es",
+   "metodo": "Instalaciones de gestión de residuos",
+   "organismo": "ENRESA",
+   "publica_via": "ENRESA",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "ENRESA",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": "2026-09-22",
+   "fecha_descarga": "2026-11-16"
+  },
+  "petrolifero": {
+   "capa": "petrolifero",
+   "titulo": "Almacenamiento de productos petrolíferos",
+   "fuente": "CORES",
+   "editor": "CORES",
+   "licencia": "CC-BY-4.0",
+   "actualizado": "2026-09-22",
+   "descargado": "2026-11-16",
+   "features": 133,
+   "url": "https://www.cores.es",
+   "metodo": "Almacenamiento de productos petrolíferos",
+   "organismo": "CORES",
+   "publica_via": "CORES",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "CORES",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": "2026-09-22",
+   "fecha_descarga": "2026-11-16"
+  },
+  "h2red": {
+   "capa": "h2red",
+   "titulo": "Red de hidrógeno (PCI)",
+   "fuente": "MITECO",
+   "editor": "MITECO",
+   "licencia": "CC-BY-4.0",
+   "actualizado": "2026-08-06",
+   "descargado": "2026-11-16",
+   "features": 10,
+   "url": "https://www.miteco.gob.es",
+   "metodo": "Red de hidrógeno (PCI)",
+   "organismo": "MITECO",
+   "publica_via": "MITECO",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "MITECO",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": "2026-08-06",
+   "fecha_descarga": "2026-11-16"
+  },
   "interelec": {
    "capa": "interelec",
    "titulo": "Interconexiones eléctricas",
@@ -1083,6 +1198,29 @@
    "fecha_publicacion": "16/11/2026 18:05:15",
    "fecha_descarga": "2026-11-16"
   },
+  "demarcaciones": {
+   "capa": "demarcaciones",
+   "titulo": "Demarcaciones",
+   "fuente": "MITECO",
+   "editor": "MITECO · SIG",
+   "licencia": "Reutilización con atribución (Ley 37/2007)",
+   "actualizado": null,
+   "descargado": "2026-11-16",
+   "features": 25,
+   "url": "https://sig.miteco.gob.es/arcgis/rest/services/25830/aguaHidroDemarcaciones",
+   "metodo": "query ArcGIS REST, maxAllowableOffset 0.0005",
+   "organismo": "MITECO",
+   "publica_via": "MITECO · SIG",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "MITECO · SIG",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": null,
+   "fecha_descarga": "2026-11-16"
+  },
   "sismos": {
    "capa": "sismos",
    "titulo": "Sismos",
@@ -1125,6 +1263,51 @@
    "vertices_despues": 9310,
    "ahorro_pct": 74.4,
    "kb": 364
+  },
+  "parques-eolicos.geojson": {
+   "id": "oficial/parques-eolicos.geojson",
+   "tolerancia": 0.0006,
+   "features": 1382,
+   "vertices_antes": 133844,
+   "vertices_despues": 31427,
+   "ahorro_pct": 76.5,
+   "kb": 3165
+  },
+  "plantas-solares.geojson": {
+   "id": "oficial/plantas-solares.geojson",
+   "tolerancia": 0.0006,
+   "features": 1330,
+   "vertices_antes": 40543,
+   "vertices_despues": 10886,
+   "ahorro_pct": 73.1,
+   "kb": 2881
+  },
+  "generacion-electrica-provincia.geojson": {
+   "id": "oficial/generacion-electrica-provincia.geojson",
+   "tolerancia": 0.002,
+   "features": 52,
+   "vertices_antes": 64817,
+   "vertices_despues": 62791,
+   "ahorro_pct": 3.1,
+   "kb": 1583
+  },
+  "residuos-radiactivos.geojson": {
+   "id": "oficial/residuos-radiactivos.geojson",
+   "tolerancia": 0.0,
+   "features": 14,
+   "vertices_antes": 14,
+   "vertices_despues": 14,
+   "ahorro_pct": 0.0,
+   "kb": 68
+  },
+  "almacenamiento-petrolifero.geojson": {
+   "id": "oficial/almacenamiento-petrolifero.geojson",
+   "tolerancia": 0.0,
+   "features": 133,
+   "vertices_antes": 133,
+   "vertices_despues": 133,
+   "ahorro_pct": 0.0,
+   "kb": 591
   },
   "red-electrica.geojson": {
    "id": "oficial/red-electrica.geojson",
@@ -1208,6 +1391,6 @@
    "kb": 18
   }
  },
- "total_capas": 48,
+ "total_capas": 54,
  "nota_cadena": "Cada capa declara productor (quien genera el dato), publica (quien lo sirve tal como lo consumimos) y consume (nosotros). Son tres fechas distintas: la del dato, la de publicación y la de descarga."
 }

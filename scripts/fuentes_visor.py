@@ -82,6 +82,11 @@ DERIVADAS = {
 
 ALIAS = {
     "subestaciones": "red-electrica",
+    "eolicos": "parques-eolicos",
+    "solares": "plantas-solares",
+    "residuos": "residuos-radiactivos",
+    "petrolifero": "almacenamiento-petrolifero",
+    "h2red": "hidrogeno-red",
     "interelec": "electricidad-interconexiones",
     "nuclear": "nuclear",
     "regas": "gas-regasificacion",
@@ -235,6 +240,10 @@ def main():
          "Reutilización con atribución (Ley 37/2007)",
          "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/",
          "GET al JSON de estaciones terrestres; coma decimal"),
+        ("demarcaciones", "demarcaciones_recibo.json", "MITECO", "MITECO · SIG",
+         "Reutilización con atribución (Ley 37/2007)",
+         "https://sig.miteco.gob.es/arcgis/rest/services/25830/aguaHidroDemarcaciones",
+         "query ArcGIS REST, maxAllowableOffset 0.0005"),
         ("sismos", "sismos_recibo.json", "EMSC-CSEM", "seismicportal.eu",
          "abierta con atribución", "https://www.seismicportal.eu/fdsnws/event/1/query",
          "FDSN query con bbox de Espana"),

@@ -89,6 +89,11 @@ Las capas que no tienen GeoJSON servido por su organismo se guardan ya vectoriza
 | Capa | Organismo | Licencia |
 |---|---|---|
 | Red eléctrica y subestaciones (657) | **IGN** (BTN Continua) | CC BY 4.0 |
+| **Demarcaciones hidrográficas (25)** | **MITECO** (SIG) | Ley 37/2007 |
+| Parques eólicos (1.382) · plantas solares (1.330) | **MITECO** | CC BY 4.0 |
+| Residuos radiactivos (14) | **ENRESA** | CC BY 4.0 |
+| Almacenamiento petrolífero (133) | **CORES** | CC BY 4.0 |
+| Red de hidrógeno (10) | **MITECO** | CC BY 4.0 |
 | Embalses (402) | **MITECO** (Boletín Hidrológico) | Ley 37/2007 |
 | Desaladoras (28), hidrógeno (7) | **MITECO** | CC BY 4.0 |
 | Nuclear (7 reactores) | **CSN** | CC BY 4.0 |
