@@ -26,6 +26,8 @@ CAPAS = [
     ("agua-conducciones.geojson", 0.0008),
     ("edar.geojson", 0.0),
     ("etap.geojson", 0.0),
+    ("rios.geojson", 0.0012),          # ríos: contexto, no la capa protagonista
+    ("trasvases-union.geojson", 0.0006),
 ]
 
 

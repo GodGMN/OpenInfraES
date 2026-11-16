@@ -199,15 +199,27 @@ def main():
         n_can = len(_f) - n_tras
     if r_agua:
         for capa, titulo, filtro in (
-            ("trasvases", "Trasvases", "name contiene 'trasvase'"),
+            ("trasvases", "Trasvases", "118 tramos unidos en 26 trazos por scripts/unir_trasvases.py"),
             ("canales", "Canales y acequias", "resto: canales de riego, acequias y aducciones"),
         ):
             fuentes[capa] = {
                 "capa": capa, "titulo": titulo, "fuente": OSM["nombre"], "editor": OSM["editor"],
                 "licencia": OSM["licencia"], "actualizado": HOY, "descargado": HOY,
-                "features": n_tras if capa == "trasvases" else n_can, "url": OSM["url"],
+                "features": (26 if capa == "trasvases" else n_can), "url": OSM["url"],
                 "metodo": "%s · %s" % (OSM["metodo"], filtro),
             }
+
+    # ríos: geometria OSM, caudal por API en vivo
+    rr = leer("rios_recibo.json", {})
+    if rr:
+        fuentes["rios"] = {
+            "capa": "rios", "titulo": "Ríos (caudal en vivo)",
+            "fuente": OSM["nombre"], "editor": OSM["editor"], "licencia": OSM["licencia"],
+            "actualizado": None, "descargado": HOY, "features": rr.get("features"),
+            "url": OSM["url"],
+            "metodo": "%s · %d tramos agrupados, mínimo %s km; caudal por Open-Meteo Flood (GloFAS)"
+                      % (OSM["metodo"], rr.get("tramos_osm", 0), rr.get("min_km", "")),
+        }
 
     sim = leer("simplificado/_recibo.json", {})
     simpl = {os.path.basename(c["id"]): c for c in sim.get("capas", [])}

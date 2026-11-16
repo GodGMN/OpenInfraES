@@ -82,6 +82,24 @@
    "vertices_despues": 1551,
    "ahorro_pct": 0.0,
    "kb": 317
+  },
+  {
+   "id": "rios.geojson",
+   "tolerancia": 0.0012,
+   "features": 260,
+   "vertices_antes": 496532,
+   "vertices_despues": 44458,
+   "ahorro_pct": 91.0,
+   "kb": 1196
+  },
+  {
+   "id": "trasvases-union.geojson",
+   "tolerancia": 0.0006,
+   "features": 13,
+   "vertices_antes": 3477,
+   "vertices_despues": 611,
+   "ahorro_pct": 82.4,
+   "kb": 20
   }
  ]
 }
