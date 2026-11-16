@@ -16,3 +16,12 @@ datos/_*.png
 datos/_*.svg
 *.json.tmp
 ine_ops.json
+
+# Capas del Atlas pesadas: se descargan con scripts/atlas.py, no se versionan
+datos/atlas/parques-eolicos.geojson
+datos/atlas/plantas-solares.geojson
+datos/atlas/generacion-electrica-provincia.geojson
+datos/atlas/almacenamiento-petrolifero.geojson
+datos/atlas/residuos-radiactivos.geojson
+datos/atlas/hidrogeno-red.geojson
+_mapa*.png

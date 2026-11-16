@@ -60,6 +60,38 @@ funciona siempre.
 | Desaladoras | OSM | pendiente: el tag `desalination=yes` no se usa en España (0 resultados); en curso por nombre |
 | Presas y embalses | OSM | 4.464 |
 
+## Capas del Atlas Estratégico (verificadas, CC-BY-4.0)
+
+Fuente: **Atlas Estratégico de España** (El Tercer Viejo, <https://atlas.eltercioviejo.com>), release
+**2026.11.183**, archivo documental en <https://github.com/ArturoVazquez/atlas-archivo>. Cada capa
+declara versión, fecha de verificación y fuentes. Descarga: `scripts/atlas.py`.
+
+| Capa | Elementos | Verificado a |
+|---|---:|---|
+| `red-electrica` | 659 | 2026-08-07 |
+| `agua-embalsada` | 402 | 2026-11-10 |
+| `desaladoras` | **28** | 2026-08-31 |
+| `refinerias` | 10 | 2026-08-09 |
+| `nuclear` | 7 | 2026-09-22 |
+| `gas-regasificacion` | 7 | 2026-09-22 |
+| `hidrogeno-produccion` | 7 | 2026-09-22 |
+| `gas-interconexiones` | 6 | — |
+| `gas-almacenamiento` | 5 | — |
+| `electricidad-interconexiones` | 5 | 2026-08-06 |
+| `conducciones-combustible` | 2 | 2026-08-13 |
+
+Capas descargables pero **no versionadas** (peso): `parques-eolicos` (1.382), `plantas-solares` (1.330),
+`generacion-electrica-provincia` (52), `almacenamiento-petrolifero` (133),
+`residuos-radiactivos` (14), `hidrogeno-red` (10). Están en `.gitignore` y se bajan con
+`python scripts/atlas.py`.
+
+**Por qué manda el Atlas en desaladoras:** OSM devuelve 40 con nombres genéricos y duplicados; el Atlas
+da **28 con nombre, municipio y estado de verificación**. Aquí se usa el Atlas y OSM queda como
+respaldo geográfico.
+
+**Atribución:** obra derivada de NGBE Continua (CC-BY 4.0, ign.es), ABAQUA/Govern de les Illes Balears,
+BOE y boletines autonómicos.
+
 ## La foto completa de OSM (16-11-2026)
 
 Consulta directa a Overpass (`area ISO3166-1=ES`), con backoff porque el servicio estaba saturado:

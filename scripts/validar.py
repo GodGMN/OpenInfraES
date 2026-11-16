@@ -125,6 +125,23 @@ def main():
             if n == 0:
                 error("datos/%s.geojson: existe pero esta vacio (0 features)" % capa)
 
+    # 4d. recibo del Atlas y capas que usa el visor
+    ra = os.path.join(DATOS, "atlas", "_recibo_atlas.json")
+    if not os.path.exists(ra):
+        error("falta datos/atlas/_recibo_atlas.json (ejecuta scripts/atlas.py)")
+    else:
+        rec = json.load(open(ra, encoding="utf-8"))
+        if len(rec.get("capas", [])) < 17:
+            error("recibo del Atlas: solo %d capas" % len(rec.get("capas", [])))
+        for capa in rec.get("capas", []):
+            if capa.get("features", 0) == 0:
+                error("atlas/%s: 0 features" % capa.get("id"))
+        usadas = ["desaladoras", "nuclear", "gas-regasificacion", "gas-almacenamiento",
+                  "agua-embalsada", "red-electrica", "conducciones-combustible"]
+        for u in usadas:
+            if not os.path.exists(os.path.join(DATOS, "atlas", u + ".geojson")):
+                error("falta datos/atlas/%s.geojson (lo usa el visor)" % u)
+
     # 5. visor
     for f in ("mapa.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):
