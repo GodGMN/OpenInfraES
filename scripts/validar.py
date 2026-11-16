@@ -113,6 +113,18 @@ def main():
         if not str(c.get("capturado", ""))[:4] == "2026":
             error("conteos_osm: sin fecha de captura creible")
 
+    # 4c. capas OSM opcionales: si existen, no pueden estar vacias
+    for capa in ("gasoductos", "presas", "desaladoras"):
+        ruta_g = os.path.join(DATOS, capa + ".geojson")
+        if os.path.exists(ruta_g):
+            try:
+                n = len(json.load(open(ruta_g, encoding="utf-8")).get("features", []))
+            except Exception:
+                error("datos/%s.geojson: no se puede leer" % capa)
+                continue
+            if n == 0:
+                error("datos/%s.geojson: existe pero esta vacio (0 features)" % capa)
+
     # 5. visor
     for f in ("mapa.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):

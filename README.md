@@ -18,9 +18,9 @@ territorial).
 | `datos/agregado_plantas_ccaa.csv` | plantas y MW por comunidad autónoma |
 | `datos/agregado_plantas_ccaa_tecnologia.csv` | el cruce de los dos anteriores |
 | `mapa.html` | visor propio con cartografía **IGN** y capas conmutables |
-| `datos/gasoductos.geojson` | gasoductos (`man_made=pipeline`, `substance=gas`) |
+| `datos/gasoductos.geojson` | **678 tramos** de gasoducto (`man_made=pipeline`, `substance=gas`) |
 | `datos/desaladoras.geojson` | plantas desaladoras (`desalination=yes`) |
-| `datos/presas.geojson` | presas y embalses (`waterway=dam`) |
+| `datos/presas.geojson` | **4.464** presas y azudes (`waterway=dam`) |
 | `datos/conteos_osm_20261116.json` | foto completa de OSM en España (líneas, subestaciones, plantas) con fecha y endpoint |
 
 ## Cartografía: IGN, no Leaflet
@@ -56,9 +56,9 @@ funciona siempre.
 | Centrales hidráulicas | REE/ELECTRA (hidro y bombeo) | 1.387 |
 | Generación de gas (CCGT/fuel) | REE/ELECTRA | 49 |
 | Resto del parque | REE/ELECTRA | resto |
-| Gasoductos | OSM | ver `conteos_osm` |
-| Desaladoras | OSM | ver `conteos_osm` |
-| Presas y embalses | OSM | ver `conteos_osm` |
+| Gasoductos | OSM | 678 |
+| Desaladoras | OSM | pendiente: el tag `desalination=yes` no se usa en España (0 resultados); en curso por nombre |
+| Presas y embalses | OSM | 4.464 |
 
 ## La foto completa de OSM (16-11-2026)
 
