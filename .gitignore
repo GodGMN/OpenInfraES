@@ -42,3 +42,8 @@ a.xml
 # Restos de pruebas en la raiz: solo el visor es HTML versionado
 /*.html
 !/mapa.html
+
+# Nunca en la raiz: respuestas de prueba
+/*.json
+/*.xml
+!/package.json
