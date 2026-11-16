@@ -1,0 +1,38 @@
+{
+ "capturado": "2026-11-16T11:07:41Z",
+ "fuente": "OpenStreetMap via Overpass API (area ISO3166-1=ES, admin_level=2)",
+ "metodo": "consulta out count por tipo de objeto; reintentos con backoff y mirrors",
+ "endpoints_que_respondieron": {
+  "lineas": "overpass.private.coffee",
+  "subestaciones": "overpass-api.de",
+  "plantas": "z.overpass-api.de"
+ },
+ "conteos": {
+  "power=line": {
+   "total": 24578,
+   "ways": 24578,
+   "nodes": 0,
+   "relations": 0,
+   "nota": "todas las tensiones, incluida distribucion"
+  },
+  "power=substation": {
+   "total": 12649,
+   "nodes": 1089,
+   "ways": 11479,
+   "relations": 81,
+   "nota": "todos los niveles de tension"
+  },
+  "power=plant": {
+   "total": 5297,
+   "nodes": 0,
+   "ways": 3881,
+   "relations": 1416,
+   "nota": "instalaciones de generacion"
+  }
+ },
+ "comparacion_con_dataset_normalizado": {
+  "plantas_osm": 5297,
+  "plantas_dataset": 5797,
+  "comentario": "el dataset anade registro administrativo ELECTRA/RAIPEE sobre la base OSM"
+ }
+}

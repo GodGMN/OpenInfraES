@@ -18,6 +18,24 @@ territorial).
 | `datos/agregado_plantas_ccaa.csv` | plantas y MW por comunidad autónoma |
 | `datos/agregado_plantas_ccaa_tecnologia.csv` | el cruce de los dos anteriores |
 | `mapa.html` | visor propio (Leaflet) con filtros por tensión |
+| `datos/conteos_osm_20261116.json` | foto completa de OSM en España (líneas, subestaciones, plantas) con fecha y endpoint |
+
+## La foto completa de OSM (16-11-2026)
+
+Consulta directa a Overpass (`area ISO3166-1=ES`), con backoff porque el servicio estaba saturado:
+
+| Objeto OSM | Elementos | Desglose |
+|---|---:|---|
+| `power=line` (todas las tensiones) | **24.578** | 24.578 ways |
+| `power=substation` | **12.649** | 1.089 nodos + 11.479 ways + 81 relaciones |
+| `power=plant` | **5.297** | 3.881 ways + 1.416 relaciones |
+
+Contraste útil: el dataset normalizado trae **5.797 plantas** frente a las **5.297** de OSM puro — la
+diferencia es el cruce con el registro administrativo ELECTRA/RAIPEE. Y de las 24.578 líneas de OSM,
+solo **4.929** son de 220/400 kV: el resto es distribución, que este repositorio no cubre.
+
+Referencia externa: OSM Wiki *Power networks/Spain* da **130.765 km** de líneas mapeadas y **104.108 MW**
+(OpenInfraMap, agosto 2026), con 45.804 km de circuito de REE en 132/220/400 kV.
 
 ## Las cifras
 

@@ -102,6 +102,17 @@ def main():
             if not str(f.get("url", "")).startswith("http"):
                 error("_procedencia.json: %s sin URL" % f.get("fichero"))
 
+    # 4b. conteos de OSM (foto completa)
+    ruta_c = os.path.join(DATOS, "conteos_osm_20261116.json")
+    if not os.path.exists(ruta_c):
+        error("falta datos/conteos_osm_20261116.json")
+    else:
+        c = json.load(open(ruta_c, encoding="utf-8"))
+        if not c.get("conteos"):
+            error("conteos_osm: sin bloque 'conteos'")
+        if not str(c.get("capturado", ""))[:4] == "2026":
+            error("conteos_osm: sin fecha de captura creible")
+
     # 5. visor
     for f in ("mapa.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):
