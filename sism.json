@@ -1,0 +1,131 @@
+{"type":"FeatureCollection","metadata":{"count":5},"features":[{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -2.2814,
+      37.0932,
+      -1.0
+    ]
+  },
+  "id": "20261116_0000222",
+  "properties": {
+    "source_id": "2090685",
+    "source_catalog": "EMSC-RTS",
+    "lastupdate": "2026-11-16T16:20:16.944104Z",
+    "time": "2026-11-16T15:55:37.88Z",
+    "flynn_region": "SPAIN",
+    "lat": 37.0932,
+    "lon": -2.2814,
+    "depth": 1.0,
+    "evtype": "ke",
+    "auth": "IGN",
+    "mag": 1.7,
+    "magtype": "ml",
+    "unid": "20261116_0000222"
+  }
+},{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      3.0315,
+      42.0060,
+      0.0
+    ]
+  },
+  "id": "20261116_0000140",
+  "properties": {
+    "source_id": "2090572",
+    "source_catalog": "EMSC-RTS",
+    "lastupdate": "2026-11-16T14:07:22.423203Z",
+    "time": "2026-11-16T11:35:46.648741Z",
+    "flynn_region": "PYRENEES",
+    "lat": 42.0060,
+    "lon": 3.0315,
+    "depth": 0.0,
+    "evtype": "ke",
+    "auth": "ReNaSS",
+    "mag": 2.1,
+    "magtype": "ml",
+    "unid": "20261116_0000140"
+  }
+},{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -2.0390,
+      37.2811,
+      0.0
+    ]
+  },
+  "id": "20261116_0000106",
+  "properties": {
+    "source_id": "2090517",
+    "source_catalog": "EMSC-RTS",
+    "lastupdate": "2026-11-16T08:34:36.347176Z",
+    "time": "2026-11-16T08:24:07.23Z",
+    "flynn_region": "SPAIN",
+    "lat": 37.2811,
+    "lon": -2.0390,
+    "depth": 0.0,
+    "evtype": "ke",
+    "auth": "IGN",
+    "mag": 1.9,
+    "magtype": "ml",
+    "unid": "20261116_0000106"
+  }
+},{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -4.0961,
+      36.2447,
+      -0.5
+    ]
+  },
+  "id": "20261116_0000059",
+  "properties": {
+    "source_id": "2090449",
+    "source_catalog": "EMSC-RTS",
+    "lastupdate": "2026-11-16T04:40:28.734348Z",
+    "time": "2026-11-16T03:47:46.09Z",
+    "flynn_region": "STRAIT OF GIBRALTAR",
+    "lat": 36.2447,
+    "lon": -4.0961,
+    "depth": 0.5,
+    "evtype": "ke",
+    "auth": "IGN",
+    "mag": 1.9,
+    "magtype": "ml",
+    "unid": "20261116_0000059"
+  }
+},{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -17.9046,
+      28.6721,
+      -0.6
+    ]
+  },
+  "id": "20261116_0000057",
+  "properties": {
+    "source_id": "2090444",
+    "source_catalog": "EMSC-RTS",
+    "lastupdate": "2026-11-16T08:48:43.275567Z",
+    "time": "2026-11-16T03:02:48.33Z",
+    "flynn_region": "CANARY ISLANDS, SPAIN REGION",
+    "lat": 28.6721,
+    "lon": -17.9046,
+    "depth": 0.6,
+    "evtype": "ke",
+    "auth": "IGN",
+    "mag": 2.0,
+    "magtype": "ml",
+    "unid": "20261116_0000057"
+  }
+}]}

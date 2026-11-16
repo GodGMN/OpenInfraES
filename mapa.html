@@ -355,6 +355,8 @@ const ETIQ = {
   hidrogeno:"Hidrógeno (€/kg)", adblue:"AdBlue (€/l)", biodiesel:"Biodiésel (€/l)",
   bioetanol:"Bioetanol (€/l)", rotulo:"Rótulo", direccion:"Dirección", horario:"Horario",
   tipo_venta:"Tipo de venta", fecha_dato:"Fecha del dato",
+  magnitud:"Magnitud", profundidad_km:"Profundidad (km)", lugar:"Lugar", hora:"Hora (UTC)",
+  tipo_magnitud:"Tipo de magnitud", region:"Región",
   operador:"Operador", municipio:"Municipio", demarcacion:"Demarcación",
   capacidad_hm3:"Capacidad (hm³)", agua_actual_hm3:"Agua embalsada (hm³)", fecha_dato:"Fecha del dato",
   hidroelectrico:"Hidroeléctrico", tecnologia_normalized:"Tecnología", installed_capacity_mw:"Potencia (MW)",
@@ -383,7 +385,8 @@ function fichaTren(p, c) {
 
 function ficha(p, c) {
   const titulo = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Aeropuerto || p.Carretera ||
-                 p.Rotulo || p.rotulo || p.Direccion || p.direccion || p.Nombre_plataforma || "Sin nombre";
+                 p.Rotulo || p.rotulo || p.Direccion || p.direccion || p.Nombre_plataforma ||
+                 (p.magnitud != null ? "Terremoto M" + p.magnitud : "Sin nombre");
   const estado = [p.categoria, p.estado_registro, p.verif]
     .filter(v => v && !/^[A-Z0-9_]+$/.test(String(v))).join(" · ");
   let h = '<div class="ficha"><div class="ft">' + titulo + "</div>";
@@ -398,6 +401,7 @@ function ficha(p, c) {
       if (typeof v === "boolean") valor = v ? "Sí" : "No";
       if (k === "hidroelectrico") valor = v ? "Sí" : "No";
       if (k === "voltage" && Number(v) > 1000) valor = (Number(v) / 1000) + " kV";
+      if (k === "profundidad_km" && Number(v) < 0) valor = "desconocida";
       if (typeof v === "number" && v > 1e11 && v < 3e12)
         valor = new Date(v).toLocaleDateString("es-ES", { day:"2-digit", month:"2-digit", year:"numeric" });
       h += '<tr><td class="k">' + (ETIQ[k] || k.replace(/_/g, " ")) + '</td><td class="v">' + nf(valor) + "</td></tr>";
@@ -498,6 +502,10 @@ const CAPAS = [
     escala:{ campo:"gasoleo_a", min:1.40, max:2.20, unidad:"€/l" } },
   { id:"estaciones-cercanias", grupo:"Tiempo real", label:"Estaciones Cercanías", tipo:"punto", on:false,
     color:"#a78bfa", fichero:"datos/estaciones-cercanias.geojson", radio:4.5, zoomMin:8 },
+  { id:"sismos", grupo:"Riesgo", label:"Terremotos (7 días)", tipo:"punto", on:false,
+    color:"#f97316", fichero:"datos/sismos.geojson", radio:5, siempreIndividual:true,
+    escala:{ campo:"magnitud", min:1, max:5, unidad:"M" }, radioPorMagnitud:true,
+    popupExtra:"sismo" },
   { id:"trenes", grupo:"Tiempo real", label:"Trenes (GTFS-RT)", tipo:"punto", on:false, color:"#f43f5e",
     fichero:"datos/trenes.geojson", radio:4.5, siempreIndividual:true, modoTren:true },
   { id:"estaciones-gas", grupo:"Transporte", label:"Estaciones GNL/GNC/H₂", tipo:"punto", on:false,
@@ -583,6 +591,7 @@ function colorEscala(v, e) {
 }
 
 const radioDe = (c, p) => {
+  if (c.radioPorMagnitud) return Math.max(4, Math.min(18, 3 + (p.magnitud || 0) * 2.5));
   const rmin = c.radioMin || c.radio || 4.5, rmax = c.radioMax || 11;
   if (!c.magnitud) return rmin;
   return Math.max(rmin, Math.min(rmax, Math.sqrt(p[c.magnitud] || 0) / 1.6));

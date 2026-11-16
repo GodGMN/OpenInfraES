@@ -42,6 +42,11 @@ vivo)**.
 Carreteras del Estado (1.602), puertos (45), terminales portuarias (440), terminales de aeropuerto
 (102), terminales de mercancías (383), estaciones con GNL/GNC/H₂ (165).
 
+### Riesgo
+| Capa | Qué da | Fuente |
+|---|---|---|
+| **Terremotos (7 días)** | 80 sismos con magnitud, profundidad y región; el tamaño del punto es la magnitud | EMSC-CSEM (sin clave) |
+
 ### Tiempo real
 | Capa | Qué da | Fuente | Clave |
 |---|---|---|---|

@@ -192,7 +192,60 @@ Trampas medidas: el separador del CSV cambia (`;` o `,`) según el fichero, y lo
 **Sobre «sin sobrecargar la web»:** las 405 estaciones se descargan en 90 KB y solo al encender la
 capa. Con `zoomMin: 8` tampoco se dibujan a escala nacional.
 
-## 11. Qué pediría primero, por orden de valor
+
+## 11. Riesgo y emergencias (verificado)
+
+| Fuente | Qué da | Clave | Estado |
+|---|---|---|---|
+| **EMSC-CSEM** (`seismicportal.eu/fdsnws`) | terremotos con magnitud, profundidad y región | **no** | **funciona**: 80 sismos en 7 días |
+| **NASA FIRMS** | focos de calor por satélite (CSV) | no (público) | responde, hoy sin focos (noviembre) |
+| **GDACS** | alertas de catástrofes | no | feed público |
+| **EFFIS** | áreas quemadas | no | servicio europeo |
+| **AEMET** | avisos meteorológicos CAP | **sí** | 404 sin token |
+
+`scripts/sismos.py` usa EMSC con un bbox que cubre Península, Baleares y Canarias:
+
+```bash
+curl "https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=600&minlatitude=27&maxlatitude=44.5&minlongitude=-19.5&maxlongitude=5&starttime=2026-11-09"
+```
+
+Detalle del dato: `profundidad = -1` significa **superficie o desconocida**, no «un km por encima».
+
+## 12. SCNE — la atribución que faltaba
+
+**<https://www.scne.es>** es el Sistema Cartográfico Nacional (Ley 14/2010): el marco que coordina
+IGN, CNIG, IDEE y las CCAA. No es una API: es la **fuente de la fuente**.
+
+Importa por un detalle legal: buena parte de lo que sirve el Atlas Estratégico (red eléctrica,
+subestaciones) es **obra derivada de la BTN Continua del IGN**, y su atribución correcta es
+`CC-BY 4.0 scne.es`. Citarlo bien no es cortesía, es la licencia.
+
+Productos suyos que nos tocan: **CartoCiudad** (callejero), **IGR-RT** (red de transporte) y la
+toponimia oficial normalizada.
+
+## 13. Radar España — el mapa de fuentes que ya funciona
+
+**<https://xn--radarespaa-19a.es>** es un proyecto ciudadano que reúne transporte y emergencias en
+tiempo real. No es fuente, es **índice**: su pie de página enumera exactamente qué se puede usar hoy.
+
+Fuentes que confirma y que merecen una visita:
+
+| Fuente | Qué aporta |
+|---|---|
+| **TMB** (Transports Metropolitans de Barcelona) | posiciones de metro y bus |
+| **CRTM** (Madrid) | metro y bus de la Comunidad |
+| **TRAM Barcelona** | tranvía |
+| **AUVASA** (Valladolid) | bus urbano |
+| **EMT Málaga**, **ALSA**, **Ouigo** | bus y tren (Ouigo solo horarios) |
+| **DGT** | incidencias de tráfico y obras |
+| **Adif** | red ferroviaria (aunque **no publica estado ni incidencias** en formato reutilizable) |
+| **Protección Civil / 112 / CCAA** | cortes de luz y planes de emergencia activados |
+
+Su propio aviso es la lección: **Adif no publica en formato reutilizable** el estado de la red ni las
+circulaciones de mercancías, e **Iryo no publica posición ni retrasos**. Lo que existe se declara, y
+lo que no, también.
+
+## 14. Qué pediría primero, por orden de valor
 
 1. **ENTSO-E** — sigue siendo el único que da generación y previsión **por unidad**. 10 minutos.
 2. **AEMET** — el único bloqueo que queda para alertas meteorológicas. Registro gratuito.
