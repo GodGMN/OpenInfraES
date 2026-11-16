@@ -1,0 +1,18 @@
+{
+ "edar": {
+  "features": 3034,
+  "con_nombre": 1644,
+  "nombres": 1461,
+  "titulo": "EDAR (depuradoras de aguas residuales)",
+  "fichero": "edar.geojson",
+  "kb": 628
+ },
+ "etap": {
+  "features": 1551,
+  "con_nombre": 994,
+  "nombres": 945,
+  "titulo": "ETAP (plantas potabilizadoras)",
+  "fichero": "etap.geojson",
+  "kb": 317
+ }
+}

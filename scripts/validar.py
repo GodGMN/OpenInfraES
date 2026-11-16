@@ -169,6 +169,19 @@ def main():
         print("  simplificado ............... %d -> %d vertices (-%.0f%%)"
               % (tot_a, tot_d, 100 * (1 - tot_d / tot_a)))
 
+    # 4g. procedencia de cada capa del visor
+    fv = os.path.join(DATOS, "fuentes.json")
+    if not os.path.exists(fv):
+        error("falta datos/fuentes.json (ejecuta scripts/fuentes_visor.py)")
+    else:
+        d = json.load(open(fv, encoding="utf-8"))
+        if d.get("total_capas", 0) < 30:
+            error("fuentes.json: solo %d capas" % d.get("total_capas", 0))
+        sin = [k for k, v in d.get("capas", {}).items() if not v.get("fuente")]
+        if sin:
+            error("fuentes.json: %d capas sin fuente (%s)" % (len(sin), ", ".join(sin[:5])))
+        print("  procedencia de datos ........ %d capas documentadas" % d.get("total_capas", 0))
+
     # 5. visor
     for f in ("mapa.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):

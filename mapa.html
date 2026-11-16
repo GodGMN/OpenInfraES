@@ -53,10 +53,14 @@
     text-transform:uppercase; }
   #cabeza .sub { color:var(--suave); font-size:10.8px; letter-spacing:.06em; margin-top:6px;
     font-family:var(--mono); text-transform:uppercase; }
-  #btn-tema { position:absolute; top:14px; right:14px; width:26px; height:26px;
+  .acciones-hud { position:absolute; top:14px; right:14px; display:flex; gap:4px; }
+  #btn-tema { width:26px; height:26px;
     border:1px solid var(--borde); background:transparent; color:var(--suave); border-radius:2px;
     cursor:pointer; font-size:12px; display:grid; place-items:center; transition:.15s; }
-  #btn-tema:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+  #btn-tema:hover, #btn-fuentes:hover, #btn-enlace:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+  #btn-fuentes, #btn-enlace { width:26px; height:26px; border:1px solid var(--borde);
+    background:transparent; color:var(--suave); border-radius:2px; cursor:pointer; font-size:12px;
+    display:grid; place-items:center; }
 
   #presets { display:flex; flex-wrap:wrap; gap:4px; padding:9px 15px 0; }
   #presets button { flex:1 1 auto; min-width:0; border:1px solid var(--borde); background:transparent;
@@ -126,6 +130,50 @@
   .ficha ul { margin:6px 0 0; padding-left:15px; font-size:11.4px; color:var(--suave); }
   .ficha ul li { margin-bottom:2px; }
 
+
+  /* ---------- buscador ---------- */
+  #buscar { display:flex; gap:6px; padding:9px 15px 0; }
+  #buscar input { flex:1; min-width:0; background:rgba(255,255,255,.04); color:var(--tinta);
+    border:1px solid var(--borde); border-radius:2px; padding:6px 9px; font-size:12px;
+    font-family:inherit; }
+  #buscar input::placeholder { color:var(--tenue); }
+  #buscar input:focus { outline:none; border-color:var(--borde-fuerte); }
+  #resultados { position:absolute; top:96px; left:15px; right:15px; z-index:5; background:var(--panel-solido);
+    border:1px solid var(--borde-fuerte); border-radius:2px; max-height:230px; overflow:auto; display:none; }
+  #resultados.on { display:block; }
+  #resultados div { padding:6px 9px; font-size:11.8px; cursor:pointer; border-bottom:1px solid var(--borde); }
+  #resultados div:hover { background:rgba(34,211,238,.1); }
+  #resultados div span { display:block; font-family:var(--mono); font-size:9.4px;
+    text-transform:uppercase; letter-spacing:.1em; color:var(--tenue); margin-top:2px; }
+
+  /* ---------- modal fuentes ---------- */
+  #velo { position:fixed; inset:0; z-index:2000; background:rgba(3,6,10,.78); display:none;
+    align-items:center; justify-content:center; padding:24px; }
+  #velo.on { display:flex; }
+  #fuentes { width:min(980px,100%); max-height:86vh; overflow:auto; background:var(--panel-solido);
+    border:1px solid var(--borde-fuerte); border-radius:3px; padding:20px 22px;
+    box-shadow:0 30px 90px rgba(0,0,0,.7); }
+  #fuentes h2 { margin:0 0 3px; font-size:15px; letter-spacing:.1em; text-transform:uppercase; }
+  #fuentes .nota { color:var(--suave); font-size:11.6px; margin-bottom:14px; line-height:1.5; }
+  #fuentes table { width:100%; border-collapse:collapse; font-size:11.6px; }
+  #fuentes th { text-align:left; font-family:var(--mono); font-size:9.6px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--tenue); border-bottom:1px solid var(--borde-fuerte);
+    padding:0 8px 6px 0; position:sticky; top:0; background:var(--panel-solido); }
+  #fuentes td { padding:6px 8px 6px 0; border-bottom:1px solid var(--borde); vertical-align:top; }
+  #fuentes td.c { font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right; }
+  #fuentes a { color:var(--cian); text-decoration:none; }
+  #fuentes .cerrar { float:right; background:transparent; border:1px solid var(--borde);
+    color:var(--suave); border-radius:2px; width:26px; height:26px; cursor:pointer; }
+  #fuentes .cerrar:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+  #fuentes .lic { font-family:var(--mono); font-size:10px; color:var(--suave); }
+
+  /* ---------- opacidad ---------- */
+  #opacidad { display:flex; align-items:center; gap:8px; padding:8px 15px 0; }
+  #opacidad label { font-family:var(--mono); font-size:9.4px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--tenue); }
+  #opacidad input[type=range] { flex:1; min-width:0; accent-color:var(--cian); height:3px; }
+  #opacidad b { font-family:var(--mono); font-size:10px; color:var(--suave); width:30px; text-align:right; }
+
   .leaflet-control-attribution { background:rgba(5,8,13,.75) !important; color:var(--tenue) !important;
     font-size:9.6px !important; }
   .leaflet-control-attribution a { color:var(--suave) !important; }
@@ -143,8 +191,14 @@
   <div id="cabeza">
     <div class="marca"><span class="punto-vivo"></span><h1>Infraestructura España</h1></div>
     <div class="sub" id="sub-hud">—</div>
-    <button id="btn-tema" title="Cambiar tema">◐</button>
+    <div class="acciones-hud">
+      <button id="btn-fuentes" title="Fuentes y fecha de los datos">ⓘ</button>
+      <button id="btn-enlace" title="Copiar enlace a esta vista">⧉</button>
+      <button id="btn-tema" title="Cambiar tema">◐</button>
+    </div>
   </div>
+  <div id="buscar"><input id="q" type="search" placeholder="Buscar instalación…" autocomplete="off"></div>
+  <div id="resultados"></div>
   <div id="presets">
     <button data-preset="todos">Todo</button>
     <button data-preset="Red eléctrica">Eléctrico</button>
@@ -153,8 +207,17 @@
     <button data-preset="Transporte">Transporte</button>
   </div>
   <div id="capas"></div>
+  <div id="opacidad"><label>Datos</label><input id="op" type="range" min="30" max="100" value="100"><b id="opv">100%</b></div>
   <div id="pie"><select id="base"></select></div>
 </div>
+
+<div id="velo"><div id="fuentes">
+  <button class="cerrar" id="cerrar-fuentes">×</button>
+  <h2>De dónde sale cada dato</h2>
+  <div class="nota" id="fuentes-nota">Cargando…</div>
+  <table><thead><tr><th>Capa</th><th>Fuente</th><th>Actualizado</th><th>Licencia</th><th class="c">Registros</th></tr></thead>
+  <tbody id="fuentes-tabla"></tbody></table>
+</div></div>
 
 <div id="estado">
   <span>z <b id="s-zoom">6.6</b></span>
@@ -219,7 +282,8 @@ const ETIQ = { operador:"Operador", municipio:"Municipio", demarcacion:"Demarcac
 function ficha(p, c) {
   const titulo = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Aeropuerto || p.Carretera ||
                  p.Rotulo || p.Direccion || p.Nombre_plataforma || "Sin nombre";
-  const estado = [p.categoria, p.estado_registro, p.verif].filter(Boolean).join(" · ");
+  const estado = [p.categoria, p.estado_registro, p.verif]
+    .filter(v => v && !/^[A-Z0-9_]+$/.test(String(v))).join(" · ");
   let h = '<div class="ficha"><div class="ft">' + titulo + "</div>";
   h += '<div class="fs">' + c.label + (estado ? " — " + estado : "") + "</div>";
   if (p.descripcion) h += '<p class="fd">' + p.descripcion + "</p>";
@@ -300,6 +364,12 @@ const CAPAS = [
     fichero:"datos/simplificado/agua-embalsada.geojson", radio:2.4, opacidad:.45, atlas:"agua-embalsada" },
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
     fichero:"datos/atlas/desaladoras.geojson", radio:6, atlas:"desaladoras", siempreIndividual:true },
+  { id:"edar", grupo:"Agua", label:"EDAR (depuradoras)", tipo:"punto", on:false, color:"#a3e635",
+    fichero:"datos/edar.geojson", radio:4 },
+  { id:"etap", grupo:"Agua", label:"ETAP (potabilizadoras)", tipo:"punto", on:false, color:"#22d3ee",
+    fichero:"datos/etap.geojson", radio:4.2 },
+  { id:"aguacond", grupo:"Agua", label:"Conducciones y trasvases", tipo:"linea", on:false, color:"#38bdf8",
+    fichero:"datos/agua-conducciones.geojson", peso:2, opacidad:.85 },
   { id:"h2", grupo:"Agua", label:"Producción de H₂", tipo:"punto", on:false, color:"#5eead4",
     fichero:"datos/atlas/hidrogeno-produccion.geojson", radio:6, atlas:"hidrogeno-produccion" },
 
@@ -322,7 +392,7 @@ const CAPAS = [
 /* zoom a partir del cual se dibuja cada punto por separado */
 const ZOOM_DETALLE = 8;
 
-const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {};
+const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
   (grupos[c.grupo] = grupos[c.grupo] || []).push(c);
   capas[c.id] = L.layerGroup();
@@ -433,6 +503,20 @@ function cargar(c) {
       if (el) el.textContent = nf(feats.length);
       document.querySelector('[data-fila="' + c.id + '"]').classList.add("activa");
 
+      // indice para el buscador: nombre + coordenadas
+      feats.forEach(f => {
+        const p = f.properties || {};
+        const nom = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Rotulo ||
+                    p.Direccion || p.Carretera;
+        if (!nom) return;
+        const g = f.geometry || {};
+        let arr = null;
+        if (g.type === "Point") arr = g.coordinates;
+        else if (g.type === "LineString" && g.coordinates.length) arr = g.coordinates[0];
+        if (!arr) return;
+        INDICE.push({ nombre: String(nom), lat: arr[1], lng: arr[0], capa: c.id, props: p });
+      });
+
       if (c.tipo === "punto") { datos[c.id] = feats; pintarPuntos(c); }
       else {
         // lineas y poligonos: halo debajo si se pide (solo 400/220 kV)
@@ -506,6 +590,116 @@ $("#btn-tema").addEventListener("click", () => {
   document.documentElement.dataset.tema = oscuro ? "claro" : "oscuro";
 });
 
+
+/* ---------------- buscador ---------------- */
+const cajaQ = $("#q"), cajaR = $("#resultados");
+let temporizador = null;
+cajaQ.addEventListener("input", () => {
+  clearTimeout(temporizador);
+  temporizador = setTimeout(() => {
+    const t = cajaQ.value.trim().toLowerCase();
+    if (t.length < 2) { cajaR.classList.remove("on"); cajaR.innerHTML = ""; return; }
+    const vistos = new Set();
+    const hits = [];
+    for (const it of INDICE) {
+      if (vistos.has(it.nombre + it.capa)) continue;
+      if (it.nombre.toLowerCase().includes(t)) {
+        vistos.add(it.nombre + it.capa);
+        hits.push(it);
+        if (hits.length >= 9) break;
+      }
+    }
+    cajaR.innerHTML = hits.length ? hits.map((h, i) =>
+      `<div data-hit="${i}">${h.nombre}<span>${h.capa}</span></div>`).join("")
+      : '<div style="color:var(--tenue)">Sin resultados en las capas cargadas</div>';
+    cajaR.classList.add("on");
+    cajaR.querySelectorAll("[data-hit]").forEach(d => {
+      d.addEventListener("click", () => {
+        const h = hits[+d.dataset.hit];
+        const def = CAPAS.find(x => x.id === h.capa);
+        mapa.setView([h.lat, h.lng], Math.max(mapa.getZoom(), 11));
+        setTimeout(() => abrirFicha(h.props, def, [h.lat, h.lng]), 260);
+        cajaR.classList.remove("on");
+      });
+    });
+  }, 140);
+});
+
+/* ---------------- panel de fuentes ---------------- */
+let FUENTES = null;
+fetch("datos/fuentes.json").then(r => r.json()).then(d => { FUENTES = d; }).catch(() => {});
+
+function pintarFuentes() {
+  const tabla = $("#fuentes-tabla");
+  if (!FUENTES) { $("#fuentes-nota").textContent = "No se pudo cargar datos/fuentes.json."; return; }
+  const filas = CAPAS.map(c => {
+    const f = FUENTES.capas[c.id] || {};
+    const n = conteo[c.id] || f.features;
+    const act = f.actualizado || "—";
+    return `<tr><td><b>${c.label}</b><br><span class="lic">${c.grupo}</span></td>
+      <td>${f.fuente || "—"}<br><span class="lic">${f.editor || ""}</span></td>
+      <td>${act}</td>
+      <td><span class="lic">${f.licencia || "—"}</span></td>
+      <td class="c">${n ? n.toLocaleString("es-ES") : "—"}</td></tr>`;
+  }).join("");
+  tabla.innerHTML = filas;
+  $("#fuentes-nota").innerHTML =
+    `Generado el <b>${FUENTES.generado}</b> desde los recibos de descarga. ` +
+    `La columna «Actualizado» es la fecha que declara el editor del dato (no la de descarga). ` +
+    `Las capas de OpenStreetMap no declaran fecha: se descargaron el ${FUENTES.generado}.` +
+    (FUENTES.simplificacion ? ` Geometrías simplificadas a 0,0008° (~89 m) para el visor.` : "");
+}
+$("#btn-fuentes").addEventListener("click", () => { pintarFuentes(); $("#velo").classList.add("on"); });
+$("#cerrar-fuentes").addEventListener("click", () => $("#velo").classList.remove("on"));
+$("#velo").addEventListener("click", e => { if (e.target.id === "velo") $("#velo").classList.remove("on"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("#velo").classList.remove("on"); });
+
+/* ---------------- opacidad global ---------------- */
+$("#op").addEventListener("input", e => {
+  const v = e.target.value;
+  $("#opv").textContent = v + "%";
+  const pane = mapa.getPane("overlayPane");
+  if (pane) pane.style.opacity = v / 100;
+});
+
+/* ---------------- enlace permanente ---------------- */
+function estadoUrl() {
+  const c = mapa.getCenter();
+  const activas = CAPAS.filter(x => document.querySelector(`[data-capa="${x.id}"]`)?.checked).map(x => x.id);
+  return "#z=" + mapa.getZoom().toFixed(2) + "&lat=" + c.lat.toFixed(4) + "&lng=" + c.lng.toFixed(4) +
+         "&c=" + activas.join(",") + "&b=" + (document.documentElement.dataset.base || "radar") +
+         "&t=" + (document.documentElement.dataset.tema || "oscuro");
+}
+$("#btn-enlace").addEventListener("click", async () => {
+  const url = location.origin + location.pathname + estadoUrl();
+  try { await navigator.clipboard.writeText(url); $("#btn-enlace").textContent = "✓"; }
+  catch (e) { prompt("Copia el enlace:", url); }
+  setTimeout(() => { $("#btn-enlace").textContent = "⧉"; }, 1600);
+});
+
+function aplicarUrl() {
+  if (!location.hash || location.hash.length < 4) return false;
+  const p = new URLSearchParams(location.hash.slice(1));
+  const z = parseFloat(p.get("z")), lat = parseFloat(p.get("lat")), lng = parseFloat(p.get("lng"));
+  if (isFinite(lat) && isFinite(lng)) mapa.setView([lat, lng], isFinite(z) ? z : mapa.getZoom());
+  const c = p.get("c");
+  if (c) {
+    const quiere = new Set(c.split(",").filter(Boolean));
+    CAPAS.forEach(x => {
+      const chk = document.querySelector(`[data-capa="${x.id}"]`);
+      const on = quiere.has(x.id);
+      if (!chk || chk.checked === on) return;
+      chk.checked = on;
+      if (on) { cargar(x); capas[x.id].addTo(mapa); } else mapa.removeLayer(capas[x.id]);
+    });
+    estado();
+  }
+  const b = p.get("b"), t = p.get("t");
+  if (b) { sel.value = b; ponerBase(b); }
+  if (t) document.documentElement.dataset.tema = t;
+  return true;
+}
+
 /* ---------------- presets ---------------- */
 document.querySelectorAll("[data-preset]").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -521,6 +715,8 @@ document.querySelectorAll("[data-preset]").forEach(btn => {
     estado();
   });
 });
+
+aplicarUrl();
 
 /* ---------------- API ---------------- */
 window.OpenInfraES = {
