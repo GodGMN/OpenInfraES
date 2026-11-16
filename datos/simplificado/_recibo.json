@@ -95,11 +95,11 @@
   {
    "id": "trasvases-union.geojson",
    "tolerancia": 0.0006,
-   "features": 13,
-   "vertices_antes": 3477,
-   "vertices_despues": 611,
-   "ahorro_pct": 82.4,
-   "kb": 20
+   "features": 8,
+   "vertices_antes": 3424,
+   "vertices_despues": 573,
+   "ahorro_pct": 83.3,
+   "kb": 18
   }
  ]
 }
