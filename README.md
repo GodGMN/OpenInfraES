@@ -1,16 +1,27 @@
-# OpenInfraES — infraestructura eléctrica de España, en datos
+# OpenInfraES — infraestructura de España, en datos
 
-> **Índice del proyecto**: [`docs/PROYECTO.md`](docs/PROYECTO.md) — qué contiene, cómo está hecho,
-> licencias y límites conocidos. · [`docs/apis.md`](docs/apis.md) — qué API responde y cuál pide clave.
-> · [`docs/nap.md`](docs/nap.md) — estado del NAP de transporte.
+## Documentación
 
-**28 capas · 6 grupos · ~7.400 objetos con las capas de por defecto.** Energía (red, generación, gas,
-agua) y transporte, con la fuente, la licencia y la fecha del dato a un clic.
+| Documento | Qué encontrarás |
+|---|---|
+| [`docs/PROYECTO.md`](docs/PROYECTO.md) | qué es, qué contiene, cómo está hecho, rendimiento medido y límites |
+| [`docs/FUENTES.md`](docs/FUENTES.md) | **ficha por fuente oficial**: qué publica, URL, cómo se obtiene, licencia, frecuencia y limitaciones |
+| [`docs/apis.md`](docs/apis.md) | estado técnico de cada API, con los errores literales |
+| [`docs/nap.md`](docs/nap.md) | el NAP de transporte: qué hay y por qué no responde |
+| [`GUIA.md`](GUIA.md) | reglas de trabajo: cómo añadir una capa, sin editar a mano, sin inventar |
+
+**28 capas · 7 grupos · ~7.400 objetos con las capas de por defecto.** Energía (red, generación, gas,
+agua), transporte, tiempo real y riesgo. Cada capa declara su fuente, su licencia y la fecha del dato;
+cada elemento abre una ficha con todos sus atributos.
 
 
-Repositorio de datos y visor de la **red de transporte eléctrica y del parque de generación español**,
-construido con fuentes abiertas y listo para reutilizar en otros proyectos (mapas, modelos, análisis
-territorial).
+Datos y visor de la **infraestructura energética, de transporte y de riesgo de España**, construido
+solo con fuentes oficiales y abiertas, y listo para reutilizar en otros proyectos (mapas, modelos,
+análisis territorial).
+
+Lo que lo distingue: cada capa dice **de qué organismo sale, cómo se obtiene y de cuándo es el dato**.
+Cuando un dato falta o está a medias —el Tajo-Segura solo está mapeado hasta Alarcón—, se declara en la
+ficha en vez de dibujarlo como si estuviera completo.
 
 > Hecho con ❤️ por David Antizar · datos © colaboradores de OpenStreetMap (ODbL) y REE/ELECTRA
 

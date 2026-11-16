@@ -3,45 +3,65 @@ titulo: Guía de trabajo — OpenInfraES
 fecha: 2026-11-16
 ---
 
-# GUIA.md
+# Guía de trabajo
 
 Reglas del repositorio. Breves y obligatorias.
 
 ## Qué es esto
 
-Datos de infraestructura eléctrica española, abiertos y reutilizables. **No es un visor de
-OpenInfraMap**: es una copia de trabajo con los datos normalizados, agregados y verificados.
+Un visor de la infraestructura **energética, de transporte y de riesgo** de España, con los datos
+normalizados, verificados y con su fuente declarada. No es una copia de OpenInfraMap ni un mapa
+decorativo: cada capa se puede rastrear hasta el organismo que publica el dato.
 
-## Reglas
+Documentación: [`docs/PROYECTO.md`](docs/PROYECTO.md) (visión general) · [`docs/FUENTES.md`](docs/FUENTES.md)
+(ficha por fuente oficial) · [`docs/apis.md`](docs/apis.md) (estado técnico) · [`docs/nap.md`](docs/nap.md).
 
-1. **Los GeoJSON no se editan a mano.** Se regeneran con `scripts/descargar.py`. Si un dato está mal,
-   se corrige en OSM o en la fuente, no en el fichero.
-2. **Cada agregado lleva su verificación.** `scripts/agregar.py` falla si los conteos no cuadran con lo
-   declarado por la fuente; `scripts/validar.py` falla si los CSV no cuadran entre sí.
-3. **Nada de datos inventados ni "estimaciones" sin marcar.** Si algo es calculado (p. ej. km por
-   haversine), se dice en el README.
-4. **Atribución obligatoria.** OSM es ODbL: todo producto derivado debe citar «© colaboradores de
-   OpenStreetMap» y compartirse igual.
-5. **Toda cifra publicada, con fecha de extracción.** Los ficheros de origen llevan la fecha en el
-   nombre; el recibo está en `datos/_procedencia.json`.
+## Las cinco reglas
 
-## Cómo añadir una capa nueva
+1. **Los GeoJSON no se editan a mano.** Se regeneran con su script. Si un dato está mal, se corrige en
+   la fuente o en el script, nunca en el fichero.
+2. **Cada capa tiene su recibo.** `scripts/validar.py` falla si falta un `_recibo.json`, si un conteo no
+   cuadra o si una capa se queda sin fuente en `datos/fuentes.json`.
+3. **Nada inventado ni estimado sin marcar.** Si algo es calculado (km por haversine, caudal modelado,
+   trazado incompleto), se declara en el propio dato y en la ficha.
+4. **Atribución por capa.** OSM es **ODbL** (comparte igual); IGN/SCNE, MITMA y MITECO son **CC BY 4.0**;
+   REE y OMIE tienen **condiciones propias**. Mezclar ODbL con CC BY en un mismo producto derivado
+   obliga a ODbL para el conjunto.
+5. **Toda cifra publicada lleva fecha de dato y de descarga.** No son lo mismo: el parte hidrológico es
+   del 10 de noviembre aunque se descargue el 16.
 
-1. Descargar a `datos/` con `scripts/descargar.py` (añadir la fuente a `FICHEROS`).
-2. Agregar en `scripts/agregar.py` con su verificación de cuadre.
-3. Añadir el CSV al README con su cifra y su fuente.
-4. Pasar `python scripts/validar.py` (debe salir VERDE).
-5. Commit en castellano, describiendo la capa.
+## Cómo añadir una capa
+
+1. **Script propio** en `scripts/<fuente>.py`: descarga, normaliza y escribe su `_recibo.json`.
+2. **Simplificar** si trae geometría: añadirla a `scripts/simplificar.py` con su tolerancia.
+3. **Declarar la fuente** en `scripts/fuentes_visor.py` (el id del visor y el id del origen no siempre
+   coinciden: hay un mapa de alias) y en `scripts/cadenas.py` (productor → publica → descarga).
+4. **Añadir la capa** al array `CAPAS` de `mapa.html`, con `zoomMin` si a escala nacional no aporta.
+5. **Pasar el validador**: `python scripts/validar.py` → `RESULTADO: VERDE`.
+6. **Commit en castellano** describiendo la capa y su fuente.
+
+## Reglas de rendimiento (medidas, no supuestas)
+
+- **Carga bajo demanda**: ninguna capa se descarga hasta que se enciende. El visor no pide nada al abrir
+  que no esté en las capas de por defecto.
+- **LOD por zoom (`zoomMin`)**: si una capa tiene miles de features y a escala nacional no aporta, se
+  retira del mapa por debajo de su zoom. No se vuelve a descargar.
+- **Puntos: solo lo que cae en la vista**, con margen, y se repintan al mover.
+- **Un popup reutilizable**, no un `bindPopup` por feature.
+- Antes de decir «va más fluido», **mide**: `OpenInfraES.bench()` para el arrastre y una secuencia de
+  `setZoom` para el redibujado. El FPS del arrastre no mide el coste de los paths (Leaflet mueve el
+  contenedor con `transform`).
+
+## Credenciales
+
+Van en `.env` (**ignorado por git**) y nunca en un commit, en la documentación ni en el chat. El
+validador no las lee; los scripts sí. Verificado con `git grep` que no aparecen en el historial.
 
 ## Limitaciones conocidas (no son bugs)
 
-- Solo transporte (220/400 kV), no distribución.
-- Longitud física, no de circuito.
-- El 49% de los tramos no declara operador en OSM.
-- El parque de generación viene de dos registros cruzados al 47% por nombre.
-
-## Rutina
-
-```bash
-python scripts/descargar.py && python scripts/agregar.py && python scripts/validar.py
-```
+- **Red de transporte** (220/400 kV), no distribución.
+- **No hay generación por planta** en la API pública de REE; hace falta ENTSO-E.
+- **No hay tensión de red por nudo** en ninguna API pública.
+- **El Tajo-Segura solo está mapeado hasta Alarcón** en OSM; el resto no existe con nombre.
+- **El caudal de los ríos es modelado** (GloFAS, rejilla ~5 km), no aforo oficial.
+- **AEMET, ENTSO-E y NAP** requieren clave; dos están sin tramitar.

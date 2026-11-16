@@ -11,6 +11,10 @@ Un mapa de la infraestructura energética y de transporte de España que se pued
 mirar: cada capa declara su fuente, su licencia y la fecha del dato, y cada elemento abre una ficha
 con todos sus atributos.
 
+**Documentación**: este documento (visión general) · [`FUENTES.md`](FUENTES.md) — ficha por fuente
+oficial con licencia, frecuencia y limitaciones · [`apis.md`](apis.md) — estado técnico de cada API ·
+[`nap.md`](nap.md) — el NAP de transporte · [`../GUIA.md`](../GUIA.md) — reglas de trabajo.
+
 Corre en local (`python -m http.server`). **Todavía no está en un servidor**, y esa es una decisión
 consciente: primero el dato y el motor, después el alojamiento.
 
@@ -113,6 +117,21 @@ Conviven dos regímenes y **no se pueden mezclar sin cuidado**:
   producto derivado hereda ODbL.
 - **CC BY 4.0** (Atlas, MITMA, MITECO): atribución, sin copyleft.
 - **Condiciones propias** (REE REData, OMIE): pendiente de leer.
+
+## De dónde sale cada dato
+
+Las 46 entradas de `datos/fuentes.json` declaran **productor → publica → descarga** y tres fechas
+distintas. El detalle, fuente por fuente, está en [`FUENTES.md`](FUENTES.md). Resumen:
+
+| Organismo | Qué aporta | Licencia |
+|---|---|---|
+| **IGN / SCNE** | cartografía base, BTN, subestaciones | CC BY 4.0 |
+| **MITECO** | embalses, desaladoras, precios de carburantes | Ley 37/2007 |
+| **MITMA** | carreteras, puertos, terminales, combustibles alternativos | CC BY 4.0 |
+| **REE / ESIOS** | generación, demanda, balance, previsión | condiciones propias |
+| **Renfe** | trenes en vivo, estaciones de Cercanías | abierto |
+| **EMSC-CSEM** | terremotos | abierto con atribución |
+| **OpenStreetMap** | red eléctrica, gas, EDAR, ETAP, ríos | **ODbL** |
 
 ## Cómo se arranca
 
