@@ -183,7 +183,7 @@ def main():
         print("  procedencia de datos ........ %d capas documentadas" % d.get("total_capas", 0))
 
     # 5. visor
-    for f in ("mapa.html", "README.md"):
+    for f in ("index.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):
             error("falta %s" % f)
 

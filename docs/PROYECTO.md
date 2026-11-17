@@ -68,7 +68,7 @@ datos/            GeoJSON servidos al visor (simplificados)
   oficial/        capas vectorizadas de IGN, MITECO, CSN, CORES y Enagás
   hermes/         capas del visor del MITMA
 scripts/          un script por fuente, cada uno con su recibo
-mapa.html         el visor: Leaflet + canvas, un solo fichero
+index.html        el visor: Leaflet + canvas, un solo fichero
 docs/             este documento, apis.md, nap.md
 ```
 
@@ -138,7 +138,7 @@ distintas. El detalle, fuente por fuente, está en [`FUENTES.md`](FUENTES.md). R
 ```bash
 cd OpenInfraES
 python -m http.server 8731 --bind 127.0.0.1
-# http://127.0.0.1:8731/mapa.html
+# http://127.0.0.1:8731/index.html
 ```
 
 Credenciales en `.env` (ignorado por git). Para actualizar los datos, un script por fuente y

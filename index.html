@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="es" data-tema="oscuro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infraestructura de España — OpenInfraES</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    --fondo:#05080d; --panel:rgba(8,13,21,.88); --panel-solido:#0a1119;
+    --borde:rgba(125,155,180,.16); --borde-fuerte:rgba(34,211,238,.45);
+    --tinta:#e8f2f9; --suave:#93a9bd; --tenue:#63788c;
+    --cian:#22d3ee; --ambar:#fbbf24;
+    --mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,monospace;
+  }
+  html[data-tema="claro"] {
+    --fondo:#eef2f6; --panel:rgba(255,255,255,.95); --panel-solido:#fff;
+    --borde:rgba(15,28,46,.14); --borde-fuerte:rgba(8,145,178,.5);
+    --tinta:#0d1a29; --suave:#4a5c70; --tenue:#7b8ea3;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; overflow:hidden; background:var(--fondo);
+    font-family:"Segoe UI",Inter,system-ui,Arial,sans-serif; color:var(--tinta); }
+  #mapa { position:absolute; inset:0; background:var(--fondo); }
+
+  /* El IGN gris solo viene en claro. En vez de invertirlo (que aplasta la geografía
+     y deja el mapa en negro sin costas) se desatura y se oscurece: queda una base
+     legible en grises oscuros sobre la que los datos neón sí destacan. */
+  /* cada base trae su filtro: el IGN no tiene teselas oscuras, así que el look se hace aquí */
+  html[data-base="radar"] .leaflet-tile-pane { filter:invert(1) brightness(2.15) contrast(1.22) saturate(0); }
+  html[data-base="gris"]  .leaflet-tile-pane { filter:grayscale(1) brightness(.42) contrast(1.55); }
+  html[data-tema="oscuro"][data-base="todo"] .leaflet-tile-pane,
+  html[data-tema="oscuro"][data-base="orto"] .leaflet-tile-pane { filter:brightness(.62) contrast(1.15) saturate(.75); }
+  html[data-tema="claro"][data-base="todo"] .leaflet-tile-pane,
+  html[data-tema="claro"][data-base="orto"] .leaflet-tile-pane,
+  html[data-tema="claro"][data-base="osm"] .leaflet-tile-pane { filter:none; }
+  html[data-tema="oscuro"][data-base="osm"] .leaflet-tile-pane { filter:grayscale(1) invert(1) brightness(.75) contrast(1.2); }
+  .leaflet-tile-pane { transition:filter .4s ease; }
+  .leaflet-container { background:var(--fondo); font-family:inherit; }
+
+  #hud { position:absolute; z-index:1000; top:16px; left:16px; width:330px;
+    max-height:calc(100% - 92px); display:flex; flex-direction:column;
+    background:var(--panel); border:1px solid var(--borde); border-radius:3px;
+    backdrop-filter:blur(10px); box-shadow:0 20px 55px rgba(0,0,0,.6); }
+  #hud::before { content:""; position:absolute; top:-1px; left:16px; right:16px; height:1px;
+    background:linear-gradient(90deg,transparent,var(--borde-fuerte),transparent); }
+  #cabeza { padding:15px 16px 12px; border-bottom:1px solid var(--borde); }
+  /* barra de acciones propia: fuera de la cabecera para no pisar el titulo */
+  #acciones { display:grid; grid-template-columns:repeat(6,1fr); gap:5px;
+    padding:9px 12px; border-bottom:1px solid var(--borde); }
+  #acciones button { display:flex; flex-direction:column; align-items:center; gap:3px;
+    border:1px solid var(--borde); background:transparent; color:var(--suave); border-radius:2px;
+    padding:6px 2px 5px; cursor:pointer; transition:.15s; font-family:var(--mono);
+    font-size:8.6px; letter-spacing:.06em; text-transform:uppercase; line-height:1.1; }
+  #acciones button b { font-size:14px; font-family:inherit; font-weight:400; line-height:1; }
+  #acciones button:hover { color:var(--cian); border-color:var(--borde-fuerte); background:rgba(34,211,238,.07); }
+  #acciones button.on { color:var(--fondo); background:var(--cian); border-color:var(--cian); }
+  .marca { display:flex; align-items:center; gap:9px; }
+  .punto-vivo { width:6px; height:6px; border-radius:50%; background:var(--cian);
+    box-shadow:0 0 0 3px rgba(34,211,238,.15); animation:latido 2.6s ease-in-out infinite; }
+  @keyframes latido { 0%,100%{opacity:1} 50%{opacity:.3} }
+  #cabeza h1 { margin:0; font-size:13px; font-weight:600; letter-spacing:.16em;
+    text-transform:uppercase; }
+  #cabeza .sub { color:var(--suave); font-size:10.8px; letter-spacing:.06em; margin-top:6px;
+    font-family:var(--mono); text-transform:uppercase; }
+  #btn-tema { width:26px; height:26px;
+    border:1px solid var(--borde); background:transparent; color:var(--suave); border-radius:2px;
+    cursor:pointer; font-size:12px; display:grid; place-items:center; transition:.15s; }
+
+
+  #presets { display:flex; flex-wrap:wrap; gap:4px; padding:9px 15px 0; }
+  #presets button { flex:1 1 auto; min-width:0; border:1px solid var(--borde); background:transparent;
+    color:var(--suave); border-radius:2px; padding:4px 6px; font-family:var(--mono); font-size:9.4px;
+    letter-spacing:.09em; text-transform:uppercase; cursor:pointer; transition:.15s; }
+  #presets button:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+  #presets button.on { color:var(--fondo); background:var(--cian); border-color:var(--cian); font-weight:600; }
+  #capas { overflow:auto; padding:10px 5px 10px 15px; flex:1; }
+  #capas::-webkit-scrollbar { width:5px; }
+  #capas::-webkit-scrollbar-thumb { background:var(--borde-fuerte); border-radius:3px; }
+  .grupo { margin:0 0 12px; }
+  .grupo-t { display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:9.8px;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--suave); margin:0 0 6px; }
+  .grupo-t::after { content:""; flex:1; height:1px; background:var(--borde); }
+  .fila { display:flex; align-items:center; gap:9px; padding:4.2px 7px 4.2px 3px; cursor:pointer;
+    border-radius:2px; transition:background .12s; }
+  .fila:hover { background:rgba(34,211,238,.07); }
+  .fila input { appearance:none; width:12px; height:12px; border:1px solid var(--tenue);
+    border-radius:1px; flex:0 0 auto; cursor:pointer; position:relative; transition:.15s; }
+  .fila input:checked { border-color:var(--cian); background:var(--cian);
+    box-shadow:0 0 8px rgba(34,211,238,.6); }
+  .fila input:checked::after { content:""; position:absolute; inset:2.5px; background:var(--fondo); }
+  .muestra { width:14px; height:3px; border-radius:1px; flex:0 0 auto; }
+  .muestra.pol { height:10px; background:transparent !important; border:1px solid; }
+  .fila .txt { font-size:12.5px; }
+  .fila .n { margin-left:auto; font-family:var(--mono); font-size:10.8px; color:var(--tenue);
+    font-variant-numeric:tabular-nums; }
+  .fila.activa .n { color:var(--cian); }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  .spin { display:inline-block; width:10px; height:10px; border:1.5px solid var(--borde-fuerte);
+    border-top-color:var(--cian); border-radius:50%; animation:girar .7s linear infinite; vertical-align:-1px; }
+
+  #pie { border-top:1px solid var(--borde); padding:10px 15px 11px; }
+  #pie select { width:100%; background:transparent; color:var(--tinta);
+    border:1px solid var(--borde); border-radius:2px; padding:6px 8px; font-family:var(--mono);
+    font-size:10.8px; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
+  #pie select option { background:var(--panel-solido); color:var(--tinta); }
+
+  #estado { position:absolute; z-index:1000; bottom:14px; left:16px; right:16px; height:30px;
+    display:flex; align-items:center; gap:16px; padding:0 14px; background:var(--panel);
+    border:1px solid var(--borde); border-radius:2px; backdrop-filter:blur(10px);
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.09em; color:var(--suave);
+    text-transform:uppercase; }
+  #estado b { color:var(--tinta); font-weight:500; }
+  #estado .sep { width:1px; height:13px; background:var(--borde); }
+  #estado .der { margin-left:auto; display:flex; gap:14px; align-items:center; }
+
+  .leaflet-popup-content-wrapper { background:var(--panel-solido); color:var(--tinta);
+    border:1px solid var(--borde-fuerte); border-radius:3px;
+    box-shadow:0 22px 60px rgba(0,0,0,.65); }
+  .leaflet-popup-tip { background:var(--panel-solido); border:1px solid var(--borde-fuerte); }
+  .leaflet-popup-content { margin:0; width:302px !important; font-size:12.4px; line-height:1.45; }
+  .leaflet-popup-close-button { color:var(--suave) !important; font-size:20px !important;
+    width:27px !important; height:27px !important; }
+  .ficha { padding:14px 15px 15px; }
+  .ficha .ft { font-size:14.5px; font-weight:600; line-height:1.25; padding-right:16px; }
+  .ficha .fs { font-family:var(--mono); font-size:9.8px; letter-spacing:.15em;
+    text-transform:uppercase; color:var(--cian); margin:6px 0 10px; }
+  .ficha .fd { margin:0 0 10px; color:var(--suave); font-size:11.8px; }
+  .ficha table { width:100%; border-collapse:collapse; font-size:11.7px; }
+  .ficha td { padding:3.2px 0; vertical-align:top; border-bottom:1px solid var(--borde); }
+  .ficha tr:last-child td { border-bottom:0; }
+  .ficha td.k { color:var(--suave); width:45%; padding-right:8px; }
+  .ficha td.v { font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:11.4px; }
+  .caudal { margin-top:11px; border-top:1px solid var(--borde); padding-top:9px; }
+  .caudal .cv { font-family:var(--mono); font-size:19px; color:var(--cian); font-variant-numeric:tabular-nums; }
+  .caudal .cv small { font-size:11px; color:var(--suave); margin-left:4px; }
+  .caudal .cl { font-family:var(--mono); font-size:9.4px; letter-spacing:.13em; text-transform:uppercase;
+    color:var(--tenue); margin-bottom:3px; }
+  .caudal .spark { display:flex; align-items:flex-end; gap:2px; height:34px; margin-top:8px; }
+  .caudal .spark i { flex:1; background:var(--cian); opacity:.55; border-radius:1px 1px 0 0; min-height:2px; }
+  .caudal .spark i.hoy { opacity:1; box-shadow:0 0 8px rgba(34,211,238,.7); }
+  .caudal .cf { font-size:10.4px; color:var(--tenue); margin-top:6px; line-height:1.45; }
+  .caudal .err { font-size:11px; color:var(--ambar); }
+  .ficha .links { margin-top:11px; display:flex; flex-wrap:wrap; gap:5px; }
+  .ficha .links a { border:1px solid var(--borde-fuerte); border-radius:2px; padding:3px 9px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--cian); text-decoration:none; }
+  .ficha .links a:hover { background:rgba(34,211,238,.13); }
+  .ficha ul { margin:6px 0 0; padding-left:15px; font-size:11.4px; color:var(--suave); }
+  .ficha ul li { margin-bottom:2px; }
+
+
+  /* ---------- buscador ---------- */
+  #buscar { display:flex; gap:6px; padding:9px 15px 0; }
+  #buscar input { flex:1; min-width:0; background:rgba(255,255,255,.04); color:var(--tinta);
+    border:1px solid var(--borde); border-radius:2px; padding:6px 9px; font-size:12px;
+    font-family:inherit; }
+  #buscar input::placeholder { color:var(--tenue); }
+  #buscar input:focus { outline:none; border-color:var(--borde-fuerte); }
+  #resultados { position:absolute; top:96px; left:15px; right:15px; z-index:5; background:var(--panel-solido);
+    border:1px solid var(--borde-fuerte); border-radius:2px; max-height:230px; overflow:auto; display:none; }
+  #resultados.on { display:block; }
+  #resultados div { padding:6px 9px; font-size:11.8px; cursor:pointer; border-bottom:1px solid var(--borde); }
+  #resultados div:hover { background:rgba(34,211,238,.1); }
+  #resultados div span { display:block; font-family:var(--mono); font-size:9.4px;
+    text-transform:uppercase; letter-spacing:.1em; color:var(--tenue); margin-top:2px; }
+
+  /* ---------- modal fuentes ---------- */
+  #velo { position:fixed; inset:0; z-index:2000; background:rgba(3,6,10,.78); display:none;
+    align-items:center; justify-content:center; padding:24px; }
+  #velo.on { display:flex; }
+  #fuentes, #proyecto { width:min(980px,100%); max-height:86vh; overflow:auto; background:var(--panel-solido);
+    border:1px solid var(--borde-fuerte); border-radius:3px; padding:20px 22px;
+    box-shadow:0 30px 90px rgba(0,0,0,.7); }
+  #fuentes h2, #proyecto h2 { margin:0 0 3px; font-size:15px; letter-spacing:.1em; text-transform:uppercase; }
+  #fuentes .nota, #proyecto .nota { color:var(--suave); font-size:11.6px; margin-bottom:14px; line-height:1.5; }
+  #fuentes table, #proyecto table { width:100%; border-collapse:collapse; font-size:11.6px; }
+  #fuentes th, #proyecto th { text-align:left; font-family:var(--mono); font-size:9.6px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--tenue); border-bottom:1px solid var(--borde-fuerte);
+    padding:0 8px 6px 0; position:sticky; top:0; background:var(--panel-solido); }
+  #fuentes td, #proyecto td { padding:6px 8px 6px 0; border-bottom:1px solid var(--borde); vertical-align:top; }
+  #fuentes td.c { font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right; }
+  #fuentes a, #proyecto a { color:var(--cian); text-decoration:none; }
+  #fuentes .cerrar, #proyecto .cerrar { float:right; background:transparent; border:1px solid var(--borde);
+    color:var(--suave); border-radius:2px; width:26px; height:26px; cursor:pointer; }
+  #fuentes .cerrar:hover, #proyecto .cerrar:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+  #fuentes .lic { font-family:var(--mono); font-size:10px; color:var(--suave); }
+  #fuentes tbody tr.fila-f { cursor:pointer; }
+  #fuentes tbody tr.fila-f:hover { background:rgba(34,211,238,.06); }
+  #fuentes tr.det td { background:rgba(34,211,238,.04); padding:9px 10px 11px 14px; }
+  #fuentes .cadena { font-size:11.4px; line-height:1.65; color:var(--suave); }
+  #fuentes .cadena b { color:var(--tinta); font-weight:600; }
+  #fuentes .cadena .fl { color:var(--cian); }
+  #fuentes .cadena .nota { display:block; margin-top:5px; font-size:11px; color:var(--tenue); }
+
+  /* el tercer velo se me olvido: sin esto el panel de proyecto queda como un div
+     suelto al final del documento y descoloca la pagina entera */
+  #velo3 { position:fixed; inset:0; z-index:2000; background:rgba(3,6,10,.78); display:none;
+    align-items:center; justify-content:center; padding:24px; overflow-y:auto; }
+  #velo3.on { display:flex; }
+
+  #velo2 { position:fixed; inset:0; z-index:2000; background:rgba(3,6,10,.78); display:none;
+    align-items:center; justify-content:center; padding:24px; }
+  #velo2.on { display:flex; }
+  #sis { width:min(760px,100%); max-height:86vh; overflow:auto; background:var(--panel-solido);
+    border:1px solid var(--borde-fuerte); border-radius:3px; padding:20px 22px;
+    box-shadow:0 30px 90px rgba(0,0,0,.7); }
+  #sis h2 { margin:0 0 3px; font-size:15px; letter-spacing:.1em; text-transform:uppercase; }
+  #sis .nota { color:var(--suave); font-size:12.2px; margin-bottom:16px; line-height:1.5; }
+  #sis .cerrar { float:right; background:transparent; border:1px solid var(--borde); color:var(--suave);
+    border-radius:2px; width:26px; height:26px; cursor:pointer; }
+  .sis-cab { display:flex; align-items:baseline; gap:10px; margin:2px 0 14px; }
+  .sis-cab .tot { font-family:var(--mono); font-size:26px; color:var(--tinta); letter-spacing:-.5px; }
+  .sis-cab .uni { font-family:var(--mono); font-size:11px; color:var(--suave); }
+  .sis-cab .dia { margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--tenue); }
+  .barra { display:flex; align-items:center; gap:10px; margin-bottom:7px; font-size:12.6px; }
+  .cabecera { display:flex; gap:10px; font-family:var(--mono); font-size:9.4px; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--tenue); margin-bottom:6px; }
+  .cabecera .n { width:158px; flex:0 0 auto; }
+  .cabecera .track { flex:1 1 auto; }
+  .cabecera .v { width:78px; text-align:right; flex:0 0 auto; }
+  .cabecera .p { width:46px; text-align:right; flex:0 0 auto; }
+  .barra .track::after { content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(90deg, transparent 24.85%, rgba(125,155,180,.22) 25%, transparent 25.15%,
+      transparent 49.85%, rgba(125,155,180,.22) 50%, transparent 50.15%,
+      transparent 74.85%, rgba(125,155,180,.22) 75%, transparent 75.15%); }
+  .nota-pie { font-size:10.8px; color:var(--tenue); margin-top:9px; line-height:1.5; }
+  .prev .rango { display:flex; justify-content:space-between; font-family:var(--mono);
+    font-size:9.6px; color:var(--tenue); margin-top:4px; }
+  .barra .n { width:158px; color:var(--suave); flex:0 0 auto; }
+  .barra .track { flex:1 1 auto; height:19px; position:relative; background:rgba(125,155,180,.10); border-radius:2px; overflow:hidden; }
+  .barra .b { display:block; height:100%; border-radius:2px; }
+  .barra .v { width:78px; text-align:right; font-family:var(--mono); font-size:11.6px;
+    color:var(--tinta); font-variant-numeric:tabular-nums; flex:0 0 auto; }
+  .barra .p { width:46px; text-align:right; font-family:var(--mono); font-size:11px; color:var(--tenue); flex:0 0 auto; }
+  .sis-sec { font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--cian); margin:20px 0 10px; padding-top:14px; border-top:1px solid var(--borde); }
+  .prev { display:flex; gap:18px; }
+  .prev .caja { flex:1; min-width:0; }
+  .prev .t { font-size:11.8px; color:var(--suave); margin-bottom:6px; }
+  .prev .spark { display:flex; align-items:flex-end; gap:2px; height:78px; }
+  .prev .spark i { flex:1; background:var(--cian); opacity:.6; border-radius:1px 1px 0 0; min-height:2px; }
+  .prev .spark i.hoy { opacity:1; box-shadow:0 0 8px rgba(34,211,238,.6); }
+  .prev .m { font-family:var(--mono); font-size:15px; color:var(--tinta); margin-top:7px; }
+  .prev .m small { font-size:10.5px; color:var(--suave); }
+
+  /* ---------- opacidad ---------- */
+  #opacidad { display:flex; align-items:center; gap:8px; padding:8px 15px 0; }
+  #opacidad label { font-family:var(--mono); font-size:9.4px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--tenue); }
+  #opacidad input[type=range] { flex:1; min-width:0; accent-color:var(--cian); height:3px; }
+  #opacidad b { font-family:var(--mono); font-size:10px; color:var(--suave); width:30px; text-align:right; }
+
+  .leaflet-control-attribution { background:rgba(5,8,13,.75) !important; color:var(--tenue) !important;
+    font-size:9.6px !important; }
+  .leaflet-control-attribution a { color:var(--suave) !important; }
+  .leaflet-bar { border:1px solid var(--borde) !important; border-radius:2px !important; }
+  .leaflet-bar a { background:var(--panel-solido) !important; color:var(--tinta) !important;
+    border-bottom-color:var(--borde) !important; width:29px !important; height:29px !important;
+    line-height:29px !important; }
+  .leaflet-bar a:hover { color:var(--cian) !important; }
+
+  .vivo-fila { display:flex; gap:10px; margin:6px 0 2px; }
+  .vivo-fila > span { flex:1; background:rgba(34,211,238,.07); border:1px solid rgba(34,211,238,.18);
+    border-radius:8px; padding:7px 9px; }
+  .vivo-fila b { display:block; font-size:15px; color:#22d3ee; font-variant-numeric:tabular-nums; }
+  .vivo-fila i { display:block; font-size:9.5px; font-style:normal; opacity:.6; margin-top:2px;
+    text-transform:uppercase; letter-spacing:.04em; }
+
+  /* --- panel de proyecto --- */
+  #proyecto { width:min(860px,100%); }
+  #proyecto .entrada { font-size:13px; line-height:1.7; color:var(--tinta);
+    border-left:2px solid var(--cian); padding-left:12px; margin:0 0 16px; }
+  #proyecto .cifras { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:0 0 18px; }
+  #proyecto .cifra { background:rgba(34,211,238,.06); border:1px solid rgba(34,211,238,.18);
+    border-radius:3px; padding:9px 10px; }
+  #proyecto .cifra b { display:block; font-size:17px; color:var(--cian);
+    font-variant-numeric:tabular-nums; line-height:1.1; }
+  #proyecto .cifra span { display:block; font-size:9.6px; color:var(--tenue);
+    text-transform:uppercase; letter-spacing:.06em; margin-top:3px; line-height:1.3; }
+  #proyecto h3 { font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--tenue); margin:20px 0 8px; font-weight:400; }
+  #proyecto ul { margin:0 0 14px; padding-left:16px; font-size:12px; line-height:1.65; color:var(--suave); }
+  #proyecto li { margin-bottom:5px; }
+  #proyecto li b, #proyecto p b { color:var(--tinta); }
+  #proyecto .organismos { display:flex; flex-wrap:wrap; gap:5px; margin:0 0 16px; }
+  #proyecto .org { font-family:var(--mono); font-size:10px; padding:3px 7px;
+    border:1px solid var(--borde-fuerte); border-radius:2px; color:var(--suave); }
+  #proyecto .pie-proy { margin-top:18px; padding-top:12px; border-top:1px solid var(--borde);
+    font-size:10.6px; color:var(--tenue); line-height:1.6; }
+</style>
+</head>
+<body>
+<div id="mapa"></div>
+
+<div id="hud">
+  <div id="cabeza">
+    <div class="marca"><span class="punto-vivo"></span><h1>Infraestructura España</h1></div>
+    <div class="sub" id="sub-hud">—</div>
+
+  </div>
+  <div id="acciones">
+    <button id="btn-estado" title="Estado del sistema eléctrico: en vivo, del día y previsión"><b>⚡</b>Datos</button>
+    <button id="btn-trenes" title="Trenes en tiempo real"><b>🚆</b>Trenes</button>
+    <button id="btn-fuentes" title="Fuentes y fecha de los datos"><b>ⓘ</b>Fuentes</button>
+    <button id="btn-enlace" title="Copiar enlace a esta vista"><b>⧉</b>Enlace</button>
+    <button id="btn-proyecto" title="Qué es este proyecto y de dónde sale cada dato"><b>◈</b>Proyecto</button>
+    <button id="btn-tema" title="Cambiar tema"><b>◐</b>Tema</button>
+  </div>
+  <div id="buscar"><input id="q" type="search" placeholder="Buscar instalación…" autocomplete="off"></div>
+  <div id="resultados"></div>
+  <div id="presets">
+    <button data-preset="todos" title="Encender todo / apagar todo">Todo</button>
+    <button data-preset="Red eléctrica">Eléctrico</button>
+    <button data-preset="Gas">Gas</button>
+    <button data-preset="Agua">Agua</button>
+    <button data-preset="Transporte">Transporte</button>
+  </div>
+  <div id="capas"></div>
+  <div id="opacidad"><label>Datos</label><input id="op" type="range" min="30" max="100" value="100"><b id="opv">100%</b></div>
+  <div id="pie"><select id="base"></select></div>
+</div>
+
+<div id="velo"><div id="fuentes">
+  <button class="cerrar" id="cerrar-fuentes">×</button>
+  <h2>De dónde sale cada dato</h2>
+  <div class="nota" id="fuentes-nota">Cargando…</div>
+  <table><thead><tr><th>Capa</th><th>Fuente</th><th>Actualizado</th><th>Licencia</th><th class="c">Registros</th></tr></thead>
+  <tbody id="fuentes-tabla"></tbody></table>
+</div></div>
+
+<div id="velo2"><div id="sis">
+  <button class="cerrar" id="cerrar-sis">×</button>
+  <h2>Sistema eléctrico</h2>
+  <div class="nota" id="sis-nota">Cargando…</div>
+  <div id="sis-barras"></div>
+</div></div>
+
+<div id="velo3"><div id="proyecto">
+  <button class="cerrar" id="cerrar-proyecto">×</button>
+  <h2>Qué es esto</h2>
+
+  <p class="entrada">Una <b>base de datos de la infraestructura española</b> y el mapa para mirarla.
+  No es un visor con datos dentro: es el dato ordenado para poder volver a usarlo. Cada capa sabe de qué
+  organismo sale, de cuándo es y qué licencia tiene. Eso es lo que la hace reutilizable en cualquier otro
+  proyecto sin repetir el trabajo.</p>
+
+  <div class="cifras">
+    <div class="cifra"><b id="n-capas">—</b><span>capas</span></div>
+    <div class="cifra"><b id="n-obj">—</b><span>objetos</span></div>
+    <div class="cifra"><b>25</b><span>demarcaciones</span></div>
+    <div class="cifra"><b>10</b><span>organismos</span></div>
+  </div>
+
+  <h3>Qué se puede consultar</h3>
+  <ul>
+    <li><b>Energía</b> — red de 400 y 220 kV, 657 recintos de subestación, 7 reactores nucleares,
+    678 gasoductos, 7 regasificadoras, 5 almacenamientos, 10 refinerías, eólica y fotovoltaica.</li>
+    <li><b>Agua</b> — 402 embalses con capacidad y volumen del parte semanal, 28 desaladoras,
+    3.034 depuradoras, 1.551 potabilizadoras, 11 trazos de trasvase, 10.777 canales y 260 ríos con
+    caudal en vivo, dentro de sus <b>25 demarcaciones hidrográficas</b>.</li>
+    <li><b>Transporte</b> — 1.602 carreteras, 45 puertos, 440 terminales portuarias, 383 nodos de
+    mercancías, 405 estaciones de Cercanías y 418 trenes en circulación.</li>
+    <li><b>Sistema eléctrico</b> — demanda, mix de generación, emisiones, intercambios internacionales y
+    bombeo cada 5 minutos; el agregado del día y la previsión.</li>
+    <li><b>Riesgo</b> — sismos de la última semana y precios de 11.433 carburantes.</li>
+  </ul>
+
+  <h3>De dónde sale cada dato</h3>
+  <p class="nota">Solo se cita al organismo que produce el dato. No hay agregadores en la cadena.</p>
+  <div class="organismos">
+    <span class="org">MITECO</span><span class="org">IGN</span><span class="org">REE</span>
+    <span class="org">MITMA</span><span class="org">Enagás</span><span class="org">CORES</span>
+    <span class="org">CSN</span><span class="org">Renfe</span><span class="org">EMSC-CSEM</span>
+    <span class="org">OpenStreetMap</span>
+  </div>
+
+  <h3>Cómo crece</h3>
+  <ul>
+    <li><b>Fichas que se rellenan solas.</b> Una presa no es solo capacidad y volumen: falta el año de
+    construcción, quién la promovió, su expediente y el enlace a su confederación. Eso lo completa un
+    agente, campo a campo, y <b>cada valor declara su procedencia</b>.</li>
+    <li><b>Un hueco declarado vale más que un número inventado.</b> Si falta el año de una presa, se deja
+    vacío con su nota. Rellenarlo con una estimación plausible arruina la base entera.</li>
+    <li><b>Nada se escribe a mano.</b> Todo entra por un script o por una ficha con su fuente. Si se
+    escribe a mano, no se puede regenerar y el repositorio se pudre.</li>
+  </ul>
+
+  <h3>Las reglas</h3>
+  <ul>
+    <li>El dato y su fecha viajan juntos: <b>una cifra sin periodo no es un dato</b>.</li>
+    <li>Lo que el dato no permite se declara: el Tajo-Segura solo llega a Alarcón porque el resto no está
+    mapeado; el caudal de los ríos es <b>modelado</b>, no aforado.</li>
+    <li>Licencia por capa, y aviso cuando mezclar ODbL con CC BY obliga a compartir igual.</li>
+  </ul>
+
+  <div class="pie-proy">
+    El detalle de cada organismo —qué publica, su URL, cómo se obtiene, licencia y limitaciones— está en
+    el botón <b>ⓘ Fuentes</b>. El proyecto completo, con el estudio de cada fuente, vive en el repositorio
+    privado <b>Ntizar/OpenInfraES</b>.<br>
+    Hecho con ❤️ por David Antizar.
+  </div>
+</div></div>
+
+<div id="estado">
+  <span>z <b id="s-zoom">6.6</b></span>
+  <span class="sep"></span>
+  <span><b id="s-coord">—</b></span>
+  <span class="sep"></span>
+  <span>capas <b id="s-capas">0</b></span>
+  <span class="der"><span id="s-peso">—</span></span>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const nf = n => (typeof n === "number" ? n.toLocaleString("es-ES", { maximumFractionDigits: 2 }) : n);
+
+const IGN = (c, f) => "https://www.ign.es/wmts/ign-base?request=GetTile&service=WMTS&version=1.0.0&layer=" +
+  c + "&style=default&tilematrixset=GoogleMapsCompatible&tilematrix={z}&tilerow={y}&tilecol={x}&format=" + f;
+const BASES = {
+  radar:          ["IGN radar (líneas)", IGN("IGNBaseTodo-nofondo", "image/png")],
+  "IGNBase-gris": ["IGN gris",      IGN("IGNBase-gris", "image/png")],
+  "IGNBaseTodo":  ["Mapa base IGN", IGN("IGNBaseTodo", "image/png")],
+  "IGNBaseOrto":  ["Ortofoto PNOA", IGN("IGNBaseOrto", "image/jpeg")],
+  "osm":          ["OpenStreetMap", "https://tile.openstreetmap.org/{z}/{x}/{y}.png"]
+};
+
+const mapa = L.map("mapa", {
+  zoomControl: true, preferCanvas: true, minZoom: 5, maxZoom: 18,
+  zoomSnap: 0.25, zoomDelta: 0.75, wheelPxPerZoomLevel: 90, wheelDebounceTime: 20,
+  zoomAnimation: true, fadeAnimation: true, inertia: true, inertiaDeceleration: 2500,
+  renderer: L.canvas({ padding: 0.45, tolerance: 17 })
+}).setView([40.1, -3.7], 6.6);
+
+let capaBase = null;
+function ponerBase(k) {
+  const [nombre, url] = BASES[k] || BASES["IGNBase-gris"];
+  if (capaBase) mapa.removeLayer(capaBase);
+  capaBase = L.tileLayer(url, {
+    attribution: "© IGN · datos: OSM / REE / MITMA / MITECO / CSN / CORES / Enagás",
+    maxNativeZoom: 18, maxZoom: 19, crossOrigin: true,
+    updateWhenIdle: false, keepBuffer: 4
+  }).addTo(mapa);
+  capaBase.bringToBack();
+  document.documentElement.dataset.base = BASES[k] ? k : "radar";
+}
+
+/* ---------------- ficha ---------------- */
+const OCULTAS = new Set(["slug","verif","id","fid","OBJECTID","objectid","claves","fuentes",
+  "fecha_alta","nombre","name","descripcion","estado_registro","geo_fuente",
+  "geo_precision","fecha_verificacion","categoria","tipo_osm"]);
+const esTecnico = k => /(_v|_f|__v|__f)$/.test(k);
+const ETIQ = {
+  gasoleo_a:"Gasóleo A (€/l)", gasolina95:"Gasolina 95 (€/l)", gasolina98:"Gasolina 98 (€/l)",
+  gasoleo_premium:"Gasóleo Premium (€/l)", glp:"GLP (€/l)", gnc:"GNC (€/kg)", gnl:"GNL (€/kg)",
+  hidrogeno:"Hidrógeno (€/kg)", adblue:"AdBlue (€/l)", biodiesel:"Biodiésel (€/l)",
+  bioetanol:"Bioetanol (€/l)", rotulo:"Rótulo", direccion:"Dirección", horario:"Horario",
+  tipo_venta:"Tipo de venta", fecha_dato:"Fecha del dato",
+  magnitud:"Magnitud", profundidad_km:"Profundidad (km)", lugar:"Lugar", hora:"Hora (UTC)",
+  tipo_magnitud:"Tipo de magnitud", region:"Región",
+  operador:"Operador", municipio:"Municipio", demarcacion:"Demarcación",
+  capacidad_hm3:"Capacidad (hm³)", agua_actual_hm3:"Agua embalsada (hm³)", fecha_dato:"Fecha del dato",
+  hidroelectrico:"Hidroeléctrico", tecnologia_normalized:"Tecnología", installed_capacity_mw:"Potencia (MW)",
+  province:"Provincia", Carretera:"Carretera", Tipo_de_via:"Tipo de vía", Titular:"Titular",
+  TENT:"Red TEN-T", Longitud:"Longitud (m)", Nombre_terminal:"Terminal", Tipo_terminal:"Tipo",
+  Aeropuerto:"Aeropuerto", Direccion:"Dirección", Rotulo:"Rótulo", Venta_al_publico:"Venta al público",
+  Coord1:"Longitud", Coord2:"Latitud", Valido_desde:"Válido desde", Hidrogeno:"Hidrógeno",
+  Biodiesel:"Biodiésel", Gas_natural_licuado:"GNL", Gas_natural_comprimido:"GNC",
+  Gases_licuados_del_petroleo:"GLP", Nombre_plataforma:"Plataforma", voltage:"Tensión (V)",
+  operator:"Operador", circuits:"Circuitos", Elemento_portuario:"Elemento portuario" };
+
+function fichaTren(p, c) {
+  const t = p.hora ? " a las " + p.hora + " UTC" : "";
+  let h = '<div class="ficha"><div class="ft">Tren ' + (p.tren || "—") + "</div>";
+  h += '<div class="fs">' + c.label + " — " + (p.ruta || "ruta sin dato") + "</div>";
+  h += "<table>";
+  if (p.etiqueta) h += '<tr><td class="k">Etiqueta</td><td class="v">' + p.etiqueta + "</td></tr>";
+  if (p.viaje) h += '<tr><td class="k">Viaje</td><td class="v">' + p.viaje + "</td></tr>";
+  if (p.velocidad_kmh) h += '<tr><td class="k">Velocidad</td><td class="v">' + nf(p.velocidad_kmh) + " km/h</td></tr>";
+  if (p.rumbo) h += '<tr><td class="k">Rumbo</td><td class="v">' + nf(Math.round(p.rumbo)) + "°</td></tr>";
+  h += "</table>";
+  h += '<div class="cf" style="margin-top:9px;font-size:10.6px;color:var(--tenue)">Posición' + t +
+       ". Instantánea de gtfsrt.renfe.com (feed abierto, sin clave). Se actualiza al recargar.</div></div>";
+  return h;
+}
+
+function ficha(p, c) {
+  const titulo = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Aeropuerto || p.Carretera ||
+                 p.Rotulo || p.rotulo || p.Direccion || p.direccion || p.Nombre_plataforma ||
+                 (p.magnitud != null ? "Terremoto M" + p.magnitud : "Sin nombre");
+  const estado = [p.categoria, p.estado_registro, p.verif]
+    .filter(v => v && !/^[A-Z0-9_]+$/.test(String(v))).join(" · ");
+  let h = '<div class="ficha"><div class="ft">' + titulo + "</div>";
+  h += '<div class="fs">' + c.label + (estado ? " — " + estado : "") + "</div>";
+  if (p.descripcion) h += '<p class="fd">' + p.descripcion + "</p>";
+  const filas = Object.entries(p).filter(([k, v]) =>
+    v !== null && v !== "" && v !== undefined && !OCULTAS.has(k) && !esTecnico(k) && typeof v !== "object");
+  if (filas.length) {
+    h += "<table>";
+    filas.slice(0, 15).forEach(([k, v]) => {
+      let valor = v;
+      if (typeof v === "boolean") valor = v ? "Sí" : "No";
+      if (k === "hidroelectrico") valor = v ? "Sí" : "No";
+      if (k === "voltage" && Number(v) > 1000) valor = (Number(v) / 1000) + " kV";
+      if (k === "profundidad_km" && Number(v) < 0) valor = "desconocida";
+      if (typeof v === "number" && v > 1e11 && v < 3e12)
+        valor = new Date(v).toLocaleDateString("es-ES", { day:"2-digit", month:"2-digit", year:"numeric" });
+      h += '<tr><td class="k">' + (ETIQ[k] || k.replace(/_/g, " ")) + '</td><td class="v">' + nf(valor) + "</td></tr>";
+    });
+    h += "</table>";
+  }
+  const enlaces = [];
+  if (p.osm_id) enlaces.push(["OpenStreetMap", "https://www.openstreetmap.org/way/" + p.osm_id]);
+  if (c.apiCaudal) h += '<div class="caudal" id="caudal-box"><div class="cl">Caudal</div>' +
+    '<div class="err">consultando…</div></div>';
+  if (enlaces.length) h += '<div class="links">' + enlaces.map(([t, u]) =>
+    '<a href="' + u + '" target="_blank" rel="noopener">' + t + "</a>").join("") + "</div>";
+  return h + "</div>";
+}
+
+/* ficha de un grupo agregado: al alejar, un punto son N instalaciones */
+function fichaGrupo(items, c) {
+  const nombres = items.slice(0, 8).map(f => {
+    const p = f.properties || {};
+    return p.nombre || p.name || p.Nombre || p.Rotulo || p.Direccion || "sin nombre";
+  });
+  let h = '<div class="ficha"><div class="ft">' + items.length + " " + c.label.toLowerCase() + "</div>";
+  h += '<div class="fs">' + c.label + " — agrupadas por zoom</div>";
+  h += "<ul>" + nombres.map(n => "<li>" + n + "</li>").join("");
+  if (items.length > 8) h += "<li>y " + (items.length - 8) + " más…</li>";
+  h += "</ul><p class='fd' style='margin-top:8px;font-size:11px'>Acércate para verlas por separado.</p></div>";
+  return h;
+}
+
+/* ---------------- capas ---------------- */
+const CAPAS = [
+  { id:"l400", grupo:"Red eléctrica", label:"Líneas 400 kV", tipo:"linea", on:true, color:"#ff2d55",
+    fichero:"datos/simplificado/lineas_hv.geojson", peso:2.8, opacidad:.96,
+    filtro:f => f.properties.voltage === 400000 },
+  { id:"l220", grupo:"Red eléctrica", label:"Líneas 220 kV", tipo:"linea", on:true, color:"#3b82f6",
+    fichero:"datos/simplificado/lineas_hv.geojson", peso:1.6, opacidad:.85, zoomMin:6.2,
+    filtro:f => f.properties.voltage === 220000 },
+  { id:"subestaciones", grupo:"Red eléctrica", label:"Subestaciones", tipo:"poligono", on:false, color:"#14e0c8",
+    fichero:"datos/simplificado/red-electrica.geojson", peso:1, zoomMin:8,
+    filtro:f => f.properties.categoria === "subestacion" },
+  { id:"interelec", grupo:"Red eléctrica", label:"Interconexiones", tipo:"punto", on:false,
+    color:"#e879f9", fichero:"datos/oficial/electricidad-interconexiones.geojson", radio:7 },
+
+  { id:"hidro", grupo:"Generación", label:"Hidráulicas", tipo:"punto", on:true, color:"#22d3ee",
+    fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw", radioMin:2.6, radioMax:9, opacidad:.62,
+    filtro:f => ["hydro","pumped_hydro"].includes(f.properties.technology_normalized) },
+  { id:"eolicos", grupo:"Generación", label:"Parques eólicos", tipo:"poligono", on:false,
+    color:"#5eead4", fichero:"datos/simplificado/parques-eolicos.geojson", opacidad:.22,
+    peso:1, zoomMin:7, popupTitulo:"nombre", etiqueta:"nombre" },
+  { id:"solares", grupo:"Generación", label:"Plantas solares", tipo:"poligono", on:false,
+    color:"#fbbf24", fichero:"datos/simplificado/plantas-solares.geojson", opacidad:.22,
+    peso:1, zoomMin:7, popupTitulo:"nombre", etiqueta:"nombre" },
+  { id:"residuos", grupo:"Generación", label:"Residuos radiactivos", tipo:"punto", on:false,
+    color:"#f472b6", fichero:"datos/simplificado/residuos-radiactivos.geojson", radio:6,
+    siempreIndividual:true, popupTitulo:"nombre" },
+  { id:"nuclear", grupo:"Generación", label:"Nucleares", tipo:"punto", on:true, color:"#c084fc",
+    fichero:"datos/oficial/nuclear.geojson", radio:9, siempreIndividual:true },
+  { id:"gasgen", grupo:"Generación", label:"Ciclos combinados", tipo:"punto", on:false, color:"#a78bfa",
+    fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw",
+    filtro:f => ["ccgt","fuel_gas"].includes(f.properties.technology_normalized) },
+  { id:"resto", grupo:"Generación", label:"Resto del parque", tipo:"punto", on:false, color:"#34d399",
+    fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw",
+    filtro:f => !["hydro","pumped_hydro","ccgt","fuel_gas"].includes(f.properties.technology_normalized) },
+
+  { id:"gasoductos", grupo:"Gas", label:"Gasoductos", tipo:"linea", on:true, color:"#fbbf24",
+    fichero:"datos/simplificado/gasoductos.geojson", peso:1.7, opacidad:.85 },
+  { id:"petrolifero", grupo:"Gas", label:"Almacenamiento petrolífero", tipo:"punto", on:false,
+    color:"#94a3b8", fichero:"datos/simplificado/almacenamiento-petrolifero.geojson", radio:5,
+    siempreIndividual:true, popupTitulo:"nombre" },
+  { id:"h2red", grupo:"Gas", label:"Red de hidrógeno", tipo:"linea", on:false,
+    color:"#a78bfa", fichero:"datos/simplificado/hidrogeno-red.geojson", peso:2.4,
+    popupTitulo:"nombre" },
+  { id:"regas", grupo:"Gas", label:"Regasificadoras", tipo:"punto", on:true, color:"#fb923c",
+    fichero:"datos/oficial/gas-regasificacion.geojson", radio:7, siempreIndividual:true },
+  { id:"gasalm", grupo:"Gas", label:"Almacenamiento", tipo:"punto", on:false, color:"#d97706",
+    fichero:"datos/oficial/gas-almacenamiento.geojson", radio:6 },
+  { id:"refinerias", grupo:"Gas", label:"Refinerías", tipo:"punto", on:false, color:"#94a3b8",
+    fichero:"datos/oficial/refinerias.geojson", radio:6 },
+
+  { id:"embalses", grupo:"Agua", label:"Embalses", tipo:"punto", on:true, color:"#60a5fa",
+    fichero:"datos/simplificado/agua-embalsada.geojson", radio:2.4, opacidad:.45 },
+  { id:"demarcaciones", grupo:"Agua", label:"Demarcaciones hidrográficas", tipo:"poligono", on:false,
+    color:"#0ea5e9", fichero:"datos/demarcaciones.geojson", opacidad:.10, peso:1.2, zoomMin:0,
+    popupTitulo:"nom_demar", etiqueta:"nom_demar" },
+  { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
+    fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
+  { id:"edar", grupo:"Agua", label:"EDAR (depuradoras)", tipo:"punto", on:false, color:"#a3e635",
+    fichero:"datos/edar.geojson", radio:3, opacidad:.45 },
+  { id:"etap", grupo:"Agua", label:"ETAP (potabilizadoras)", tipo:"punto", on:false, color:"#22d3ee",
+    fichero:"datos/etap.geojson", radio:3.2, opacidad:.5 },
+  { id:"trasvases", grupo:"Agua", label:"Trasvases", tipo:"linea", on:false, color:"#f472b6",
+    fichero:"datos/simplificado/trasvases-union.geojson", peso:3.4, opacidad:.98,
+    filtro:f => /trasvase|postrasvase/i.test(f.properties.name || "") },
+  { id:"canales", grupo:"Agua", label:"Canales y acequias", tipo:"linea", on:false, color:"#38bdf8",
+    fichero:"datos/simplificado/agua-conducciones.geojson", peso:1.1, opacidad:.5, zoomMin:9,
+    filtro:f => !/trasvase|postrasvase/i.test(f.properties.name || "") },
+  { id:"rios", grupo:"Agua", label:"Ríos (caudal en vivo)", tipo:"linea", on:false, color:"#7dd3fc",
+    fichero:"datos/simplificado/rios.geojson", peso:1.6, opacidad:.8, apiCaudal:true },
+  { id:"h2", grupo:"Agua", label:"Producción de H₂", tipo:"punto", on:false, color:"#5eead4",
+    fichero:"datos/oficial/hidrogeno-produccion.geojson", radio:6 },
+
+  { id:"carreteras", grupo:"Transporte", label:"Carreteras del Estado", tipo:"linea", on:false, color:"#64748b",
+    fichero:"datos/hermes/carreteras.geojson", peso:1.1, opacidad:.6, zoomMin:7.5 },
+  { id:"puertos", grupo:"Transporte", label:"Puertos interés general", tipo:"punto", on:false, color:"#38bdf8",
+    fichero:"datos/hermes/puertos-interes-general.geojson", radio:7 },
+  { id:"terminales-puerto", grupo:"Transporte", label:"Terminales portuarias", tipo:"poligono", on:false,
+    color:"#3b82f6", fichero:"datos/hermes/terminales-portuarias.geojson", peso:1, zoomMin:9 },
+  { id:"terminales-aero", grupo:"Transporte", label:"Terminales aeropuerto", tipo:"poligono", on:false,
+    color:"#a78bfa", fichero:"datos/hermes/terminales-aeropuerto.geojson", peso:1, zoomMin:9 },
+  { id:"intermodales", grupo:"Transporte", label:"Terminales mercancías", tipo:"punto", on:false,
+    color:"#f59e0b", fichero:"datos/hermes/terminales-mercancias.geojson", radio:5 },
+  { id:"carburantes", grupo:"Tiempo real", label:"Carburantes (gasóleo A)", tipo:"punto", on:false,
+    color:"#22c55e", fichero:"datos/carburantes.geojson", radio:3.6, zoomMin:7,
+    escala:{ campo:"gasoleo_a", min:1.40, max:2.20, unidad:"€/l" } },
+  { id:"estaciones-cercanias", grupo:"Tiempo real", label:"Estaciones Cercanías", tipo:"punto", on:false,
+    color:"#a78bfa", fichero:"datos/estaciones-cercanias.geojson", radio:4.5, zoomMin:8 },
+  { id:"sismos", grupo:"Riesgo", label:"Terremotos (7 días)", tipo:"punto", on:false,
+    color:"#f97316", fichero:"datos/sismos.geojson", radio:5, siempreIndividual:true,
+    escala:{ campo:"magnitud", min:1, max:5, unidad:"M" }, radioPorMagnitud:true,
+    popupExtra:"sismo" },
+  { id:"trenes", grupo:"Tiempo real", label:"Trenes (GTFS-RT)", tipo:"punto", on:false, color:"#f43f5e",
+    fichero:"datos/trenes.geojson", radio:4.5, siempreIndividual:true, modoTren:true },
+  { id:"estaciones-gas", grupo:"Transporte", label:"Estaciones GNL/GNC/H₂", tipo:"punto", on:false,
+    color:"#4ade80", fichero:"datos/hermes/estaciones-gas.geojson", radio:5,
+    filtro:f => ["Gas_natural_licuado","Gas_natural_comprimido","Hidrogeno"]
+                 .some(k => f.properties[k] === "SI") }
+];
+
+/* zoom a partir del cual se dibuja cada punto por separado */
+const ZOOM_DETALLE = 8;
+
+const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
+CAPAS.forEach(c => {
+  (grupos[c.grupo] = grupos[c.grupo] || []).push(c);
+  capas[c.id] = L.layerGroup();
+  conteo[c.id] = 0; elementos[c.id] = []; datos[c.id] = null;
+});
+
+const panel = $("#capas");
+Object.entries(grupos).forEach(([nombre, lista]) => {
+  const d = document.createElement("div");
+  d.className = "grupo";
+  d.innerHTML = '<div class="grupo-t">' + nombre + "</div>" + lista.map(c =>
+    `<label class="fila" data-fila="${c.id}"><input type="checkbox" data-capa="${c.id}" ${c.on ? "checked" : ""}>` +
+    `<span class="muestra ${c.tipo === "poligono" ? "pol" : ""}" style="background:${c.color};` +
+    `${c.tipo === "poligono" ? "border-color:" + c.color : ""}"></span>` +
+    `<span class="txt">${c.label}</span><span class="n" id="n-${c.id}"></span></label>`).join("");
+  panel.appendChild(d);
+});
+
+const sel = $("#base");
+Object.entries(BASES).forEach(([k, v]) => {
+  const o = document.createElement("option");
+  o.value = k; o.textContent = v[0]; if (k === "radar") o.selected = true;
+  sel.appendChild(o);
+});
+sel.addEventListener("change", e => ponerBase(e.target.value));
+ponerBase("radar");
+
+/* ---------------- motor ---------------- */
+const POPUP = L.popup({ maxWidth: 348, minWidth: 302, autoPanPadding: [26, 26] });
+function abrirFicha(p, c, latlng) {
+  POPUP.setLatLng(latlng).setContent(c.modoTren ? fichaTren(p, c) : ficha(p, c)).openOn(mapa);
+  if (c.apiCaudal) consultarCaudal(p);
+}
+
+/* Caudal: Open-Meteo Flood (GloFAS), sin clave. Es MODELADO, no aforo oficial:
+   el modelo reparte el agua en una malla de ~5 km, no mide en la presa. */
+async function consultarCaudal(p) {
+  const caja = document.getElementById("caudal-box");
+  if (!caja) return;
+  const pt = p.punto_aforo;
+  if (!pt) { caja.innerHTML = '<div class="cl">Caudal</div><div class="err">sin punto de aforo</div>'; return; }
+  try {
+    const url = "https://flood-api.open-meteo.com/v1/flood?latitude=" + pt[1] + "&longitude=" + pt[0] +
+                "&daily=river_discharge&past_days=7&forecast_days=2";
+    const r = await fetch(url);
+    const d = await r.json();
+    const dias = d.daily.time, vals = d.daily.river_discharge;
+    const hoy = new Date().toISOString().slice(0, 10);
+    const iHoy = Math.max(0, dias.indexOf(hoy));
+    const max = Math.max(...vals.filter(v => v != null), 0.1);
+    const barras = vals.map((v, i) =>
+      `<i style="height:${v == null ? 2 : Math.max(3, (v / max) * 34)}px" class="${dias[i] === hoy ? "hoy" : ""}" title="${dias[i]}: ${v == null ? "—" : v + " m³/s"}"></i>`).join("");
+    caja.innerHTML = '<div class="cl">Caudal modelado (GloFAS)</div>' +
+      `<div class="cv">${vals[iHoy] == null ? "—" : nf(vals[iHoy])}<small>m³/s hoy</small></div>` +
+      `<div class="spark">${barras}</div>` +
+      `<div class="cf">Modelo global, rejilla ~5 km · no es el aforo de la confederación. ` +
+      `Punto: ${pt[1].toFixed(3)}, ${pt[0].toFixed(3)}</div>`;
+  } catch (e) {
+    caja.innerHTML = '<div class="cl">Caudal</div><div class="err">API no disponible ahora mismo</div>';
+  }
+}
+
+/* escala de color para capas con magnitud: verde barato -> rojo caro */
+function colorEscala(v, e) {
+  if (v == null) return "#5a6b80";
+  const t = Math.max(0, Math.min(1, (v - e.min) / (e.max - e.min)));
+  const paradas = [[34,197,94],[163,230,53],[250,204,21],[249,115,22],[239,68,68]];
+  const x = t * (paradas.length - 1), i = Math.min(paradas.length - 2, Math.floor(x)), f = x - i;
+  const a = paradas[i], b = paradas[i + 1];
+  return "rgb(" + [0,1,2].map(k => Math.round(a[k] + (b[k] - a[k]) * f)).join(",") + ")";
+}
+
+const radioDe = (c, p) => {
+  if (c.radioPorMagnitud) return Math.max(4, Math.min(18, 3 + (p.magnitud || 0) * 2.5));
+  const rmin = c.radioMin || c.radio || 4.5, rmax = c.radioMax || 11;
+  if (!c.magnitud) return rmin;
+  return Math.max(rmin, Math.min(rmax, Math.sqrt(p[c.magnitud] || 0) / 1.6));
+};
+
+/* ---------- agregación propia por rejilla (sin plugin) ----------
+   A zoom nacional 1.400 puntos hidráulicos son una mancha. Se agrupan en celdas
+   cuyo tamaño crece al alejar; al acercarse (z>=8) cada punto se dibuja solo. */
+function celda(z) {
+  // calibrado para ~70 burbujas con 1.400 puntos a zoom nacional
+  const grados = Math.pow(2, 9 - Math.floor(z)) * 0.045;
+  return Math.max(0.06, Math.min(3, grados));
+}
+
+function pintarPuntos(c) {
+  const feats = datos[c.id];
+  if (!feats) return;
+  c.__zPintado = mapa.getZoom();
+  capas[c.id].clearLayers();
+  elementos[c.id] = [];
+  const z = mapa.getZoom();
+
+  if (c.siempreIndividual || z >= ZOOM_DETALLE) {
+    // solo se crean los marcadores que caen en la vista (con margen): a zoom alto
+    // una capa de 3.000 puntos ocupaba el mapa entero y no se veía ninguno de fuera
+    const b = mapa.getBounds().pad(0.25);
+    const visibles = feats.filter(f => {
+      const g = f.geometry;
+      if (!g || !g.coordinates) return false;
+      const [lng, lat] = g.coordinates;
+      return lat >= b.getSouth() && lat <= b.getNorth() && lng >= b.getWest() && lng <= b.getEast();
+    });
+    (visibles.length ? visibles : feats).forEach(f => {
+      const [lng, lat] = f.geometry.coordinates;
+      const p = f.properties || {};
+      const m = L.circleMarker([lat, lng], {
+        radius: radioDe(c, p), fillColor: c.color, fillOpacity: c.opacidad || .78,
+        color: "#fff", weight: 1, opacity: .45
+      });
+      m.on("click", e => { abrirFicha(p, c, e.latlng); L.DomEvent.stopPropagation(e); });
+      m.addTo(capas[c.id]);
+      elementos[c.id].push(m);
+    });
+    return;
+  }
+
+  // agrupado: una burbuja por celda
+  const g = celda(z), celdas = new Map();
+  feats.forEach(f => {
+    const [lng, lat] = f.geometry.coordinates;
+    const k = Math.floor(lat / g) + ":" + Math.floor(lng / g);
+    if (!celdas.has(k)) celdas.set(k, []);
+    celdas.get(k).push(f);
+  });
+  celdas.forEach(items => {
+    const lat = items.reduce((a, f) => a + f.geometry.coordinates[1], 0) / items.length;
+    const lng = items.reduce((a, f) => a + f.geometry.coordinates[0], 0) / items.length;
+    const n = items.length;
+    const r = n === 1 ? radioDe(c, items[0].properties)
+                      : Math.min(19, 6 + 3.1 * Math.log2(n + 1));
+    const m = L.circleMarker([lat, lng], {
+      radius: r,
+      fillColor: c.color, fillOpacity: n === 1 ? (c.opacidad || .78) : .3,
+      color: c.color, weight: n === 1 ? 1 : 1.6, opacity: n === 1 ? .45 : .95
+    });
+    m.on("click", e => {
+      if (n === 1) abrirFicha(items[0].properties, c, e.latlng);
+      else { POPUP.setLatLng(e.latlng).setContent(fichaGrupo(items, c)).openOn(mapa); }
+      L.DomEvent.stopPropagation(e);
+    });
+    m.addTo(capas[c.id]);
+    elementos[c.id].push(m);
+  });
+}
+
+function cargar(c) {
+  if (c.__cargada) return;
+  c.__cargada = true;
+  const rot = document.getElementById("n-" + c.id);
+  if (rot) rot.innerHTML = '<i class="spin"></i>';
+  fetch(c.fichero)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(gj => {
+      const feats = c.filtro ? gj.features.filter(c.filtro) : gj.features;
+      conteo[c.id] = feats.length;
+      const el = document.getElementById("n-" + c.id);
+      if (el) el.textContent = nf(feats.length);
+      if (c.zoomMin) aplicarZoomMin();
+      document.querySelector('[data-fila="' + c.id + '"]').classList.add("activa");
+
+      // indice para el buscador: nombre + coordenadas
+      feats.forEach(f => {
+        const p = f.properties || {};
+        const nom = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Rotulo ||
+                    p.Direccion || p.Carretera;
+        if (!nom) return;
+        const g = f.geometry || {};
+        let arr = null;
+        if (g.type === "Point") arr = g.coordinates;
+        else if (g.type === "LineString" && g.coordinates.length) arr = g.coordinates[0];
+        if (!arr) return;
+        INDICE.push({ nombre: String(nom), lat: arr[1], lng: arr[0], capa: c.id, props: p });
+      });
+
+      if (c.tipo === "punto") { datos[c.id] = feats; pintarPuntos(c); }
+      else {
+        // lineas y poligonos: halo debajo si se pide (solo 400/220 kV)
+        if (c.halo) {
+          L.geoJSON({ type:"FeatureCollection", features:feats }, {
+            style: () => ({ color:"#0b1220", weight:c.halo, opacity:.85, fill:false })
+          }).addTo(capas[c.id]);
+        }
+        L.geoJSON({ type:"FeatureCollection", features:feats }, {
+          style: () => ({ color:c.color, weight:c.peso || 1.2, opacity:c.opacidad || .8,
+                          fillColor:c.color, fillOpacity:(c.tipo === "poligono" ? (c.opacidad || .3) : .12) }),
+          onEachFeature: (f, layer) => {
+            elementos[c.id].push(layer);
+            layer.on("click", e => { abrirFicha(f.properties, c, e.latlng); L.DomEvent.stopPropagation(e); });
+          }
+        }).addTo(capas[c.id]);
+      }
+      estado();
+    })
+    .catch(e => {
+      const el = document.getElementById("n-" + c.id);
+      if (el) el.textContent = "—";
+      console.warn("capa no disponible:", c.id, e.message);
+    });
+}
+CAPAS.forEach(c => { if (c.on) { capas[c.id].addTo(mapa); cargar(c); } });
+
+document.querySelectorAll("[data-capa]").forEach(chk => {
+  chk.addEventListener("change", e => {
+    const id = e.target.dataset.capa;
+    if (e.target.checked) {
+      const c = CAPAS.find(x => x.id === id);
+      cargar(c);
+      if (mapa.getZoom() >= (c.zoomMin || 0)) capas[id].addTo(mapa);
+    }
+    else mapa.removeLayer(capas[id]);
+    estado();
+  });
+});
+
+
+/* ---------------- LOD: cada capa aparece a partir de su zoom ----------------
+   `zoomMin` estaba declarado en CAPAS y no se aplicaba en ningun sitio: con 36 capas
+   a zoom nacional se dibujaban 10.000 objetos y el mapa era ilegible. */
+function aplicarLOD() {
+  const z = mapa.getZoom();
+  CAPAS.forEach(c => {
+    const chk = document.querySelector(`[data-capa="${c.id}"]`);
+    if (!chk || !chk.checked) return;
+    const debe = z >= (c.zoomMin || 0);
+    const puesta = mapa.hasLayer(capas[c.id]);
+    if (debe && !puesta) capas[c.id].addTo(mapa);
+    else if (!debe && puesta) mapa.removeLayer(capas[c.id]);
+  });
+  estado();
+}
+
+/* al cambiar de zoom, re-agrupar los puntos visibles (barato: solo los cargados) */
+let pendiente = null;
+let moverPendiente = null;
+mapa.on("zoomend", aplicarLOD);
+mapa.on("moveend", () => {
+  aplicarLOD();
+  if (mapa.getZoom() < ZOOM_DETALLE) return;
+  clearTimeout(moverPendiente);
+  moverPendiente = setTimeout(() => {
+    CAPAS.forEach(c => {
+      if (c.tipo !== "punto" || !c.__cargada || c.__cargando) return;
+      if (!document.querySelector(`[data-capa="${c.id}"]`)?.checked) return;
+      if (c.siempreIndividual && c.id !== "trenes") return;
+      pintarPuntos(c);
+    });
+  }, 220);
+});
+
+mapa.on("zoomend", () => {
+  const z = mapa.getZoom();
+  clearTimeout(pendiente);
+  pendiente = setTimeout(() => {
+    CAPAS.forEach(c => {
+      if (c.tipo !== "punto" || !c.__cargada || c.siempreIndividual) return;
+      if (!document.querySelector(`[data-capa="${c.id}"]`)?.checked) return;
+      // re-agrupar solo al cambiar de nivel entero: dentro del mismo nivel la celda es la misma
+      const antes = Math.floor(c.__zPintado === undefined ? -99 : c.__zPintado);
+      const ahora = Math.floor(z);
+      const cruzaDetalle = (c.__zPintado < ZOOM_DETALLE) !== (z < ZOOM_DETALLE);
+      if (antes !== ahora || cruzaDetalle) pintarPuntos(c);
+    });
+  }, 160);
+});
+
+/* ---------------- capas por nivel de zoom ----------------
+   A escala nacional una capa de 3.000 líneas no aporta y cuesta un redibujado entero.
+   Por debajo de su zoomMin se retira del mapa (sigue cargada: no vuelve a descargarse). */
+function aplicarZoomMin() {
+  const z = mapa.getZoom();
+  CAPAS.forEach(c => {
+    if (!c.zoomMin || !c.__cargada) return;
+    const chk = document.querySelector(`[data-capa="${c.id}"]`);
+    if (!chk || !chk.checked) return;
+    if (z >= c.zoomMin) { if (!mapa.hasLayer(capas[c.id])) capas[c.id].addTo(mapa); }
+    else if (mapa.hasLayer(capas[c.id])) mapa.removeLayer(capas[c.id]);
+  });
+}
+
+/* ---------------- estado ---------------- */
+function estado() {
+  $("#s-zoom").textContent = mapa.getZoom().toFixed(2).replace(/\.00$/, "");
+  const activas = CAPAS.filter(c => document.querySelector(`[data-capa="${c.id}"]`)?.checked);
+  $("#s-capas").textContent = activas.length + "/" + CAPAS.length;
+  let n = 0; activas.forEach(c => n += conteo[c.id] || 0);
+  $("#s-peso").textContent = nf(n) + " objetos";
+  $("#sub-hud").textContent = (BASES[sel.value] ? BASES[sel.value][0] : "") + " · " + nf(n) + " objetos";
+}
+mapa.on("zoomend moveend", estado);
+mapa.on("zoomend", aplicarZoomMin);
+mapa.on("mousemove", e => {
+  $("#s-coord").textContent = e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4);
+});
+
+$("#btn-tema").addEventListener("click", () => {
+  const oscuro = document.documentElement.dataset.tema === "oscuro";
+  document.documentElement.dataset.tema = oscuro ? "claro" : "oscuro";
+});
+
+
+/* ---------------- buscador ---------------- */
+const cajaQ = $("#q"), cajaR = $("#resultados");
+let temporizador = null;
+cajaQ.addEventListener("input", () => {
+  clearTimeout(temporizador);
+  temporizador = setTimeout(() => {
+    const t = cajaQ.value.trim().toLowerCase();
+    if (t.length < 2) { cajaR.classList.remove("on"); cajaR.innerHTML = ""; return; }
+    const vistos = new Set();
+    const hits = [];
+    for (const it of INDICE) {
+      if (vistos.has(it.nombre + it.capa)) continue;
+      if (it.nombre.toLowerCase().includes(t)) {
+        vistos.add(it.nombre + it.capa);
+        hits.push(it);
+        if (hits.length >= 9) break;
+      }
+    }
+    cajaR.innerHTML = hits.length ? hits.map((h, i) =>
+      `<div data-hit="${i}">${h.nombre}<span>${h.capa}</span></div>`).join("")
+      : '<div style="color:var(--tenue)">Sin resultados en las capas cargadas</div>';
+    cajaR.classList.add("on");
+    cajaR.querySelectorAll("[data-hit]").forEach(d => {
+      d.addEventListener("click", () => {
+        const h = hits[+d.dataset.hit];
+        const def = CAPAS.find(x => x.id === h.capa);
+        mapa.setView([h.lat, h.lng], Math.max(mapa.getZoom(), 11));
+        setTimeout(() => abrirFicha(h.props, def, [h.lat, h.lng]), 260);
+        cajaR.classList.remove("on");
+      });
+    });
+  }, 140);
+});
+
+/* ---------------- panel de fuentes ---------------- */
+let FUENTES = null;
+fetch("datos/fuentes.json").then(r => r.json()).then(d => { FUENTES = d; }).catch(() => {});
+
+function pintarFuentes() {
+  const tabla = $("#fuentes-tabla");
+  if (!FUENTES) { $("#fuentes-nota").textContent = "No se pudo cargar datos/fuentes.json."; return; }
+  const filas = CAPAS.map(c => {
+    const f = FUENTES.capas[c.id] || {};
+    const n = conteo[c.id] || f.features;
+    const act = f.actualizado || "—";
+    return `<tr class="fila-f" data-f="${c.id}"><td><b>${c.label}</b><br><span class="lic">${c.grupo}</span></td>
+      <td><b>${f.organismo || f.fuente || "—"}</b>${
+        (f.publica_via && !String(f.organismo || "").includes(String(f.publica_via)))
+          ? `<br><span class="lic">vía ${String(f.publica_via).slice(0, 30)}</span>` : ""}</td>
+      <td>${act}</td>
+      <td><span class="lic">${f.licencia || "—"}</span></td>
+      <td class="c">${n ? n.toLocaleString("es-ES") : "—"}</td></tr>`;
+  }).join("");
+  tabla.innerHTML = filas;
+  // al pinchar una fila se despliega la cadena de procedencia
+  tabla.querySelectorAll("tr.fila-f").forEach(tr => {
+    tr.addEventListener("click", () => {
+      const id = tr.dataset.f;
+      const sig = tr.nextElementSibling;
+      if (sig && sig.classList.contains("det")) { sig.remove(); return; }
+      const f = (FUENTES.capas[id] || {});
+      const cd = f.cadena || {};
+      const fila = document.createElement("tr");
+      fila.className = "det";
+      fila.innerHTML = "<td colspan='5'><div class='cadena'>" +
+        "<b>Produce el dato:</b> " + (cd.productor || "—") + "<br>" +
+        "<b>Lo publica:</b> " + (cd.publica || "—") + "<br>" +
+        "<b>Lo descarga:</b> " + (cd.consume || "—") + "<br>" +
+        "<span class='fl'>Fecha del dato:</span> " + (f.fecha_dato || "no la declara") +
+        " · <span class='fl'>publicación:</span> " + (f.fecha_publicacion || "—") +
+        " · <span class='fl'>descarga:</span> " + (f.fecha_descarga || "—") +
+        (cd.nota ? "<span class='nota'>" + cd.nota + "</span>" : "") +
+        "</div></td>";
+      tr.after(fila);
+    });
+  });
+  $("#fuentes-nota").innerHTML =
+    `Generado el <b>${FUENTES.generado}</b> desde los recibos de descarga. ` +
+    `La columna «Actualizado» es la fecha que declara el editor del dato (no la de descarga). ` +
+    `Las capas de OpenStreetMap no declaran fecha: se descargaron el ${FUENTES.generado}.` +
+    (FUENTES.simplificacion ? ` Geometrías simplificadas a 0,0008° (~89 m) para el visor.` : "");
+}
+$("#btn-fuentes").addEventListener("click", () => {
+  $("#velo").classList.add("on");              // primero abrir: si el pintado falla, el panel ya esta
+  try { pintarFuentes(); }
+  catch (e) {
+    console.warn("fuentes:", e);
+    $("#fuentes-nota").textContent = "No se pudo cargar datos/fuentes.json (" + e.message + "). " +
+      "Sirve la carpeta con un servidor: python -m http.server 8731";
+  }
+});
+$("#cerrar-fuentes").addEventListener("click", () => $("#velo").classList.remove("on"));
+$("#velo").addEventListener("click", e => { if (e.target.id === "velo") $("#velo").classList.remove("on"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("#velo").classList.remove("on"); $("#velo2").classList.remove("on"); } });
+
+
+/* ---------------- panel de proyecto ---------------- */
+function pintarProyecto() {
+  const p = document.getElementById("proyecto"); if (p) p.scrollTop = 0;
+  fetch("datos/fuentes.json").then(r => r.json()).then(d => {
+    const capas = Object.keys(d.capas || {}).length;
+    const obj = Object.values(d.capas || {}).reduce((a, c) => a + (c.features || 0), 0);
+    const nc = document.getElementById("n-capas"), no = document.getElementById("n-obj");
+    if (nc) nc.textContent = capas;
+    if (no) no.textContent = obj > 9999 ? Math.round(obj / 1000) + "k" : obj;
+  }).catch(() => {});
+}
+document.getElementById("btn-proyecto").addEventListener("click", () => {
+  const v = document.getElementById("velo3");
+  if (!v) { console.warn("no existe #velo3"); return; }
+  v.classList.add("on");
+  try { pintarProyecto(); } catch (e) { console.warn("proyecto:", e); }
+});
+document.getElementById("cerrar-proyecto").addEventListener("click", () =>
+  document.getElementById("velo3").classList.remove("on"));
+document.getElementById("velo3").addEventListener("click", e => {
+  if (e.target.id === "velo3") e.target.classList.remove("on");
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") document.getElementById("velo3").classList.remove("on");
+});
+
+/* ---------------- generación del día (API REE) ---------------- */
+function pintarSis() {
+  Promise.all([
+    fetch("datos/ree_estado.json").then(r => r.json()).catch(() => null),
+    fetch("datos/esios_prevision.json").then(r => r.json()).catch(() => null),
+    fetch("datos/ree_vivo.json").then(r => r.json()).catch(() => null)
+  ]).then(([d, p, v]) => {
+    let h = "";
+
+    /* --- EN VIVO: indicadores abiertos de ESIOS, cada 5 min --- */
+    if (v && v.series) {
+      const COLMIX = { eolica: "#22d3ee", solar_fv: "#fbbf24", solar_ter: "#f59e0b",
+                       hidro: "#3b82f6", ciclo: "#a855f7", nuclear: "#ef4444" };
+      const est = v.estado || {};
+      const gen = Object.entries(v.series).filter(([k, x]) => x.grupo === "generacion");
+      const tot = gen.reduce((a, [, x]) => a + (x.valor || 0), 0);
+      h += '<div class="sis-cab"><span class="tot">' + nf(Math.round(est.demanda || 0)) + '</span>' +
+           '<span class="uni">MW de demanda ahora</span><span class="dia">' +
+           (v.series.demanda ? v.series.demanda.hora : "") + '</span></div>';
+      if (gen.length && tot > 0) {
+        h += '<div class="cabecera"><span class="n">Generando ahora</span><span class="track"></span>' +
+             '<span class="v">MW</span><span class="p">%</span></div>';
+        gen.sort((a, b) => b[1].valor - a[1].valor).forEach(([k, x]) => {
+          const pct = 100 * x.valor / tot;
+          h += '<div class="barra"><span class="n">' + x.etiqueta + '</span>' +
+               '<span class="track"><span class="b" style="width:' + Math.max(0.6, pct) +
+               '%;background:' + (COLMIX[k] || "#22d3ee") + '"></span></span>' +
+               '<span class="v">' + nf(Math.round(x.valor)) + '</span>' +
+               '<span class="p">' + pct.toFixed(1) + '%</span></div>';
+        });
+      }
+      // una linea: emisiones, intercambios netos, bombeo
+      const co2 = est.co2 != null ? est.co2.toFixed(3) + " tCO₂/MW" : "—";
+      const ints = ["francia", "portugal", "marruecos", "andorra"].map(p2 => {
+        const e = est["exp_" + p2] || 0, i = est["imp_" + p2] || 0;
+        return [p2, Math.round(e - i)];
+      }).filter(x => x[1] !== 0);
+      const netoInt = ints.reduce((a, x) => a + x[1], 0);
+      h += '<div class="sis-sec">Ahora mismo</div><div class="vivo-fila">' +
+           '<span><b>' + co2 + '</b><i>emisiones asociadas</i></span>' +
+           '<span><b>' + (netoInt >= 0 ? "+" : "") + nf(Math.round(netoInt)) + ' MW</b><i>saldo internacional</i></span>' +
+           '<span><b>' + nf(Math.round((est.bombeo_turb || 0) - (est.bombeo_cons || 0))) + ' MW</b><i>bombeo neto</i></span>' +
+           '</div>';
+      if (ints.length) {
+        h += '<div class="nota-pie">Saldo con ' + ints.map(x => x[0] + " " +
+             (x[1] >= 0 ? "+" : "") + nf(x[1])).join(" · ") + ' MW. Positivo = exporta.</div>';
+      }
+      if (v.series.demanda && v.series.demanda.heredado) {
+        h += '<div class="nota-pie">Sin actualizar: el WAF de ESIOS bloqueó la descarga. ' +
+             'Último dato bueno de las ' + (v.series.demanda.hora || "") + '.</div>';
+      }
+      h += '<div class="sis-sec">Generación del día (MWh)</div>';
+    }
+
+    if (d && d.series && d.series.generacion) {
+      const gen = d.series.generacion;
+      const total = (gen.find(x => x.titulo.toLowerCase().startsWith("generación total")) || {}).valor || 0;
+      const filas = gen.filter(x => !x.titulo.toLowerCase().startsWith("generación total"))
+        .sort((a, b) => b.valor - a.valor);
+      h += '<div class="sis-cab"><span class="tot">' + nf(total) + '</span>' +
+           '<span class="uni">MWh generados</span><span class="dia">' + d.fecha + '</span></div>' +
+           '<div class="cabecera"><span class="n">Tecnología</span><span class="track"></span>' +
+           '<span class="v">MWh</span><span class="p">%</span></div>';
+      filas.forEach(x => {
+        const pct = total ? (100 * x.valor / total) : 0;
+        const neg = x.valor < 0;
+        h += '<div class="barra"><span class="n">' + x.titulo + '</span>' +
+             '<span class="track"><span class="b" style="width:' + Math.max(neg ? 0.4 : 0.6, Math.abs(pct)) +
+             '%;background:' + (neg ? "#4a5c70" : (x.color || "#22d3ee")) + '"></span></span>' +
+             '<span class="v">' + nf(Math.round(x.valor)) + '</span>' +
+             '<span class="p">' + (neg ? "—" : pct.toFixed(1) + "%") + '</span></div>';
+      });
+      if (filas.some(x => x.valor < 0)) {
+        h += '<div class="nota-pie">Carbón en negativo es consumo propio de las centrales: ' +
+             'la generación neta puede ser menor que cero cuando el grupo está arrancando.</div>';
+      }
+    } else {
+      h += '<div class="barra">No se pudo cargar la generación del día.</div>';
+    }
+
+    if (p && p.series) {
+      h += '<div class="sis-sec">Previsión (ESIOS)</div><div class="prev">';
+      const series = [["prevision_demanda", "Demanda prevista", "MW"],
+                      ["prevision_eolica", "Eólica prevista", "MW"]];
+      series.forEach(([clave, titulo, uni]) => {
+        const ss = p.series[clave];
+        if (!ss || !ss.valores || !ss.valores.length) return;
+        const hoy = new Date().toISOString().slice(0, 10);
+        const vals = ss.valores.slice(-96);       // últimas 24 h en cuartos de hora
+        const max = Math.max(...vals.map(v => v.v || 0), 1);
+        const barras = vals.map(v =>
+          '<i style="height:' + Math.max(2, ((v.v || 0) / max) * 52) + 'px" title="' +
+          (v.t || "").slice(11, 16) + " · " + nf(v.v) + " " + uni + '"></i>').join("");
+        const ultimo = vals[vals.length - 1];
+        const ini = (vals[0].t || "").slice(11, 16), fin = (ultimo.t || "").slice(11, 16);
+        const pico = Math.max(...vals.map(v => v.v || 0));
+        h += '<div class="caja"><div class="t">' + titulo + '</div>' +
+             '<div class="spark">' + barras + '</div>' +
+             '<div class="rango"><span>' + ini + '</span><span>máx ' + nf(Math.round(pico)) + '</span><span>' + fin + '</span></div>' +
+             '<div class="m">' + nf(ultimo.v) + ' <small>' + uni + ' · último dato</small></div></div>';
+      });
+      h += "</div>";
+    }
+    $("#sis-barras").innerHTML = h;
+    $("#sis-nota").innerHTML = "<b>En vivo</b>: ESIOS, indicadores abiertos sin clave, 5 min. " +
+      "<b>Del día</b>: REE apidatos (agregado diario). " +
+      "<b>Previsión</b>: ESIOS 460 y 541. Por planta requiere ENTSO-E.";
+  });
+}
+$("#btn-estado").addEventListener("click", () => { pintarSis(); $("#velo2").classList.add("on"); });
+$("#cerrar-sis").addEventListener("click", () => $("#velo2").classList.remove("on"));
+$("#velo2").addEventListener("click", e => { if (e.target.id === "velo2") $("#velo2").classList.remove("on"); });
+
+/* ---------------- trenes en tiempo real ---------------- */
+$("#btn-trenes").addEventListener("click", () => {
+  const chk = document.querySelector('[data-capa="trenes"]');
+  if (!chk.checked) { chk.checked = true; cargar(CAPAS.find(x => x.id === "trenes")); capas["trenes"].addTo(mapa); }
+  else { mapa.removeLayer(capas["trenes"]); chk.checked = false; }
+  estado();
+});
+
+/* ---------------- opacidad global ---------------- */
+$("#op").addEventListener("input", e => {
+  const v = e.target.value;
+  $("#opv").textContent = v + "%";
+  const pane = mapa.getPane("overlayPane");
+  if (pane) pane.style.opacity = v / 100;
+});
+
+/* ---------------- enlace permanente ---------------- */
+function estadoUrl() {
+  const c = mapa.getCenter();
+  const activas = CAPAS.filter(x => document.querySelector(`[data-capa="${x.id}"]`)?.checked).map(x => x.id);
+  return "#z=" + mapa.getZoom().toFixed(2) + "&lat=" + c.lat.toFixed(4) + "&lng=" + c.lng.toFixed(4) +
+         "&c=" + activas.join(",") + "&b=" + (document.documentElement.dataset.base || "radar") +
+         "&t=" + (document.documentElement.dataset.tema || "oscuro");
+}
+$("#btn-enlace").addEventListener("click", async () => {
+  const url = location.origin + location.pathname + estadoUrl();
+  try { await navigator.clipboard.writeText(url); $("#btn-enlace").textContent = "✓"; }
+  catch (e) { prompt("Copia el enlace:", url); }
+  setTimeout(() => { $("#btn-enlace").textContent = "⧉"; }, 1600);
+});
+
+function aplicarUrl() {
+  if (!location.hash || location.hash.length < 4) return false;
+  const p = new URLSearchParams(location.hash.slice(1));
+  const z = parseFloat(p.get("z")), lat = parseFloat(p.get("lat")), lng = parseFloat(p.get("lng"));
+  if (isFinite(lat) && isFinite(lng)) mapa.setView([lat, lng], isFinite(z) ? z : mapa.getZoom());
+  const c = p.get("c");
+  if (c) {
+    const quiere = new Set(c.split(",").filter(Boolean));
+    CAPAS.forEach(x => {
+      const chk = document.querySelector(`[data-capa="${x.id}"]`);
+      const on = quiere.has(x.id);
+      if (!chk || chk.checked === on) return;
+      chk.checked = on;
+      if (on) { cargar(x); capas[x.id].addTo(mapa); } else mapa.removeLayer(capas[x.id]);
+    });
+    estado();
+  }
+  const b = p.get("b"), t = p.get("t");
+  if (b) { sel.value = b; ponerBase(b); }
+  if (t) document.documentElement.dataset.tema = t;
+  return true;
+}
+
+/* ---------------- presets ---------------- */
+document.querySelectorAll("[data-preset]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const p = btn.dataset.preset;
+    // "Todo" es un interruptor segun el estado del propio boton, no segun los checkboxes
+    const yaActivo = btn.classList.contains("on");
+    document.querySelectorAll("[data-preset]").forEach(b => b.classList.toggle("on", b === btn && !(p === "todos" && yaActivo)));
+    CAPAS.forEach(c => {
+      const SOLO_PRESET = { "Agua": new Set(["embalses", "desaladoras", "trasvases"]) };
+      // "Todo" es un interruptor: si ya estan todas, las apaga
+      let on;
+      if (p === "todos") {
+        on = !yaActivo;
+      } else {
+        on = SOLO_PRESET[p] ? SOLO_PRESET[p].has(c.id) : (c.grupo === p);
+      }
+      const chk = document.querySelector('[data-capa="' + c.id + '"]');
+      if (!chk || chk.checked === on) return;
+      chk.checked = on;
+      if (on) { cargar(c); capas[c.id].addTo(mapa); } else mapa.removeLayer(capas[c.id]);
+    });
+    estado();
+  });
+});
+
+aplicarUrl();
+
+/* ---------------- API ---------------- */
+window.OpenInfraES = {
+  abrir(capaId, i = 0, zoom = 11) {
+    if (!capas[capaId]) return "sin capa";
+    const chk = document.querySelector('[data-capa="' + capaId + '"]');
+    if (chk && !chk.checked) { chk.checked = true; capas[capaId].addTo(mapa); estado(); }
+    const def = CAPAS.find(x => x.id === capaId);
+    if (def) cargar(def);
+    const intentar = (n) => {
+      const ls = elementos[capaId] || [];
+      if (!ls.length) { if (n > 0) return setTimeout(() => intentar(n - 1), 350); return "capa vacia"; }
+      const l = ls[i] || ls[0];
+      const centro = l.getLatLng ? l.getLatLng() : (l.getBounds ? l.getBounds().getCenter() : null);
+      if (centro) mapa.setView(centro, zoom);
+      const p = datos[capaId] ? (datos[capaId][i] || datos[capaId][0]).properties : l.feature.properties;
+      abrirFicha(p, def, centro);
+      return "ok";
+    };
+    return intentar(20);
+  },
+  capas: () => ({ ...conteo }),
+  zoom: () => mapa.getZoom(),
+  // fps medido en un arrastre real
+  bench(ms = 2200) {
+    return new Promise(res => {
+      let f = 0; const t0 = performance.now();
+      const contar = () => {
+        f++;
+        if (performance.now() - t0 < ms) requestAnimationFrame(contar);
+        else res({ fps: Math.round(f / ((performance.now() - t0) / 1000)), frames:f });
+      };
+      mapa.panBy([600, 0], { animate: true, duration: ms / 1000 });
+      requestAnimationFrame(contar);
+    });
+  }
+};
+</script>
+</body>
+</html>

@@ -39,8 +39,9 @@ r.json
 w.txt
 a.xml
 
-# Restos de pruebas en la raiz: solo el visor es HTML versionado
+# Restos de pruebas en la raiz: solo el visor y su redirección son HTML versionados
 /*.html
+!/index.html
 !/mapa.html
 
 # Nunca en la raiz: respuestas de prueba

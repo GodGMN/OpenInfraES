@@ -36,7 +36,7 @@ Documentación: [`docs/PROYECTO.md`](docs/PROYECTO.md) (visión general) · [`do
 2. **Simplificar** si trae geometría: añadirla a `scripts/simplificar.py` con su tolerancia.
 3. **Declarar la fuente** en `scripts/fuentes_visor.py` (el id del visor y el id del origen no siempre
    coinciden: hay un mapa de alias) y en `scripts/cadenas.py` (productor → publica → descarga).
-4. **Añadir la capa** al array `CAPAS` de `mapa.html`, con `zoomMin` si a escala nacional no aporta.
+4. **Añadir la capa** al array `CAPAS` de `index.html`, con `zoomMin` si a escala nacional no aporta.
 5. **Pasar el validador**: `python scripts/validar.py` → `RESULTADO: VERDE`.
 6. **Commit en castellano** describiendo la capa y su fuente.
 

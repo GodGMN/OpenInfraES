@@ -21,6 +21,8 @@ Datos y visor de la **infraestructura energética, de transporte y de riesgo de 
 solo con fuentes oficiales y abiertas, y listo para reutilizar en otros proyectos (mapas, modelos,
 análisis territorial).
 
+**Visor en vivo:** <https://ntizar.github.io/OpenInfraES/> (GitHub Pages, sin clave ni registro).
+
 Lo que lo distingue: cada capa dice **de qué organismo sale, cómo se obtiene y de cuándo es el dato**.
 Cuando un dato falta o está a medias —el Tajo-Segura solo está mapeado hasta Alarcón—, se declara en la
 ficha en vez de dibujarlo como si estuviera completo.
@@ -38,7 +40,7 @@ ficha en vez de dibujarlo como si estuviera completo.
 | `datos/agregado_plantas_tecnologia.csv` | plantas y MW por tecnología |
 | `datos/agregado_plantas_ccaa.csv` | plantas y MW por comunidad autónoma |
 | `datos/agregado_plantas_ccaa_tecnologia.csv` | el cruce de los dos anteriores |
-| `mapa.html` | visor propio con cartografía **IGN** y capas conmutables |
+| `index.html` | visor propio con cartografía **IGN** y capas conmutables |
 | `datos/gasoductos.geojson` | **678 tramos** de gasoducto (`man_made=pipeline`, `substance=gas`) |
 | `datos/desaladoras.geojson` | plantas desaladoras (`desalination=yes`) |
 | `datos/presas.geojson` | **4.464** presas y azudes (`waterway=dam`) |
@@ -167,7 +169,7 @@ python scripts/validar.py       # arnés del repo: ficheros, cabeceras, cuadres
 ## Ver el mapa
 
 ```bash
-python -m http.server 8000   # y abrir http://localhost:8000/mapa.html
+python -m http.server 8000   # y abrir http://localhost:8000/index.html
 ```
 
 (El mapa carga los GeoJSON por `fetch`, así que necesita servidor local: `file://` no vale.)
@@ -197,6 +199,9 @@ python -m http.server 8000   # y abrir http://localhost:8000/mapa.html
 
 **Licencia de los datos derivados: ODbL 1.0** (herencia de OSM). Si se publica un mapa o un producto,
 hay que atribuir a OpenStreetMap y compartir igual.
+
+**El código** (visor, scripts de extracción y validador) es **MIT** — ver [`LICENSE`](LICENSE), que
+detalla además la licencia de cada conjunto de datos.
 
 ## Para qué se hizo
 
