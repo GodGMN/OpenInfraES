@@ -295,6 +295,32 @@
   .lista-grupo a { display:block; padding:5px 2px; color:var(--cian); text-decoration:none; font-size:11.8px; }
   .lista-grupo a:hover { background:rgba(34,211,238,.09); }
   .foto { width:100%; border-radius:3px; margin:7px 0 3px; display:block; border:1px solid var(--borde); }
+
+  /* panel de informacion a la derecha: que es esta capa */
+  #info-der { position:fixed; top:78px; right:14px; width:290px; max-height:calc(100vh - 160px);
+    overflow-y:auto; z-index:1500; display:none; background:var(--panel-solido);
+    border:1px solid var(--borde-fuerte); border-radius:4px; padding:14px 15px;
+    box-shadow:0 18px 50px rgba(0,0,0,.6); font-size:12px; }
+  #info-der.on { display:block; }
+  #info-der h4 { margin:0 0 2px; font-size:12.6px; letter-spacing:.02em; color:var(--tinta); }
+  #info-der .sub { font-size:10px; color:var(--tenue); text-transform:uppercase;
+    letter-spacing:.1em; margin-bottom:10px; }
+  #info-der .dato { display:flex; justify-content:space-between; gap:10px; padding:4px 0;
+    border-bottom:1px solid var(--borde); font-size:11.4px; }
+  #info-der .dato span:first-child { color:var(--tenue); }
+  #info-der .dato span:last-child { color:var(--tinta); text-align:right;
+    font-variant-numeric:tabular-nums; }
+  #info-der .cifra-g { display:block; font-size:24px; color:var(--cian); margin:2px 0 8px;
+    font-variant-numeric:tabular-nums; line-height:1; }
+  #info-der .cerrar { position:absolute; top:8px; right:8px; background:transparent;
+    border:1px solid var(--borde); color:var(--suave); border-radius:2px; width:24px;
+    height:24px; cursor:pointer; }
+  #info-der .cerrar:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+  #info-der .nota { font-size:10.6px; color:var(--tenue); line-height:1.5; margin-top:9px; }
+  #info-der a { color:var(--cian); text-decoration:none; }
+  #capas .txt { cursor:pointer; }
+  #capas .txt:hover { color:var(--cian); }
+  #capas .grupo-t { cursor:pointer; }
 </style>
 </head>
 <body>
@@ -322,12 +348,19 @@
     <button data-preset="Gas">Gas</button>
     <button data-preset="Agua">Agua</button>
     <button data-preset="Transporte">Transporte</button>
+    <button data-preset="DGT · Tráfico">DGT</button>
+    <button data-preset="Tiempo real">En vivo</button>
+    <button data-preset="Riesgo">Riesgo</button>
   </div>
   <div id="capas"></div>
   <div id="opacidad"><label>Datos</label><input id="op" type="range" min="30" max="100" value="100"><b id="opv">100%</b></div>
   <div id="pie"><select id="base"></select></div>
 </div>
 
+<aside id="info-der" aria-live="polite">
+  <button class="cerrar" id="cerrar-info-der">×</button>
+  <div id="info-der-cuerpo"></div>
+</aside>
 <div id="velo"><div id="fuentes">
   <button class="cerrar" id="cerrar-fuentes">×</button>
   <h2>De dónde sale cada dato</h2>
@@ -584,6 +617,85 @@ function engancharGrupo() {
   });
 }
 
+
+/* ---------------- panel de informacion (derecha) ----------------
+   Al pinchar el NOMBRE de una capa (no el checkbox) se abre este cuadro con lo que
+   el dato es, cuanto tiene, de que organismo sale y con que licencia. Sale de
+   datos/fuentes.json, no de una tabla escrita a mano. */
+const INFO_DER = document.getElementById("info-der");
+function cerrarInfoDer() { INFO_DER.classList.remove("on"); }
+document.getElementById("cerrar-info-der").addEventListener("click", cerrarInfoDer);
+
+function abrirInfoCapa(id) {
+  const c = CAPAS.find(x => x.id === id);
+  if (!c) return;
+  const f = (FUENTES && FUENTES.capas && FUENTES.capas[id]) || {};
+  const n = conteo[id] || f.features;
+  let h = `<h4>${c.label}</h4><div class="sub">${c.grupo}</div>`;
+  h += `<span class="cifra-g">${n != null ? nf(n) : "—"}</span>`;
+  h += `<div class="dato"><span>objetos</span><span>${n != null ? nf(n) : "aún sin cargar"}</span></div>`;
+  if (f.organismo || f.fuente) h += `<div class="dato"><span>organismo</span><span>${f.organismo || f.fuente}</span></div>`;
+  if (f.actualizado) h += `<div class="dato"><span>dato de</span><span>${String(f.actualizado).slice(0,10)}</span></div>`;
+  if (f.descargado) h += `<div class="dato"><span>descargado</span><span>${String(f.descargado).slice(0,10)}</span></div>`;
+  if (f.licencia) h += `<div class="dato"><span>licencia</span><span>${String(f.licencia).slice(0,34)}</span></div>`;
+  if (f.metodo) h += `<div class="dato"><span>cómo</span><span>${String(f.metodo).slice(0,44)}</span></div>`;
+  if (f.url) h += `<div class="nota"><a href="${f.url}" target="_blank" rel="noopener">fuente oficial ↗</a></div>`;
+  h += `<div class="nota">${c.tipo === "punto" ? "Puntos" : c.tipo === "linea" ? "Líneas" : "Polígonos"}` +
+       `${c.zoomMin ? " · aparece desde zoom " + c.zoomMin : ""}. ` +
+       `Toca el nombre de otra capa para comparar.</div>`;
+  document.getElementById("info-der-cuerpo").innerHTML = h;
+  INFO_DER.classList.add("on");
+}
+
+function abrirInfoGrupo(nombre, lista) {
+  const cargadas = lista.filter(c => conteo[c.id]);
+  const total = lista.reduce((a, c) => a + (conteo[c.id] || 0), 0);
+  const orgs = new Set();
+  lista.forEach(c => {
+    const f = (FUENTES && FUENTES.capas && FUENTES.capas[c.id]) || {};
+    if (f.organismo || f.fuente) orgs.add(f.organismo || f.fuente);
+  });
+  let h = `<h4>${nombre}</h4><div class="sub">${lista.length} capas</div>`;
+  h += `<span class="cifra-g">${nf(total)}</span>`;
+  h += `<div class="dato"><span>objetos cargados</span><span>${nf(total)}</span></div>`;
+  h += `<div class="dato"><span>capas encendidas</span><span>${cargadas.length} de ${lista.length}</span></div>`;
+  if (orgs.size) h += `<div class="dato"><span>organismos</span><span>${[...orgs].join(", ").slice(0,40)}</span></div>`;
+  h += `<ul class="lista-grupo">` + lista.map(c =>
+        `<li><a href="#" data-info-capa="${c.id}">${c.label}` +
+        `<span style="float:right;opacity:.6">${conteo[c.id] ? nf(conteo[c.id]) : "—"}</span></a></li>`).join("") + `</ul>`;
+  document.getElementById("info-der-cuerpo").innerHTML = h;
+  INFO_DER.classList.add("on");
+  document.querySelectorAll("#info-der-cuerpo [data-info-capa]").forEach(a => {
+    a.addEventListener("click", ev => { ev.preventDefault(); abrirInfoCapa(a.dataset.infoCapa); });
+  });
+  if (/riesgo/i.test(nombre)) pintarAvisos();
+}
+
+/* AEMET no publica geometría en su feed CAP: las áreas son comarcas. Se muestran
+   como lista en el panel de Riesgo, sin inventar coordenadas. */
+function pintarAvisos() {
+  fetch("datos/aemet_avisos.json").then(r => r.json()).then(d => {
+    const caja = document.getElementById("info-der-cuerpo");
+    if (!caja || !d.avisos) return;
+    let h = '<div class="sub" style="margin-top:14px">Avisos AEMET</div>';
+    h += '<span class="cifra-g">' + d.vigentes + '</span>';
+    h += '<div class="dato"><span>vigentes</span><span>' + d.vigentes + ' de ' + d.total + '</span></div>';
+    h += '<div class="dato"><span>naranja</span><span>' + (d.por_nivel.naranja || 0) + '</span></div>';
+    h += '<div class="dato"><span>amarillo</span><span>' + (d.por_nivel.amarillo || 0) + '</span></div>';
+    h += '<ul class="lista-grupo">' + d.avisos.slice(0, 22).map(a => {
+      const col = a.nivel === "naranja" ? "#fb923c" : (a.nivel === "rojo" ? "#ef4444" : "#facc15");
+      return '<li style="padding:5px 0"><span style="display:inline-block;width:7px;height:7px;' +
+             'border-radius:50%;background:' + col + ';margin-right:6px"></span>' +
+             '<b style="font-size:11.4px">' + a.evento.replace("Aviso de ", "") + '</b>' +
+             '<div style="font-size:10.4px;opacity:.65;margin-left:13px">' +
+             (a.zonas[0] || "") + ' · hasta ' + (a.hasta || "").slice(0, 16).replace("T", " ") + '</div></li>';
+    }).join("") + '</ul>';
+    h += '<div class="nota">Fuente: <b>AEMET</b> vía Meteoalarm. El feed no trae polígonos: ' +
+         'las zonas son comarcas, así que no se pintan en el mapa.</div>';
+    caja.insertAdjacentHTML("beforeend", h);
+  }).catch(() => {});
+}
+
 /* ---------------- capas ---------------- */
 const CAPAS = [
   { id:"l400", grupo:"Red eléctrica", label:"Líneas 400 kV", tipo:"linea", on:true, color:"#ff2d55",
@@ -702,8 +814,6 @@ const CAPAS = [
     color:"#f97316", fichero:"datos/sismos.geojson", radio:5, siempreIndividual:true,
     escala:{ campo:"magnitud", min:1, max:5, unidad:"M" }, radioPorMagnitud:true,
     popupExtra:"sismo" },
-  { id:"trenes", grupo:"Tiempo real", label:"Trenes (GTFS-RT)", tipo:"punto", on:false, color:"#f43f5e",
-    fichero:"datos/trenes.geojson", radio:4.5, siempreIndividual:true, modoTren:true },
   { id:"estaciones-gas", grupo:"Transporte", label:"Estaciones GNL/GNC/H₂", tipo:"punto", on:false,
     color:"#4ade80", fichero:"datos/hermes/estaciones-gas.geojson", radio:5,
     filtro:f => ["Gas_natural_licuado","Gas_natural_comprimido","Hidrogeno"]
@@ -1389,6 +1499,20 @@ window.OpenInfraES = {
     });
   }
 };
+
+/* enganchar los clics del panel de capas */
+document.querySelectorAll("#capas .grupo").forEach(g => {
+  const titulo = g.querySelector(".grupo-t");
+  const lista = [...g.querySelectorAll("[data-capa]")].map(i => i.dataset.capa);
+  const capasGrupo = CAPAS.filter(c => lista.includes(c.id));
+  if (titulo) titulo.addEventListener("click", () => abrirInfoGrupo(titulo.textContent, capasGrupo));
+  g.querySelectorAll(".fila").forEach(fila => {
+    const txt = fila.querySelector(".txt");
+    if (txt) txt.addEventListener("click", ev => { ev.preventDefault(); abrirInfoCapa(fila.dataset.fila); });
+  });
+});
+
+
 </script>
 </body>
 </html>

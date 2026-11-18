@@ -100,6 +100,7 @@ Las capas que no tienen GeoJSON servido por su organismo se guardan ya vectoriza
 | Paradas Metro Madrid / Cercanías / AVE (3.223) | **NAP · MITMA** | Ley 37/2007 |
 | Cámaras de tráfico (1.977) · puntos de recarga (12.144) · **incidencias en vivo (1.350)** | **DGT** | reutilización con atribución |
 | Vehículos en vivo (403) | **Renfe** (GTFS-RT) | condiciones del editor |
+| Avisos meteorológicos (177 vigentes) | **AEMET** vía Meteoalarm | reutilización con atribución |
 | Embalses (402) | **MITECO** (Boletín Hidrológico) | Ley 37/2007 |
 | Desaladoras (28), hidrógeno (7) | **MITECO** | CC BY 4.0 |
 | Nuclear (7 reactores) | **CSN** | CC BY 4.0 |
