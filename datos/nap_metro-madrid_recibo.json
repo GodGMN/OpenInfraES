@@ -2,9 +2,11 @@
  "fuente": "NAP · MITMA",
  "conjunto": "metro-madrid",
  "fichero_id": 1134,
+ "fecha_servicio": "2026-11-19",
  "paradas": 1050,
  "lineas": 13,
  "lineas_con_frecuencia": 12,
+ "metodo_frecuencia": "frequencies.txt",
  "frecuencias": [
   {
    "ruta": "2",

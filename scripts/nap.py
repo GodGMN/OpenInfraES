@@ -142,7 +142,9 @@ def descarga_gtfs(fichero_id):
         return r.read()
 
 
-def extrae(zbytes, etiqueta, fichero_id):
+def extrae(zbytes, etiqueta, fichero_id, _fecha=None):
+    if _fecha is None:
+        _fecha = __import__("datetime").date.today() + __import__("datetime").timedelta(days=1)
     z = zipfile.ZipFile(io.BytesIO(zbytes))
     nombres = z.namelist()
 
@@ -152,12 +154,18 @@ def extrae(zbytes, etiqueta, fichero_id):
                 return x
         return None
 
+    def limpia(r):
+        """Algunos GTFS rellenan a ancho fijo: route_id '10T0001C1  ' no casa con
+        el '10T0001C1' de trips.txt. Sin strip, 269 de 277 rutas quedan huerfanas
+        y la linea sale con su ID interno en vez de C1."""
+        return {(k or "").strip(): (v or "").strip() for k, v in r.items()}
+
     def filas(n, filtro=None):
         ruta = hoja(n)
         if not ruta:
             return []
         texto = z.read(ruta).decode("utf-8-sig", "replace")
-        it = csv.DictReader(io.StringIO(texto))
+        it = (limpia(r) for r in csv.DictReader(io.StringIO(texto)))
         return [r for r in it if (filtro is None or filtro(r))]
 
     def itera(n):
@@ -168,7 +176,7 @@ def extrae(zbytes, etiqueta, fichero_id):
         with z.open(ruta) as fh:
             texto = io.TextIOWrapper(fh, encoding="utf-8-sig", errors="replace")
             for r in csv.DictReader(texto):
-                yield r
+                yield {(k or "").strip(): (v or "").strip() for k, v in r.items()}
 
     # --- paradas
     feats = []
@@ -185,6 +193,26 @@ def extrae(zbytes, etiqueta, fichero_id):
 
     # route_short_name viene VACIO en Cercanias: sin este fallback las lineas salen
     # como IDs internos (10T0018C5) en vez de C-1, C-2...
+    # --- calendario: un GTFS trae TODOS los patrones (L-V, sabados, festivos, verano).
+    # Sumarlos da "salidas de ningun dia concreto": C1 salia con 26.847 al dia, imposible.
+    # Se filtra por los service_id activos en una fecha real.
+    import datetime as _dt
+    fecha = _fecha
+    dia_sem = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"][fecha.weekday()]
+    ymd = fecha.strftime("%Y%m%d")
+    activos = set()
+    for c in filas("calendar.txt"):
+        if (c.get(dia_sem) or "0") == "1":
+            ini, fin = c.get("start_date") or "", c.get("end_date") or ""
+            if (not ini or ini <= ymd) and (not fin or ymd <= fin):
+                activos.add(c.get("service_id"))
+    for c in filas("calendar_dates.txt"):
+        if (c.get("date") or "") == ymd:
+            if (c.get("exception_type") or "") == "1":
+                activos.add(c.get("service_id"))
+            elif (c.get("exception_type") or "") == "2":
+                activos.discard(c.get("service_id"))
+
     rutas = {r["route_id"]: {
                 "corto": ((r.get("route_short_name") or "").strip()
                           or (r.get("route_long_name") or "").strip()
@@ -194,7 +222,10 @@ def extrae(zbytes, etiqueta, fichero_id):
              for r in filas("routes.txt")}
 
     # --- frecuencias: trip_id -> headway, agregado por ruta
-    viaje_ruta = {t["trip_id"]: t.get("route_id") for t in filas("trips.txt")}
+    # solo los viajes que circulan ese dia
+    viaje_ruta = {t["trip_id"]: t.get("route_id") for t in filas("trips.txt")
+                  if not activos or t.get("service_id") in activos}
+    print("  servicio activo el %s: %d de %d viajes" % (fecha, len(viaje_ruta), len(filas("trips.txt"))))
     por_ruta = defaultdict(list)
     for f in filas("frequencies.txt"):
         rid = viaje_ruta.get(f.get("trip_id"))
@@ -284,6 +315,7 @@ def extrae(zbytes, etiqueta, fichero_id):
               ensure_ascii=False)
 
     recibo = {"fuente": "NAP · MITMA", "conjunto": etiqueta, "fichero_id": fichero_id,
+              "fecha_servicio": _fecha.isoformat(),
               "paradas": len(feats), "lineas": len(rutas),
               "lineas_con_frecuencia": len(frec), "metodo_frecuencia": metodo,
               "frecuencias": frec[:60]}
@@ -309,7 +341,9 @@ def main():
         print("  descargando fichero %s..." % a.gtfs)
         b = descarga_gtfs(a.gtfs)
         print("  %.1f MB" % (len(b) / 1e6))
-        feats, rutas, frec = extrae(b, a.etiqueta, a.gtfs)
+        fechas = [__import__('datetime').date.today() + __import__('datetime').timedelta(days=d)
+                  for d in (1,)]
+        feats, rutas, frec = extrae(b, a.etiqueta, a.gtfs, fechas[0])
         print("  %d paradas · %d líneas · %d con frecuencias" % (len(feats), len(rutas), len(frec)))
         for f in frec[:8]:
             if "headway_min_medio" in f:

@@ -95,21 +95,39 @@ Para el segundo caso la frecuencia se calcula contando **salidas reales por hora
 viaje). Pero hay una trampa: **en largo recorrido un «headway» no significa nada**. Un AVE no pasa cada
 tres minutos porque salgan tres trenes a la misma hora, y publicar «AVE cada 3 min» es un dato falso.
 
-Lo honesto en esos casos es **salidas al día**:
+Lo honesto en esos casos es **salidas al día**, y ahí hay una tercera trampa.
 
-| Línea | Salidas/día | Pico | Rutas |
+### Un GTFS no describe un día: describe todos
+
+`trips.txt` incluye **todos los patrones de servicio**: laborables, sábados, festivos, verano, Navidad.
+Sumarlos no da «salidas de un día», da la suma de todos los calendarios. El primer cálculo daba
+**C1 con 26.847 salidas diarias y 1.816 a la hora**, que es imposible: son las 24 h de todos los días
+del año a la vez.
+
+Hay que filtrar por los `service_id` activos en **una fecha concreta** (`calendar.txt` + las excepciones
+de `calendar_dates.txt`). Con fecha de servicio 2026-11-19:
+
+| Línea | Salidas ese día | Pico | Rutas |
 |---|---:|---:|---:|
-| Regional | 3.266 | 337/h | 380 |
-| AVE | 1.283 | 138/h | 92 |
-| AVANT | 983 | 115/h | 37 |
-| Intercity | 762 | 102/h | 24 |
-| AVLO | 175 | 37/h | 24 |
+| C1 | 981 | 71/h | — |
+| C2 | 597 | 40/h | — |
+| C3 | 487 | 31/h | — |
+| R3 | 477 | 31/h | — |
+| C5 | 391 | 32/h | — |
+
+Y en largo recorrido: **Regional 898 · AVE 259 · AVANT 255 · Intercity 158 · AVLO 37 · Euromed 15**.
+De 1.283 a 259 en el AVE: la diferencia era el calendario, no el tren.
 
 ## Trampa del formato
 
 **`stop_sequence` no siempre empieza por `1`.** Los GTFS de Renfe numeran `01`, `02`, `03`. Comparar
 `== "1"` no casa ninguna fila y la frecuencia sale a cero **sin ningún error**: el fallo es silencioso.
-Comparar como entero.
+Para la hora de salida de un viaje es más fiable el **mínimo de sus paradas** que cualquier convención.
+
+**Los CSV vienen con relleno de ancho fijo.** En el GTFS de Cercanías, `routes.txt` da
+`route_id = '10T0001C1  '` (dos espacios) mientras `trips.txt` da `'10T0001C1'`. Sin `.strip()`,
+**269 de 277 rutas quedan huérfanas**, el nombre no casa y la línea sale como `10T0018C5` en vez de `C1`.
+El síntoma es silencioso. La pista: `route_text_color` con sesenta espacios en la cabecera.
 
 ## Cómo se usa aquí
 
