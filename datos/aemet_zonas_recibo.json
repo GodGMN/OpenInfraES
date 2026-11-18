@@ -1,0 +1,19 @@
+{
+ "fuente": "AEMET",
+ "dataset": "Meteoalerta — zonas de aviso",
+ "url": "https://www.aemet.es/es/eltiempo/prediccion/avisos",
+ "url_geojson": "https://www.aemet.es/es/geojson/download/avisos/geojson_1795025160.tar.gz",
+ "licencia": "© AEMET. Reproducción autorizada citando a AEMET como autora.",
+ "elaborado": "20261118175717",
+ "descargado": "2026-11-18T19:20:33",
+ "ficheros": [
+  "r_D+0_20261118175717_penbal_20261118CET_1795025160.geojson"
+ ],
+ "features": 70,
+ "por_nivel": {
+  "rojo": 59,
+  "naranja": 11
+ },
+ "geometria": true,
+ "nota": "Zonas con aviso, como polígonos. Los ficheros de menos de 300 bytes van vacíos (sin aviso)."
+}

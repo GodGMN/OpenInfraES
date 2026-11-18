@@ -810,6 +810,10 @@ const CAPAS = [
   { id:"gtfsrt", grupo:"Tiempo real", label:"Vehículos en vivo (GTFS-RT)", tipo:"punto", on:false,
     color:"#facc15", fichero:"datos/gtfsrt_vehiculos.geojson", radio:4.6, zoomMin:6,
     zoomDetalle:8, popupTitulo:"linea" },
+  { id:"aemet-zonas", grupo:"Riesgo", label:"Avisos AEMET (zonas)", tipo:"poligono", on:false,
+    color:"#ef4444", fichero:"datos/aemet_zonas.geojson", opacidad:.28, peso:1.6, zoomMin:0,
+    colorCampo:"nivel", colores:{1:"#facc15", 2:"#fb923c", 3:"#ef4444"},
+    popupTitulo:"zona" },
   { id:"sismos", grupo:"Riesgo", label:"Terremotos (7 días)", tipo:"punto", on:false,
     color:"#f97316", fichero:"datos/sismos.geojson", radio:5, siempreIndividual:true,
     escala:{ campo:"magnitud", min:1, max:5, unidad:"M" }, radioPorMagnitud:true,
@@ -1026,8 +1030,13 @@ function cargar(c) {
           }).addTo(capas[c.id]);
         }
         L.geoJSON({ type:"FeatureCollection", features:feats }, {
-          style: () => ({ color:c.color, weight:c.peso || 1.2, opacity:c.opacidad || .8,
-                          fillColor:c.color, fillOpacity:(c.tipo === "poligono" ? (c.opacidad || .3) : .12) }),
+          // `colorCampo` permite pintar cada feature segun una propiedad (nivel de aviso)
+          style: (f) => {
+            const col = (c.colorCampo && c.colores && f && f.properties)
+              ? (c.colores[f.properties[c.colorCampo]] || c.color) : c.color;
+            return { color: col, weight: c.peso || 1.2, opacity: c.opacidad || .8,
+                     fillColor: col, fillOpacity: (c.tipo === "poligono" ? (c.opacidad || .3) : .12) };
+          },
           onEachFeature: (f, layer) => {
             elementos[c.id].push(layer);
             layer.on("click", e => { abrirFicha(f.properties, c, e.latlng); L.DomEvent.stopPropagation(e); });

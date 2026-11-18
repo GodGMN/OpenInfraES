@@ -9,6 +9,7 @@
 | [`docs/PROYECTO.md`](docs/PROYECTO.md) | qué es, qué contiene, cómo está hecho, rendimiento medido y límites |
 | [`docs/FUENTES.md`](docs/FUENTES.md) | **ficha por fuente oficial**: qué publica, URL, cómo se obtiene, licencia, frecuencia y limitaciones |
 | [`docs/apis.md`](docs/apis.md) | estado técnico de cada API, con los errores literales |
+| [`docs/aemet.md`](docs/aemet.md) | avisos de AEMET: el tar.gz con polígonos y por qué Meteoalarm no sirve para el mapa |
 | [`docs/gtfsrt.md`](docs/gtfsrt.md) | vehículos en vivo: qué feeds abren y por qué el NAP no da sus 86 |
 | [`docs/nap.md`](docs/nap.md) | el NAP de transporte: 169 conjuntos GTFS y la cabecera `ApiKey` que lo abre |
 | [`GUIA.md`](GUIA.md) | reglas de trabajo: cómo añadir una capa, sin editar a mano, sin inventar |
@@ -100,7 +101,7 @@ Las capas que no tienen GeoJSON servido por su organismo se guardan ya vectoriza
 | Paradas Metro Madrid / Cercanías / AVE (3.223) | **NAP · MITMA** | Ley 37/2007 |
 | Cámaras de tráfico (1.977) · puntos de recarga (12.144) · **incidencias en vivo (1.350)** | **DGT** | reutilización con atribución |
 | Vehículos en vivo (403) | **Renfe** (GTFS-RT) | condiciones del editor |
-| Avisos meteorológicos (177 vigentes) | **AEMET** vía Meteoalarm | reutilización con atribución |
+| Avisos meteorológicos (177 vigentes) · **70 zonas en aviso con polígono** | **AEMET** | © AEMET, citar como autora |
 | Embalses (402) | **MITECO** (Boletín Hidrológico) | Ley 37/2007 |
 | Desaladoras (28), hidrógeno (7) | **MITECO** | CC BY 4.0 |
 | Nuclear (7 reactores) | **CSN** | CC BY 4.0 |

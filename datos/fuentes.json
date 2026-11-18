@@ -1404,6 +1404,29 @@
    "fecha_dato": null,
    "fecha_publicacion": "2026-11-18T15:19:27",
    "fecha_descarga": "2026-11-18T16:19:31"
+  },
+  "aemet-zonas": {
+   "capa": "aemet-zonas",
+   "titulo": "Avisos AEMET (zonas)",
+   "fuente": "AEMET",
+   "editor": "AEMET · Meteoalerta",
+   "licencia": "© AEMET, citar como autora",
+   "actualizado": "20261118",
+   "descargado": "2026-11-18T19:20:33",
+   "features": 70,
+   "url": "https://www.aemet.es/es/eltiempo/prediccion/avisos",
+   "metodo": "tar.gz de GeoJSON de la pagina de avisos (sin clave)",
+   "organismo": "AEMET",
+   "publica_via": "AEMET · Meteoalerta",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "AEMET · Meteoalerta",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": "20261118",
+   "fecha_descarga": "2026-11-18T19:20:33"
   }
  },
  "simplificacion": {
@@ -1552,6 +1575,6 @@
    "kb": 18
   }
  },
- "total_capas": 61,
+ "total_capas": 62,
  "nota_cadena": "Cada capa declara productor (quien genera el dato), publica (quien lo sirve tal como lo consumimos) y consume (nosotros). Son tres fechas distintas: la del dato, la de publicación y la de descarga."
 }

@@ -312,6 +312,21 @@ def main():
             "metodo": "protobuf GTFS-RT, refresco continuo",
         }
 
+
+    # --- AEMET: zonas de aviso con geometria ---
+    r = leer("aemet_zonas_recibo.json", {})
+    if r:
+        fuentes["aemet-zonas"] = {
+            "capa": "aemet-zonas", "titulo": "Avisos AEMET (zonas)",
+            "fuente": "AEMET", "editor": "AEMET · Meteoalerta",
+            "licencia": "© AEMET, citar como autora",
+            "actualizado": (r.get("elaborado") or "")[:8] or None,
+            "descargado": r.get("descargado"),
+            "features": r.get("features"),
+            "url": r.get("url") or "https://www.aemet.es/es/eltiempo/prediccion/avisos",
+            "metodo": "tar.gz de GeoJSON de la pagina de avisos (sin clave)",
+        }
+
     sim = leer("simplificado/_recibo.json", {})
     simpl = {os.path.basename(c["id"]): c for c in sim.get("capas", [])}
 
