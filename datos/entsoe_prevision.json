@@ -1,0 +1,16 @@
+{
+ "fecha": "2026-11-18",
+ "fuente": "ENTSO-E Transparency (A71/A69)",
+ "generacion": {
+  "puntos": 149,
+  "series": 1,
+  "min": 4.4,
+  "max": 43067.6
+ },
+ "demanda": {
+  "puntos": 172,
+  "series": 2,
+  "min": 6.0,
+  "max": 19897.0
+ }
+}
