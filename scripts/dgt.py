@@ -82,9 +82,12 @@ def camaras(ruta):
                       "properties": {
                           "carretera": texto(el, "roadName") or "",
                           "provincia": texto(el, "province") or "",
+                          "destino": texto(el, "roadDestination") or "",
                           "km": texto(el, "kilometerPoint") or "",
                           "tipo": texto(el, "typeOfDevice") or "",
                           "actualizado": texto(el, "lastUpdateOfDeviceInformation") or "",
+                          # deviceUrl es la FOTO de la camara, no un enlace informativo
+                          "imagen": texto(el, "deviceUrl") or "",
                       }})
         el.clear()
 
@@ -139,7 +142,8 @@ def electrolineras(ruta):
                           "codigo_postal": texto(el, "postcode") or "",
                           "tipo_sitio": texto(el, "typeOfSite") or "",
                           "conectores": int(conectores),
-                          "potencia_max_kw": round(max(potencias) / 1000, 1) if potencias else None,
+                          "potencia_max_kw": (round(max(potencias) / 1000, 1)
+                                              if potencias else None),
                           "actualizado": texto(el, "lastUpdated") or "",
                       }})
         el.clear()

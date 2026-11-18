@@ -288,6 +288,13 @@
     border:1px solid var(--borde-fuerte); border-radius:2px; color:var(--suave); }
   #proyecto .pie-proy { margin-top:18px; padding-top:12px; border-top:1px solid var(--borde);
     font-size:10.6px; color:var(--tenue); line-height:1.6; }
+
+  .lista-grupo { list-style:none; margin:6px 0 0; padding:0; max-height:230px; overflow:auto; }
+  .lista-grupo li { border-bottom:1px solid var(--borde); }
+  .lista-grupo li.mas { border:0; color:var(--tenue); font-size:11px; padding:5px 0; }
+  .lista-grupo a { display:block; padding:5px 2px; color:var(--cian); text-decoration:none; font-size:11.8px; }
+  .lista-grupo a:hover { background:rgba(34,211,238,.09); }
+  .foto { width:100%; border-radius:3px; margin:7px 0 3px; display:block; border:1px solid var(--borde); }
 </style>
 </head>
 <body>
@@ -447,7 +454,7 @@ function ponerBase(k) {
 }
 
 /* ---------------- ficha ---------------- */
-const OCULTAS = new Set(["slug","verif","id","fid","OBJECTID","objectid","claves","fuentes",
+const OCULTAS = new Set(["imagen", "slug","verif","id","fid","OBJECTID","objectid","claves","fuentes",
   "fecha_alta","nombre","name","descripcion","estado_registro","geo_fuente",
   "geo_precision","fecha_verificacion","categoria","tipo_osm"]);
 const esTecnico = k => /(_v|_f|__v|__f)$/.test(k);
@@ -488,12 +495,21 @@ function fichaTren(p, c) {
 function ficha(p, c) {
   const titulo = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Aeropuerto || p.Carretera ||
                  p.Rotulo || p.rotulo || p.Direccion || p.direccion || p.Nombre_plataforma ||
-                 (p.magnitud != null ? "Terremoto M" + p.magnitud : "Sin nombre");
+                 (p.magnitud != null ? "Terremoto M" + p.magnitud :
+                  (c.popupTitulo && p[c.popupTitulo] ? String(p[c.popupTitulo]) : "Sin nombre")) +
+                 (c.popupTitulo && p.km ? " · km " + p.km : "");
   const estado = [p.categoria, p.estado_registro, p.verif]
     .filter(v => v && !/^[A-Z0-9_]+$/.test(String(v))).join(" · ");
   let h = '<div class="ficha"><div class="ft">' + titulo + "</div>";
   h += '<div class="fs">' + c.label + (estado ? " — " + estado : "") + "</div>";
   if (p.descripcion) h += '<p class="fd">' + p.descripcion + "</p>";
+  // camaras de la DGT: deviceUrl es la foto. Sin esto solo se ve la carretera y el km.
+  if (p.imagen) {
+    h += `<a href="${p.imagen}" target="_blank" rel="noopener"><img class="foto" src="${p.imagen}"
+           alt="Imagen de la cámara" loading="lazy"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'"></a>
+          <div class="fd" style="display:none">La imagen no está disponible ahora mismo.</div>`;
+  }
   const filas = Object.entries(p).filter(([k, v]) =>
     v !== null && v !== "" && v !== undefined && !OCULTAS.has(k) && !esTecnico(k) && typeof v !== "object");
   if (filas.length) {
@@ -520,17 +536,52 @@ function ficha(p, c) {
 }
 
 /* ficha de un grupo agregado: al alejar, un punto son N instalaciones */
+function etiquetaCorta(p, c) {
+  const campos = [c.popupTitulo, "nombre", "name", "Nombre", "Nombre_terminal",
+                  "Rotulo", "rotulo", "Direccion", "direccion", "carretera", "label"];
+  for (const k of campos) {
+    if (k && p[k]) {
+      let t = String(p[k]);
+      if (p.km) t += " · km " + p.km;
+      else if (p.codigo_postal) t += " · CP " + p.codigo_postal;
+      if (p.provincia) t += " (" + p.provincia + ")";
+      return t;
+    }
+  }
+  return "sin nombre";
+}
+
+/* Ficha de un grupo: lista los elementos y CADA UNO se puede abrir.
+   Antes solo pintaba ocho nombres en <li> muertos y, en capas sin campo
+   `nombre` (camaras: carretera + km), salian todos como "sin nombre". */
+let GRUPO_ITEMS = [], GRUPO_CAPA = null;
 function fichaGrupo(items, c) {
-  const nombres = items.slice(0, 8).map(f => {
-    const p = f.properties || {};
-    return p.nombre || p.name || p.Nombre || p.Rotulo || p.Direccion || "sin nombre";
-  });
+  GRUPO_ITEMS = items; GRUPO_CAPA = c;
+  const tope = 14;
   let h = '<div class="ficha"><div class="ft">' + items.length + " " + c.label.toLowerCase() + "</div>";
-  h += '<div class="fs">' + c.label + " — agrupadas por zoom</div>";
-  h += "<ul>" + nombres.map(n => "<li>" + n + "</li>").join("");
-  if (items.length > 8) h += "<li>y " + (items.length - 8) + " más…</li>";
-  h += "</ul><p class='fd' style='margin-top:8px;font-size:11px'>Acércate para verlas por separado.</p></div>";
+  h += '<div class="fs">' + c.label + " — toca uno para ver su ficha</div>";
+  h += '<ul class="lista-grupo">';
+  items.slice(0, tope).forEach((f, i) => {
+    h += '<li><a href="#" data-grupo-i="' + i + '">' + etiquetaCorta(f.properties || {}, c) + "</a></li>";
+  });
+  if (items.length > tope) h += '<li class="mas">y ' + (items.length - tope) + " más…</li>";
+  h += "</ul></div>";
   return h;
+}
+
+/* engancha los clics de la lista del grupo ya abierto */
+function engancharGrupo() {
+  const el = POPUP.getElement();
+  if (!el) return;
+  el.querySelectorAll("[data-grupo-i]").forEach(a => {
+    a.addEventListener("click", ev => {
+      ev.preventDefault(); ev.stopPropagation();
+      const f = GRUPO_ITEMS[Number(a.dataset.grupoI)];
+      if (!f) return;
+      const [lng, lat] = f.geometry.coordinates;
+      abrirFicha(f.properties || {}, GRUPO_CAPA, [lat, lng]);
+    });
+  });
 }
 
 /* ---------------- capas ---------------- */
@@ -616,11 +667,17 @@ const CAPAS = [
   { id:"intermodales", grupo:"Transporte", label:"Terminales mercancías", tipo:"punto", on:false,
     color:"#f59e0b", fichero:"datos/hermes/terminales-mercancias.geojson", radio:5 },
   { id:"dgt-camaras", grupo:"DGT · Tráfico", label:"Cámaras de tráfico (DGT)", tipo:"punto", on:false,
-    color:"#fb7185", fichero:"datos/dgt_camaras.geojson", radio:4, zoomMin:8,
-    siempreIndividual:true, popupTitulo:"carretera" },
+    color:"#fb7185", fichero:"datos/dgt_camaras.geojson", radio:4, zoomMin:7, zoomDetalle:11,
+    // sin `siempreIndividual`: 1.977 camaras sueltas a zoom nacional son una masa en la
+    // que no se puede pinchar ninguna. Agrupadas, la burbuja abre una lista pinchable.
+    popupTitulo:"carretera" },
   { id:"dgt-electrolineras", grupo:"DGT · Tráfico", label:"Puntos de recarga eléctrica", tipo:"punto", on:false,
-    color:"#34d399", fichero:"datos/dgt_electrolineras.geojson", radio:4.2, zoomMin:7,
-    popupTitulo:"nombre" },
+    color:"#34d399", fichero:"datos/dgt_electrolineras.geojson", radio:4.2, zoomMin:7, zoomDetalle:11,
+    radioPorMagnitud:true,
+    // escala por cuartiles reales: p25 = 22 kW, p75 = 50 kW, y los rapidos (>150) son 1.095
+    // de 12.144. Con min 22 / max 350 casi todos caian en el mismo tamano.
+    escala:{ campo:"potencia_max_kw", min:7, max:150, unidad:"kW" },
+    popupTitulo:"tipo_sitio" },
   { id:"carburantes", grupo:"Tiempo real", label:"Carburantes (gasóleo A)", tipo:"punto", on:false,
     color:"#22c55e", fichero:"datos/carburantes.geojson", radio:3.6, zoomMin:7,
     escala:{ campo:"gasoleo_a", min:1.40, max:2.20, unidad:"€/l" } },
@@ -724,7 +781,16 @@ function colorEscala(v, e) {
 }
 
 const radioDe = (c, p) => {
-  if (c.radioPorMagnitud) return Math.max(4, Math.min(18, 3 + (p.magnitud || 0) * 2.5));
+  // radio por magnitud: usa el campo que declare `escala.campo` y lo normaliza.
+  // Antes estaba fijado a `p.magnitud`, asi que solo servia para sismos.
+  if (c.radioPorMagnitud) {
+    const e = c.escala || {};
+    const v = Number(p[e.campo || "magnitud"]) || 0;
+    const min = (e.min !== undefined) ? e.min : 0;
+    const max = (e.max !== undefined) ? e.max : v;
+    const t = (max > min) ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0.5;
+    return 3.5 + t * 10.5;          // 3,5 px a 14 px
+  }
   const rmin = c.radioMin || c.radio || 4.5, rmax = c.radioMax || 11;
   if (!c.magnitud) return rmin;
   return Math.max(rmin, Math.min(rmax, Math.sqrt(p[c.magnitud] || 0) / 1.6));
@@ -747,7 +813,10 @@ function pintarPuntos(c) {
   elementos[c.id] = [];
   const z = mapa.getZoom();
 
-  if (c.siempreIndividual || z >= ZOOM_DETALLE) {
+  // `zoomDetalle` por capa: una capa de 2.000 puntos no debe desplegarse al mismo zoom
+  // que una de 20. Antes solo habia un umbral global y las camaras se pintaban sueltas
+  // a z8: 1.623 puntos solapados donde no se podia pinchar ninguno.
+  if (c.siempreIndividual || z >= (c.zoomDetalle || ZOOM_DETALLE)) {
     // solo se crean los marcadores que caen en la vista (con margen): a zoom alto
     // una capa de 3.000 puntos ocupaba el mapa entero y no se veía ninguno de fuera
     const b = mapa.getBounds().pad(0.25);
@@ -792,7 +861,10 @@ function pintarPuntos(c) {
     });
     m.on("click", e => {
       if (n === 1) abrirFicha(items[0].properties, c, e.latlng);
-      else { POPUP.setLatLng(e.latlng).setContent(fichaGrupo(items, c)).openOn(mapa); }
+      else {
+        POPUP.setLatLng(e.latlng).setContent(fichaGrupo(items, c)).openOn(mapa);
+        engancharGrupo();
+      }
       L.DomEvent.stopPropagation(e);
     });
     m.addTo(capas[c.id]);
@@ -892,13 +964,16 @@ let moverPendiente = null;
 mapa.on("zoomend", aplicarLOD);
 mapa.on("moveend", () => {
   aplicarLOD();
-  if (mapa.getZoom() < ZOOM_DETALLE) return;
   clearTimeout(moverPendiente);
   moverPendiente = setTimeout(() => {
     CAPAS.forEach(c => {
       if (c.tipo !== "punto" || !c.__cargada || c.__cargando) return;
       if (!document.querySelector(`[data-capa="${c.id}"]`)?.checked) return;
       if (c.siempreIndividual && c.id !== "trenes") return;
+      // cada capa tiene su umbral de detalle; el global ya no corta aqui
+      if (mapa.getZoom() < (c.zoomDetalle || ZOOM_DETALLE) && !c.__agrupada) {
+        // agrupada y sin desplegar: nada que recalcular salvo el paso de nivel
+      }
       pintarPuntos(c);
     });
   }, 220);
@@ -914,7 +989,8 @@ mapa.on("zoomend", () => {
       // re-agrupar solo al cambiar de nivel entero: dentro del mismo nivel la celda es la misma
       const antes = Math.floor(c.__zPintado === undefined ? -99 : c.__zPintado);
       const ahora = Math.floor(z);
-      const cruzaDetalle = (c.__zPintado < ZOOM_DETALLE) !== (z < ZOOM_DETALLE);
+      const u = (c.zoomDetalle || ZOOM_DETALLE);
+      const cruzaDetalle = (c.__zPintado < u) !== (z < u);
       if (antes !== ahora || cruzaDetalle) pintarPuntos(c);
     });
   }, 160);
