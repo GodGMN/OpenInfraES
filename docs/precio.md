@@ -47,6 +47,27 @@ media sale 63,07 y la de OMIE 52,13: **le faltan justo las horas baratas**. Una 
 sobre un subconjunto no es la media del día — comparar medias entre las dos fuentes es un error,
 comparar cuarto a cuarto es la prueba.
 
+
+### Por qué el error era creíble
+
+Cortar las 96 filas en cuatro grupos de 24 da cuatro medias que **parecen** cuatro mercados,
+porque cada grupo es una franja horaria con su propio nivel de precio:
+
+| Cuartos | Franja | Media |
+|---|---|---:|
+| 1-24 | 01:00 – 06:45 | **1,39** |
+| 25-48 | 07:00 – 12:45 | 46,26 |
+| 49-72 | 13:00 – 18:45 | 50,40 |
+| 73-96 | 19:00 – 00:45 | **110,48** |
+
+La primera franja es la madrugada, con precio casi cero. Por eso «media 1,39» no chirriaba:
+era un número plausible, solo que de las seis de la mañana. La curva sube a lo largo del día y
+el máximo (**150,00 a las 22:00**) cae en la última franja, la más cara. Todo encaja — y por eso
+el error pasó desapercibido hasta que ENTSO-E puso el contraste.
+
+**Regla**: si un CSV trae 96 filas donde esperabas 24, sospecha de la resolución antes que de
+un formato raro. Un dato plausible puede seguir siendo el dato equivocado.
+
 ## Trampas
 
 - **96 filas = 96 cuartos**, no 4 bloques de 24 horas. El campo 4 llega hasta 96.
