@@ -276,6 +276,25 @@ def main():
                 "metodo": "GTFS-ZIP del NAP; cabecera `ApiKey`",
             }
 
+
+    # --- DGT: NAP de Trafico (DATEX II) ---
+    for capa, fich, titulo, ds in (
+        ("dgt-camaras", "dgt_camaras_recibo.json", "Cámaras de tráfico (DGT)", "Cámaras DGT DATEX2 v3.7"),
+        ("dgt-electrolineras", "dgt_electrolineras_recibo.json", "Puntos de recarga eléctrica", "Puntos de recarga eléctrica para vehículos"),
+    ):
+        r = leer(fich, {})
+        if r:
+            fuentes[capa] = {
+                "capa": capa, "titulo": titulo,
+                "fuente": "DGT", "editor": "DGT · NAP de Tráfico",
+                "licencia": "reutilización con atribución",
+                "actualizado": r.get("actualizado") or None,
+                "descargado": HOY,
+                "features": r.get("features"),
+                "url": "https://nap.dgt.es",
+                "metodo": "DATEX II v3 (XML) del NAP de Tráfico · " + ds,
+            }
+
     sim = leer("simplificado/_recibo.json", {})
     simpl = {os.path.basename(c["id"]): c for c in sim.get("capas", [])}
 

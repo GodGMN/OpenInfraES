@@ -1,0 +1,9 @@
+{
+ "fuente": "DGT · NAP de Tráfico",
+ "dataset": "Puntos de recarga eléctrica para vehículos",
+ "url": "https://nap.dgt.es/datex2/v3/miterd/EnergyInfrastructureTablePublication/electrolineras.xml",
+ "features": 12144,
+ "con_conectores": 12144,
+ "potencia_max_kw": 1000.0,
+ "potencia_mediana_kw": 22.2
+}

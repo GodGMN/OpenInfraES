@@ -108,6 +108,7 @@ ORGANISMOS = {
     "petrolifero": "CORES", "h2red": "MITECO",
     "nap-metro": "NAP · MITMA", "nap-cercanias": "NAP · MITMA",
     "nap-ave": "NAP · MITMA",
+    "dgt-camaras": "DGT", "dgt-electrolineras": "DGT",
 }
 
 

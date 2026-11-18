@@ -1,0 +1,18 @@
+{
+ "fuente": "DGT · NAP de Tráfico",
+ "dataset": "Cámaras DGT DATEX2 v3.7",
+ "url": "https://nap.dgt.es/datex2/v3/dgt/DevicePublication/camaras_datex2_v37.xml",
+ "licencia": "reutilización con atribución",
+ "features": 1977,
+ "provincias": 43,
+ "ejemplo_provincias": [
+  "ALBACETE",
+  "ALICANTE/ALACANT",
+  "ALMERÍA",
+  "ASTURIAS",
+  "BADAJOZ",
+  "BALEARS, ILLES",
+  "BURGOS",
+  "CANTABRIA"
+ ]
+}
