@@ -14,7 +14,7 @@
    "rutas": 34,
    "salidas_dia": 981,
    "salidas_hora_pico": 71,
-   "headway_pico_min": 0.8,
+   "headway_pico_min": null,
    "por_hora": {
     "0": 2,
     "5": 31,
@@ -36,7 +36,8 @@
     "21": 51,
     "22": 39,
     "23": 17
-   }
+   },
+   "nota": "salidas agregadas de 34 rutas; no es un headway"
   },
   {
    "ruta": "C2",
@@ -44,7 +45,7 @@
    "rutas": 25,
    "salidas_dia": 597,
    "salidas_hora_pico": 40,
-   "headway_pico_min": 1.5,
+   "headway_pico_min": null,
    "por_hora": {
     "4": 1,
     "5": 30,
@@ -66,7 +67,8 @@
     "21": 27,
     "22": 20,
     "23": 8
-   }
+   },
+   "nota": "salidas agregadas de 25 rutas; no es un headway"
   },
   {
    "ruta": "C3",
@@ -74,7 +76,7 @@
    "rutas": 22,
    "salidas_dia": 487,
    "salidas_hora_pico": 31,
-   "headway_pico_min": 1.9,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 16,
     "6": 28,
@@ -95,7 +97,8 @@
     "21": 26,
     "22": 21,
     "23": 10
-   }
+   },
+   "nota": "salidas agregadas de 22 rutas; no es un headway"
   },
   {
    "ruta": "R3",
@@ -103,7 +106,7 @@
    "rutas": 28,
    "salidas_dia": 477,
    "salidas_hora_pico": 31,
-   "headway_pico_min": 1.9,
+   "headway_pico_min": null,
    "por_hora": {
     "4": 3,
     "5": 16,
@@ -125,7 +128,8 @@
     "21": 27,
     "22": 17,
     "23": 2
-   }
+   },
+   "nota": "salidas agregadas de 28 rutas; no es un headway"
   },
   {
    "ruta": "C5",
@@ -133,7 +137,7 @@
    "rutas": 14,
    "salidas_dia": 391,
    "salidas_hora_pico": 32,
-   "headway_pico_min": 1.9,
+   "headway_pico_min": null,
    "por_hora": {
     "0": 1,
     "4": 1,
@@ -156,7 +160,8 @@
     "21": 16,
     "22": 12,
     "23": 8
-   }
+   },
+   "nota": "salidas agregadas de 14 rutas; no es un headway"
   },
   {
    "ruta": "R1",
@@ -164,7 +169,7 @@
    "rutas": 2,
    "salidas_dia": 190,
    "salidas_hora_pico": 14,
-   "headway_pico_min": 4.3,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 6,
     "6": 14,
@@ -185,7 +190,8 @@
     "21": 9,
     "22": 4,
     "23": 1
-   }
+   },
+   "nota": "salidas agregadas de 2 rutas; no es un headway"
   },
   {
    "ruta": "C6",
@@ -193,7 +199,7 @@
    "rutas": 13,
    "salidas_dia": 186,
    "salidas_hora_pico": 16,
-   "headway_pico_min": 3.8,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 6,
     "6": 16,
@@ -214,7 +220,8 @@
     "21": 11,
     "22": 4,
     "23": 2
-   }
+   },
+   "nota": "salidas agregadas de 13 rutas; no es un headway"
   },
   {
    "ruta": "R4",
@@ -222,7 +229,7 @@
    "rutas": 2,
    "salidas_dia": 161,
    "salidas_hora_pico": 12,
-   "headway_pico_min": 5.0,
+   "headway_pico_min": null,
    "por_hora": {
     "4": 3,
     "5": 8,
@@ -243,7 +250,8 @@
     "20": 9,
     "21": 8,
     "23": 1
-   }
+   },
+   "nota": "salidas agregadas de 2 rutas; no es un headway"
   },
   {
    "ruta": "C4",
@@ -251,7 +259,7 @@
    "rutas": 8,
    "salidas_dia": 160,
    "salidas_hora_pico": 16,
-   "headway_pico_min": 3.8,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 7,
     "6": 16,
@@ -272,7 +280,8 @@
     "21": 11,
     "22": 7,
     "23": 4
-   }
+   },
+   "nota": "salidas agregadas de 8 rutas; no es un headway"
   },
   {
    "ruta": "C10",
@@ -280,7 +289,7 @@
    "rutas": 5,
    "salidas_dia": 144,
    "salidas_hora_pico": 10,
-   "headway_pico_min": 6.0,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 3,
     "6": 9,
@@ -301,7 +310,8 @@
     "21": 7,
     "22": 6,
     "23": 2
-   }
+   },
+   "nota": "salidas agregadas de 5 rutas; no es un headway"
   },
   {
    "ruta": "R2S",
@@ -309,7 +319,7 @@
    "rutas": 4,
    "salidas_dia": 143,
    "salidas_hora_pico": 10,
-   "headway_pico_min": 6.0,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 5,
     "6": 7,
@@ -330,7 +340,8 @@
     "21": 8,
     "22": 3,
     "23": 1
-   }
+   },
+   "nota": "salidas agregadas de 4 rutas; no es un headway"
   },
   {
    "ruta": "C4a",
@@ -338,7 +349,7 @@
    "rutas": 2,
    "salidas_dia": 124,
    "salidas_hora_pico": 11,
-   "headway_pico_min": 5.5,
+   "headway_pico_min": null,
    "por_hora": {
     "0": 1,
     "4": 1,
@@ -361,7 +372,8 @@
     "21": 5,
     "22": 6,
     "23": 2
-   }
+   },
+   "nota": "salidas agregadas de 2 rutas; no es un headway"
   },
   {
    "ruta": "C4b",
@@ -369,7 +381,7 @@
    "rutas": 2,
    "salidas_dia": 122,
    "salidas_hora_pico": 10,
-   "headway_pico_min": 6.0,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 7,
     "6": 10,
@@ -390,7 +402,8 @@
     "21": 6,
     "22": 5,
     "23": 3
-   }
+   },
+   "nota": "salidas agregadas de 2 rutas; no es un headway"
   },
   {
    "ruta": "C7",
@@ -398,7 +411,7 @@
    "rutas": 9,
    "salidas_dia": 111,
    "salidas_hora_pico": 12,
-   "headway_pico_min": 5.0,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 4,
     "6": 12,
@@ -419,7 +432,8 @@
     "21": 5,
     "22": 4,
     "23": 1
-   }
+   },
+   "nota": "salidas agregadas de 9 rutas; no es un headway"
   },
   {
    "ruta": "T1",
@@ -427,7 +441,7 @@
    "rutas": 2,
    "salidas_dia": 74,
    "salidas_hora_pico": 6,
-   "headway_pico_min": 10.0,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 2,
     "6": 6,
@@ -448,7 +462,8 @@
     "21": 3,
     "22": 4,
     "23": 1
-   }
+   },
+   "nota": "salidas agregadas de 2 rutas; no es un headway"
   },
   {
    "ruta": "R2N",
@@ -456,7 +471,7 @@
    "rutas": 2,
    "salidas_dia": 72,
    "salidas_hora_pico": 5,
-   "headway_pico_min": 12.0,
+   "headway_pico_min": null,
    "por_hora": {
     "4": 2,
     "5": 3,
@@ -477,7 +492,8 @@
     "20": 4,
     "21": 5,
     "22": 2
-   }
+   },
+   "nota": "salidas agregadas de 2 rutas; no es un headway"
   },
   {
    "ruta": "R2",
@@ -485,7 +501,7 @@
    "rutas": 5,
    "salidas_dia": 54,
    "salidas_hora_pico": 5,
-   "headway_pico_min": 12.0,
+   "headway_pico_min": null,
    "por_hora": {
     "4": 1,
     "5": 2,
@@ -504,7 +520,8 @@
     "21": 3,
     "22": 1,
     "23": 1
-   }
+   },
+   "nota": "salidas agregadas de 5 rutas; no es un headway"
   },
   {
    "ruta": "C8a",
@@ -512,7 +529,7 @@
    "rutas": 4,
    "salidas_dia": 49,
    "salidas_hora_pico": 5,
-   "headway_pico_min": 12.0,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 1,
     "6": 5,
@@ -533,7 +550,8 @@
     "21": 2,
     "22": 3,
     "23": 1
-   }
+   },
+   "nota": "salidas agregadas de 4 rutas; no es un headway"
   },
   {
    "ruta": "R11",
@@ -541,7 +559,7 @@
    "rutas": 3,
    "salidas_dia": 48,
    "salidas_hora_pico": 4,
-   "headway_pico_min": 15.0,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 2,
     "6": 4,
@@ -561,7 +579,8 @@
     "20": 3,
     "21": 1,
     "23": 2
-   }
+   },
+   "nota": "salidas agregadas de 3 rutas; no es un headway"
   },
   {
    "ruta": "C8b",
@@ -569,7 +588,7 @@
    "rutas": 3,
    "salidas_dia": 42,
    "salidas_hora_pico": 4,
-   "headway_pico_min": 15.0,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 1,
     "6": 4,
@@ -590,7 +609,8 @@
     "21": 2,
     "22": 2,
     "23": 1
-   }
+   },
+   "nota": "salidas agregadas de 3 rutas; no es un headway"
   },
   {
    "ruta": "R13",
@@ -598,7 +618,7 @@
    "rutas": 6,
    "salidas_dia": 42,
    "salidas_hora_pico": 6,
-   "headway_pico_min": 10.0,
+   "headway_pico_min": null,
    "por_hora": {
     "4": 1,
     "5": 1,
@@ -617,7 +637,8 @@
     "19": 6,
     "20": 2,
     "21": 3
-   }
+   },
+   "nota": "salidas agregadas de 6 rutas; no es un headway"
   },
   {
    "ruta": "R15",
@@ -625,7 +646,7 @@
    "rutas": 8,
    "salidas_dia": 36,
    "salidas_hora_pico": 4,
-   "headway_pico_min": 15.0,
+   "headway_pico_min": null,
    "por_hora": {
     "5": 1,
     "6": 4,
@@ -643,7 +664,8 @@
     "19": 2,
     "20": 1,
     "21": 3
-   }
+   },
+   "nota": "salidas agregadas de 8 rutas; no es un headway"
   },
   {
    "ruta": "R8",
@@ -651,7 +673,7 @@
    "rutas": 2,
    "salidas_dia": 33,
    "salidas_hora_pico": 3,
-   "headway_pico_min": 20.0,
+   "headway_pico_min": null,
    "por_hora": {
     "6": 2,
     "7": 3,
@@ -669,7 +691,8 @@
     "19": 2,
     "20": 2,
     "21": 2
-   }
+   },
+   "nota": "salidas agregadas de 2 rutas; no es un headway"
   },
   {
    "ruta": "C8",
@@ -705,7 +728,7 @@
    "rutas": 2,
    "salidas_dia": 30,
    "salidas_hora_pico": 3,
-   "headway_pico_min": 20.0,
+   "headway_pico_min": null,
    "por_hora": {
     "6": 1,
     "7": 2,
@@ -725,7 +748,8 @@
     "21": 1,
     "22": 1,
     "23": 1
-   }
+   },
+   "nota": "salidas agregadas de 2 rutas; no es un headway"
   },
   {
    "ruta": "C5a",

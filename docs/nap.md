@@ -129,6 +129,17 @@ Para la hora de salida de un viaje es más fiable el **mínimo de sus paradas** 
 **269 de 277 rutas quedan huérfanas**, el nombre no casa y la línea sale como `10T0018C5` en vez de `C1`.
 El síntoma es silencioso. La pista: `route_text_color` con sesenta espacios en la cabecera.
 
+## Cuarta trampa: el headway de una línea con ramas
+
+Agrupar por nombre de línea y calcular el headway da un dato falso cuando esa línea tiene **varias rutas**.
+C1 tiene **34 ramas** (Príncipe Pío, Aeropuerto-T4, Villalba…). Sumar sus 71 salidas de la hora punta da
+`60/71 = 0,8 min`, o sea «un tren cada 48 segundos», que no existe en ningún andén.
+
+**Regla:** el headway solo se publica cuando la línea tiene **una sola ruta**. Si agrupa varias, se
+publican salidas y se anota cuántas ramas suman. Aplicado: **30 headways anulados** (24 en Cercanías,
+6 en Renfe) y ninguno en Metro de Madrid, donde cada línea es una ruta y el dato sí es real
+(línea 2: 6,7 min).
+
 ## Cómo se usa aquí
 
 ```bash

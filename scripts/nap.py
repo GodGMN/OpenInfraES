@@ -287,7 +287,10 @@ def extrae(zbytes, etiqueta, fichero_id, _fecha=None):
                 "rutas": len(L["rutas"]),
                 "salidas_dia": L["salidas"],
                 "salidas_hora_pico": pico,
-                "headway_pico_min": round(60 / pico, 1) if pico >= 3 else None,
+                # El headway solo significa algo con UNA ruta. C1 tiene 34 ramas
+                # (Principe Pio, Aeropuerto-T4...): sumarlas daba "un tren cada 48 s".
+                "headway_pico_min": (round(60 / pico, 1)
+                                     if pico >= 3 and len(L["rutas"]) == 1 else None),
                 "por_hora": horas,
             })
         frec.sort(key=lambda x: -x["salidas_dia"])
