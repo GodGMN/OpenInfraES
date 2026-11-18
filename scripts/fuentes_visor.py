@@ -295,6 +295,22 @@ def main():
                 "metodo": "DATEX II v3 (XML) del NAP de Tráfico · " + ds,
             }
 
+
+    # --- GTFS-Realtime: vehiculos en vivo ---
+    r = leer("gtfsrt_recibo.json", {})
+    if r and r.get("feeds"):
+        renfe = r["feeds"].get("renfe", {})
+        fuentes["gtfsrt"] = {
+            "capa": "gtfsrt", "titulo": "Vehículos en vivo (GTFS-RT)",
+            "fuente": "Operadores (Renfe)", "editor": "GTFS-Realtime",
+            "licencia": "condiciones del editor",
+            "actualizado": (renfe.get("timestamp_feed") or "")[:19] or None,
+            "descargado": r.get("descargado"),
+            "features": renfe.get("vehiculos"),
+            "url": renfe.get("url") or "https://gtfsrt.renfe.com/",
+            "metodo": "protobuf GTFS-RT, refresco continuo",
+        }
+
     sim = leer("simplificado/_recibo.json", {})
     simpl = {os.path.basename(c["id"]): c for c in sim.get("capas", [])}
 

@@ -1358,6 +1358,29 @@
    "fecha_dato": null,
    "fecha_publicacion": null,
    "fecha_descarga": "2026-11-18"
+  },
+  "gtfsrt": {
+   "capa": "gtfsrt",
+   "titulo": "Vehículos en vivo (GTFS-RT)",
+   "fuente": "Operadores (Renfe)",
+   "editor": "GTFS-Realtime",
+   "licencia": "condiciones del editor",
+   "actualizado": "2026-11-18T15:19:27",
+   "descargado": "2026-11-18T16:19:31",
+   "features": 403,
+   "url": "https://gtfsrt.renfe.com/vehicle_positions.pb",
+   "metodo": "protobuf GTFS-RT, refresco continuo",
+   "organismo": "Renfe",
+   "publica_via": "GTFS-Realtime",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "GTFS-Realtime",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": "2026-11-18T15:19:27",
+   "fecha_descarga": "2026-11-18T16:19:31"
   }
  },
  "simplificacion": {
@@ -1506,6 +1529,6 @@
    "kb": 18
   }
  },
- "total_capas": 59,
+ "total_capas": 60,
  "nota_cadena": "Cada capa declara productor (quien genera el dato), publica (quien lo sirve tal como lo consumimos) y consume (nosotros). Son tres fechas distintas: la del dato, la de publicación y la de descarga."
 }

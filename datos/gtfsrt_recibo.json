@@ -1,0 +1,153 @@
+{
+ "fuente": "GTFS-Realtime (protobuf)",
+ "descargado": "2026-11-18T16:19:31",
+ "feeds": {
+  "renfe": {
+   "operador": "Renfe",
+   "url": "https://gtfsrt.renfe.com/vehicle_positions.pb",
+   "vehiculos": 403,
+   "lineas": 30,
+   "timestamp_feed": "2026-11-18T15:19:27+00:00",
+   "retrasos": [
+    {
+     "linea": "5121X18127R16",
+     "viajes": 1,
+     "retraso_medio_s": 2460,
+     "retraso_max_s": 2460
+    },
+    {
+     "linea": "6221X71872C3",
+     "viajes": 1,
+     "retraso_medio_s": 2460,
+     "retraso_max_s": 2460
+    },
+    {
+     "linea": "2021X70522C7",
+     "viajes": 1,
+     "retraso_medio_s": 2340,
+     "retraso_max_s": 2340
+    },
+    {
+     "linea": "6221X71170C2",
+     "viajes": 1,
+     "retraso_medio_s": 2280,
+     "retraso_max_s": 2280
+    },
+    {
+     "linea": "5121X77644R4",
+     "viajes": 1,
+     "retraso_medio_s": 2220,
+     "retraso_max_s": 2220
+    },
+    {
+     "linea": "5121X28526R2",
+     "viajes": 1,
+     "retraso_medio_s": 2160,
+     "retraso_max_s": 2160
+    },
+    {
+     "linea": "4621X70054C1",
+     "viajes": 1,
+     "retraso_medio_s": 2040,
+     "retraso_max_s": 2040
+    },
+    {
+     "linea": "4121X84919C2",
+     "viajes": 1,
+     "retraso_medio_s": 2040,
+     "retraso_max_s": 2040
+    },
+    {
+     "linea": "1021X21342C10",
+     "viajes": 1,
+     "retraso_medio_s": 2040,
+     "retraso_max_s": 2040
+    },
+    {
+     "linea": "5121X77540R4",
+     "viajes": 1,
+     "retraso_medio_s": 1800,
+     "retraso_max_s": 1800
+    },
+    {
+     "linea": "1021X21541C2",
+     "viajes": 1,
+     "retraso_medio_s": 1800,
+     "retraso_max_s": 1800
+    },
+    {
+     "linea": "5121X25656R1",
+     "viajes": 1,
+     "retraso_medio_s": 1740,
+     "retraso_max_s": 1740
+    }
+   ],
+   "avisos": [
+    {
+     "titulo": "#MadC5 Por obras de mejora en la infraestructura, los días 14, 15, 21 ",
+     "texto": "#MadC5 Por obras de mejora en la infraestructura, los días 14, 15, 21 y 22 de noviembre, entre las 00:30h y las 08:30h, los trenes de la línea C-5 circularán con frecuencias de paso modificadas. Se recomienda consultar los horarios antes de",
+     "lineas": [
+      "10T0017C5",
+      "10T0018C5",
+      "10T0035C5",
+      "10T0047C5",
+      "10T0048C5"
+     ],
+     "desde": "2026-11-09T10:23:00+00:00"
+    },
+    {
+     "titulo": "#MadC9 Por obras de reforma integral en la línea C-9, se encuentra sus",
+     "texto": "#MadC9 Por obras de reforma integral en la línea C-9, se encuentra suspendido el servicio de trenes entre las estaciones de Cercedilla-Puerto de Navacerrada-Los Cotos. Se ha establecido un servicio especial de autobuses con reserva de plaza",
+     "lineas": [
+      "10T0026C9",
+      "10T0110C9",
+      "10T0111C9",
+      "10T0025C9"
+     ],
+     "desde": "2026-03-27T11:37:00+00:00"
+    },
+    {
+     "titulo": "#MadC9 Debido a las obras que se están realizando en la línea C-9, los",
+     "texto": "#MadC9 Debido a las obras que se están realizando en la línea C-9, los aseos públicos de la estación de Cercedilla permanecen temporalmente inoperativos.",
+     "lineas": [
+      "10T0026C9",
+      "10T0110C9",
+      "10T0111C9",
+      "10T0025C9"
+     ],
+     "desde": "2025-12-12T08:28:00+00:00"
+    },
+    {
+     "titulo": "La estación de Las Margaritas, en estos momentos, se encuentra inacces",
+     "texto": "La estación de Las Margaritas, en estos momentos, se encuentra inaccesible.",
+     "lineas": [],
+     "desde": "2026-11-19T04:00:00+00:00"
+    },
+    {
+     "titulo": "Ascensor de la estación de Entrevías que da acceso a la vía 2 sentido ",
+     "texto": "Ascensor de la estación de Entrevías que da acceso a la vía 2 sentido Alcalá de Henares y Guadalajara, se encuentra fuera de servicio.",
+     "lineas": [],
+     "desde": "2026-11-18T10:02:00+00:00"
+    },
+    {
+     "titulo": "Ascensor de la estación de Sol, con acceso desde la plaza Puerta del S",
+     "texto": "Ascensor de la estación de Sol, con acceso desde la plaza Puerta del Sol, se encuentra fuera de servicio.",
+     "lineas": [],
+     "desde": "2026-11-15T05:46:00+00:00"
+    },
+    {
+     "titulo": "Ascensor de la estación de Zarzaquemada, con acceso desde la avenida d",
+     "texto": "Ascensor de la estación de Zarzaquemada, con acceso desde la avenida de Gran Bretaña, se encuentra fuera de servicio.",
+     "lineas": [],
+     "desde": "2026-11-15T05:45:00+00:00"
+    },
+    {
+     "titulo": "Ascensores de la estación Majadahonda, con acceso a las vías 1 y 2 sen",
+     "texto": "Ascensores de la estación Majadahonda, con acceso a las vías 1 y 2 sentido Príncipe Pío-Chamartín y sentido Villalba-Alcalá de Henares, se encuentran fuera de servicio.",
+     "lineas": [],
+     "desde": "2026-11-13T20:37:00+00:00"
+    }
+   ]
+  }
+ }
+}
