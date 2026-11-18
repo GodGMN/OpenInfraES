@@ -39,7 +39,9 @@ def token():
     ruta = os.path.join(RAIZ, ".env")
     for linea in open(ruta, encoding="utf-8"):
         if linea.startswith("ENTSOE_TOKEN="):
-            return linea.split("=", 1)[1].strip()
+            v = linea.split("=", 1)[1].strip()
+            if v:            # una linea vacia arriba no debe tapar la buena
+                return v
     return None
 
 

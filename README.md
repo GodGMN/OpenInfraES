@@ -75,15 +75,36 @@ funciona siempre.
 
 ## Capas del visor
 
-| Capa | Fuente | Elementos |
-|---|---|---|
-| 400 kV / 220 kV | OSM normalizado | 1.752 + 3.176 tramos |
-| Centrales hidráulicas | REE/ELECTRA (hidro y bombeo) | 1.387 |
-| Generación de gas (CCGT/fuel) | REE/ELECTRA | 49 |
-| Resto del parque | REE/ELECTRA | resto |
-| Gasoductos | OSM | 678 |
-| Desaladoras | OSM | pendiente: el tag `desalination=yes` no se usa en España (0 resultados); en curso por nombre |
-| Presas y embalses | OSM | 4.464 |
+**46 capas en 8 grupos temáticos**, con carga bajo demanda: nada se descarga hasta que lo enciendes.
+
+| Grupo | Capas | Objetos |
+|---|---:|---:|
+| **Red eléctrica** | 4 | 664 |
+| **Generación** | 7 | 2.733 |
+| **Gas** | 6 | 165 |
+| **Agua** | 9 | 16.110 |
+| **Transporte** | 11 | 17.445 |
+| **DGT · Tráfico** | 4 | 16.490 |
+| **Tiempo real** | 3 | 11.836 |
+| **Riesgo** | 2 | 150 |
+| **Total** | **46** | **65.593** |
+
+Cifras contadas del propio `datos/fuentes.json`, no estimadas. **No suman lo que se ve en pantalla**:
+una capa que no está encendida no ha descargado sus datos, y `fuentes.json` guarda el total del fichero.
+
+Los grupos se encienden de un golpe con los presets de arriba: **Todo · Eléctrico · Gas · Agua ·
+Transporte · DGT · En vivo · Riesgo**.
+
+### Lo que cada capa te dice al pinchar
+
+- **Ficha rica**: todos los atributos, con la URL de la fuente oficial cuando existe.
+- **Cámaras de la DGT**: la **foto** de la cámara en ese momento.
+- **Paneles de mensaje variable**: el **texto que muestra el panel** («MODERE LA VELOCIDAD», «VELOCIDAD
+  CONTROLADA POR RADAR»).
+- **Puntos agrupados**: la burbuja abre una **lista pinchable**, no un «acércate más».
+- **Panel de la derecha** (◈ al pinchar el nombre de una capa): organismo, fecha del dato, licencia,
+  cómo se obtuvo y **distribuciones reales** — líneas con sus trazados, provincias, niveles de aviso,
+  subtipos, y mínimo/mediana/máximo de los campos numéricos.
 
 ## Capas oficiales vectorizadas
 
@@ -165,14 +186,45 @@ Extremadura 12.018 · Aragón 11.916 · Cataluña 11.810 · Galicia 9.592 · C. 
 
 ## Cómo se regenera
 
+Cada capa sale de un script. Ningún dato se escribe a mano: todo es regenerable y lleva su recibo.
+
 ```bash
-python scripts/descargar.py     # baja los GeoJSON de la fuente (con fecha en el nombre)
-python scripts/agregar.py       # agrega y VERIFICA los conteos de la fuente
-python scripts/validar.py       # arnés del repo: ficheros, cabeceras, cuadres
+# Red y generación (OSM + REE/ELECTRA)
+python scripts/descargar.py       # baja los GeoJSON de la fuente (con fecha en el nombre)
+python scripts/agregar.py         # agrega y VERIFICA los conteos de la fuente
+python scripts/simplificar.py     # Douglas-Peucker para el visor (89 m de tolerancia)
+
+# Organismos, capa por capa
+python scripts/capas_oficiales.py # IGN, MITECO, CSN, CORES, Enagás
+python scripts/demarcaciones.py   # MITECO · 25 demarcaciones hidrográficas
+python scripts/rios.py            # OSM · 260 ríos >12 km
+python scripts/unir_trasvases_v2.py
+python scripts/hermes.py          # MITMA · carreteras, puertos, terminales
+
+# Transporte público (NAP de transportes)
+python scripts/nap.py --catalogo                  # 169 conjuntos, 550 operadores
+python scripts/nap.py --gtfs 1134 --etiqueta metro-madrid
+python scripts/nap_lineas.py --gtfs 1134 --etiqueta metro-madrid   # shapes.txt -> líneas
+python scripts/gtfsrt.py --detalle                # vehículos en vivo (Renfe)
+
+# Tráfico (NAP de la DGT)
+python scripts/dgt.py --camaras
+python scripts/dgt.py --electrolineras
+python scripts/dgt_rt.py --incidencias            # 1.350 incidencias activas
+python scripts/dgt_rt.py --paneles                # mensajes de los paneles
+
+# Energía y riesgo
+python scripts/ree_vivo.py        # ESIOS, 19 indicadores sin clave, 5 min
+python scripts/omie.py            # precio del mercado diario, 24 h
+python scripts/entsoe.py --probar # ENTSO-E (requiere token)
+python scripts/aemet_geo.py       # avisos con polígono
+python scripts/aemet.py           # avisos por comarca (Meteoalarm)
+
+# Arnés
+python scripts/validar.py         # debe salir VERDE (rc=0)
 ```
 
-`agregar.py` **falla** si los conteos no cuadran con los declarados por la fuente
-(4.929 / 1.752 de 400 kV / 3.176 de 220 kV / 5.797 plantas). No genera CSV a medias.
+Las claves van en `.env` (`NAP_API_KEY`, `ENTSOE_TOKEN`) y nunca al repositorio.
 
 ## Ver el mapa
 
@@ -219,6 +271,28 @@ detalla además la licencia de cada conjunto de datos.
 
 ## Estado
 
-Primera extracción: **16-11-2026**. La fuente se actualiza periódicamente; el nombre de los ficheros
-lleva la fecha del extracto. Overpass API (la vía directa a OSM) estaba saturada durante la creación
-de este repositorio — el pipeline alternativo está en `scripts/descargar.py`.
+**Actualizado el 18-11-2026.**
+
+| | |
+|---|---|
+| Capas en el visor | **46** |
+| Capas documentadas en `fuentes.json` | **65** |
+| Organismos citados | **11** — MITECO, IGN, REE, MITMA, Enagás, CORES, CSN, ENRESA, Renfe, DGT, AEMET |
+| Fuentes sin clave | MITECO, IGN, MITMA, Enagás, CORES, CSN, ENRESA, Renfe, DGT, AEMET, OMIE, ESIOS (19 indicadores) |
+| Fuentes con clave | NAP de transportes (`ApiKey`), ENTSO-E (token) |
+
+**Lo que se actualiza solo** (basta relanzar el script):
+
+- `ree_vivo.py` — demanda, mix, emisiones, intercambios y bombeo **cada 5 minutos**.
+- `dgt_rt.py --incidencias` — incidencias de tráfico **en vivo**.
+- `dgt_rt.py --paneles` — lo que dicen los paneles **ahora**.
+- `gtfsrt.py` — posición de los trenes.
+- `omie.py` — precio del día siguiente, cuando se casa la subasta.
+- `aemet_geo.py` — avisos de AEMET, con polígono, cada hora.
+
+**Límites conocidos, declarados en `docs/`:**
+
+- El NAP de transportes **cataloga** los 86 feeds GTFS-RT pero **no los sirve** (`docs/gtfsrt.md`).
+- REE **no publica generación por unidad** en ENTSO-E: el endpoint existe y responde «no matching data».
+- Los avisos de Meteoalarm no traen geometría; los de AEMET, sí (`docs/aemet.md`).
+- El caudal de los ríos es **modelado** (GloFAS), no aforado.

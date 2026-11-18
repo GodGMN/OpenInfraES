@@ -32,6 +32,28 @@ TIPO = {"0": "tranvía", "1": "metro", "2": "tren", "3": "autobús",
         "11": "trolebús", "12": "monorraíl"}
 
 
+
+# Colores oficiales de línea (plano de Metro de Madrid / CRTM). Se guardan EN EL DATO, no en
+# el visor: así el color viaja con la línea y cualquier otro proyecto lo hereda.
+COLORES = {
+    "metro-madrid": {
+        "1": "#2DBEF0", "2": "#E23A39", "3": "#FFDF00", "4": "#814C9E",
+        "5": "#6DBE45", "6": "#9CA3AF", "7": "#F58220", "8": "#EC038B",
+        "9": "#9B0D82", "10": "#005AA9", "11": "#00893D", "12": "#A5BE00",
+        "R": "#003DA5",
+    },
+    # Cercanías: paleta del núcleo de Madrid, aproximada donde el plano no da color propio
+    "cercanias-renfe": {
+        "C1": "#00A0DF", "C2": "#00893D", "C3": "#9B0D82", "C4": "#005AA9",
+        "C5": "#FFDF00", "C6": "#E23A39", "C7": "#F58220", "C8": "#6DBE45",
+        "C9": "#814C9E", "C10": "#A5BE00",
+        "R1": "#EC038B", "R2": "#2DBEF0", "R3": "#F58220", "R4": "#00893D",
+        "R5": "#814C9E", "R6": "#005AA9", "R7": "#E23A39", "R8": "#6DBE45",
+        "R9": "#9B0D82",
+    },
+}
+
+
 def main():
     ap = argparse.ArgumentParser(description="NAP · líneas desde shapes.txt")
     ap.add_argument("--gtfs", type=int, required=True)
@@ -120,6 +142,17 @@ def main():
         por_linea[rid].append([round(x, 5) for _, x, y in pts] and
                               [[round(x, 5), round(y, 5)] for _, x, y in pts])
 
+    paleta = COLORES.get(a.etiqueta, {})
+    def color_de(linea):
+        base = (linea or "").strip()
+        if base in paleta:
+            return paleta[base]
+        # C1a, C4b... heredan el color de su línea base
+        for k in sorted(paleta, key=len, reverse=True):
+            if base.startswith(k):
+                return paleta[k]
+        return None
+
     feats = []
     for rid, trazados in por_linea.items():
         r = rutas.get(rid, {})
@@ -135,6 +168,7 @@ def main():
                     "tipo": r.get("tipo") or "",
                     "ramal": i + 1,
                     "puntos": len(coords),
+                    "color": color_de(r.get("linea")),
                 }})
 
     salida = os.path.join(DEST, "nap_lineas_%s.geojson" % a.etiqueta)
@@ -157,6 +191,7 @@ def main():
                            for k, v in sorted(resumen.items())][:80],
         "descargado": datetime.datetime.now().isoformat(timespec="seconds"),
         "nota": "Un LineString por shape (ida/vuelta y ramales son trazados distintos).",
+        "colores": "oficiales de línea (plano de Metro de Madrid); en Cercanías, paleta aproximada",
     }
     json.dump(recibo, open(os.path.join(DEST, "nap_lineas_%s_recibo.json" % a.etiqueta), "w",
                            encoding="utf-8"), ensure_ascii=False, indent=1)

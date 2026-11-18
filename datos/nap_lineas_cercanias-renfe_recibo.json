@@ -6,7 +6,7 @@
  "features": 135,
  "lineas": 35,
  "shapes": 135,
- "tamano_kb": 2444.6,
+ "tamano_kb": 2447.2,
  "lineas_detalle": [
   {
    "linea": "C1",
@@ -184,6 +184,7 @@
    "puntos": 486
   }
  ],
- "descargado": "2026-11-18T20:03:18",
- "nota": "Un LineString por shape (ida/vuelta y ramales son trazados distintos)."
+ "descargado": "2026-11-18T22:54:50",
+ "nota": "Un LineString por shape (ida/vuelta y ramales son trazados distintos).",
+ "colores": "oficiales de línea (plano de Metro de Madrid); en Cercanías, paleta aproximada"
 }

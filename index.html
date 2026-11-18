@@ -890,11 +890,11 @@ const CAPAS = [
     color:"#22c55e", fichero:"datos/carburantes.geojson", radio:3.6, zoomMin:7,
     escala:{ campo:"gasoleo_a", min:1.40, max:2.20, unidad:"€/l" } },
   { id:"nap-lineas-metro", grupo:"Transporte", label:"Líneas de Metro Madrid", tipo:"linea", on:false,
-    color:"#38bdf8", fichero:"datos/nap_lineas_metro-madrid.geojson", peso:2.2, opacidad:.85,
-    zoomMin:9, popupTitulo:"linea" },
+    color:"#38bdf8", fichero:"datos/nap_lineas_metro-madrid.geojson", peso:2.6, opacidad:.92,
+    zoomMin:9, popupTitulo:"linea", colorCampo:"color" },
   { id:"nap-lineas-cercanias", grupo:"Transporte", label:"Líneas de Cercanías", tipo:"linea", on:false,
-    color:"#c084fc", fichero:"datos/nap_lineas_cercanias-renfe.geojson", peso:2.2, opacidad:.85,
-    zoomMin:7, popupTitulo:"linea" },
+    color:"#c084fc", fichero:"datos/nap_lineas_cercanias-renfe.geojson", peso:2.6, opacidad:.92,
+    zoomMin:7, popupTitulo:"linea", colorCampo:"color" },
   { id:"nap-metro", grupo:"Transporte", label:"Metro de Madrid (NAP)", tipo:"punto", on:false,
     color:"#38bdf8", fichero:"datos/nap_paradas_metro-madrid.geojson", radio:3.4,
     zoomMin:9, popupTitulo:"nombre" },
@@ -1130,10 +1130,15 @@ function cargar(c) {
           }).addTo(capas[c.id]);
         }
         L.geoJSON({ type:"FeatureCollection", features:feats }, {
-          // `colorCampo` permite pintar cada feature segun una propiedad (nivel de aviso)
+          // `colorCampo` pinta cada feature segun una propiedad. Dos modos:
+          //   - con `colores`: mapa valor->color (nivel de aviso de AEMET)
+          //   - sin `colores`: el propio dato trae el color (lineas de metro, color oficial)
           style: (f) => {
-            const col = (c.colorCampo && c.colores && f && f.properties)
-              ? (c.colores[f.properties[c.colorCampo]] || c.color) : c.color;
+            let col = c.color;
+            if (c.colorCampo && f && f.properties) {
+              const v = f.properties[c.colorCampo];
+              if (v) col = (c.colores ? (c.colores[v] || c.color) : v);
+            }
             return { color: col, weight: c.peso || 1.2, opacity: c.opacidad || .8,
                      fillColor: col, fillOpacity: (c.tipo === "poligono" ? (c.opacidad || .3) : .12) };
           },
