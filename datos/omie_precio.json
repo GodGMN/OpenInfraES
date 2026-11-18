@@ -1,0 +1,139 @@
+{
+ "fuente": "OMIE",
+ "mercado": "diario (MARGINALPDBC)",
+ "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261118.1",
+ "fecha": "2026-11-18",
+ "unidad": "€/MWh",
+ "horas": [
+  {
+   "hora": 1,
+   "es": 12.17,
+   "pt": 12.17
+  },
+  {
+   "hora": 2,
+   "es": 11.2,
+   "pt": 11.2
+  },
+  {
+   "hora": 3,
+   "es": 2.99,
+   "pt": 2.99
+  },
+  {
+   "hora": 4,
+   "es": 1.0,
+   "pt": 1.0
+  },
+  {
+   "hora": 5,
+   "es": 2.99,
+   "pt": 2.99
+  },
+  {
+   "hora": 6,
+   "es": 1.09,
+   "pt": 1.09
+  },
+  {
+   "hora": 7,
+   "es": 1.0,
+   "pt": 1.0
+  },
+  {
+   "hora": 8,
+   "es": 0.02,
+   "pt": 0.02
+  },
+  {
+   "hora": 9,
+   "es": 0.99,
+   "pt": 0.99
+  },
+  {
+   "hora": 10,
+   "es": 0.01,
+   "pt": 0.01
+  },
+  {
+   "hora": 11,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 12,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 13,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 14,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 15,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 16,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 17,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 18,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 19,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 20,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 21,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 22,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 23,
+   "es": 0.0,
+   "pt": 0.0
+  },
+  {
+   "hora": 24,
+   "es": 0.0,
+   "pt": 0.0
+  }
+ ],
+ "min": 0.0,
+ "hora_min": 11,
+ "max": 12.17,
+ "hora_max": 1,
+ "media": 1.39,
+ "horas_separadas_es_pt": [],
+ "filas_en_fichero": 96,
+ "nota_bloques": "El fichero de OMIE trae 96 filas (4 bloques de 24) con la misma fecha y precios distintos. Se publican las 24 primeras; los bloques 2-4 no están identificados en la documentación de OMIE.",
+ "descargado": "2026-11-18T20:09:17",
+ "nota": "Precio del mercado mayorista, no el precio final del consumidor: faltan peajes, cargos e impuestos. Portugal comparte precio salvo en las horas de separación."
+}

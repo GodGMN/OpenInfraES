@@ -321,6 +321,13 @@
   #capas .txt { cursor:pointer; }
   #capas .txt:hover { color:var(--cian); }
   #capas .grupo-t { cursor:pointer; }
+
+  #info-der .dist { margin:4px 0 2px; }
+  #info-der .dl { display:flex; align-items:center; gap:6px; margin-bottom:3px; font-size:10.8px; }
+  #info-der .dn { flex:0 0 96px; color:var(--suave); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #info-der .db { flex:1; height:5px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden; }
+  #info-der .db span { display:block; height:100%; background:var(--cian); border-radius:3px; }
+  #info-der .dv { flex:0 0 34px; text-align:right; color:var(--tinta); font-variant-numeric:tabular-nums; }
 </style>
 </head>
 <body>
@@ -629,6 +636,85 @@ const INFO_DER = document.getElementById("info-der");
 function cerrarInfoDer() { INFO_DER.classList.remove("on"); }
 document.getElementById("cerrar-info-der").addEventListener("click", cerrarInfoDer);
 
+
+/* ---------------- resumen de datos por capa ----------------
+   El panel derecho no debe limitarse a decir cuántos objetos hay: si la capa está cargada,
+   se analiza el GeoJSON y se muestran las distribuciones que de verdad interesan (líneas,
+   provincias, niveles, potencias). Todo calculado del dato, nada escrito a mano. */
+const RESUMEN_CAT = {
+  linea: "líneas", linea_corta: "líneas", tipo: "tipos", tipo_sitio: "tipos de sitio",
+  nivel_txt: "nivel de aviso", provincia: "provincias", subtipo: "subtipos",
+  carretera: "carreteras", mensaje: "mensajes en panel", fenomenos: "fenómenos",
+  tecnologia: "tecnologías", categoria: "categorías", demarcacion: "demarcaciones",
+  operador: "operadores", zona: "zonas"
+};
+const RESUMEN_NUM = {
+  potencia_max_kw: ["kW", 1], conectores: ["conectores", 0], magnitud: ["magnitud", 1],
+  km: ["km", 1], salidas_dia: ["salidas/día", 0], voltage: ["V", 0]
+};
+
+function analizarCapa(id) {
+  const feats = datos[id];
+  if (!feats || !feats.length) return null;
+  const cat = {}, num = {};
+  const CAMPOS = Object.keys(RESUMEN_CAT), NUMS = Object.keys(RESUMEN_NUM);
+  for (const f of feats) {
+    const p = f.properties || {};
+    for (const k of CAMPOS) {
+      const v = p[k];
+      if (v !== undefined && v !== null && v !== "") {
+        cat[k] = cat[k] || {};
+        const key = String(v).slice(0, 42);
+        cat[k][key] = (cat[k][key] || 0) + 1;
+      }
+    }
+    for (const k of NUMS) {
+      const v = Number(p[k]);
+      if (!isNaN(v) && p[k] !== null && p[k] !== "") {
+        (num[k] = num[k] || []).push(v);
+      }
+    }
+  }
+  return { cat, num, total: feats.length };
+}
+
+function bloqueResumen(id) {
+  const a = analizarCapa(id);
+  if (!a) return "";
+  let h = "";
+  // categoricos: top 5 por campo, maximo 2 campos para no hacer un muro
+  let nCat = 0;
+  for (const [k, mapa] of Object.entries(a.cat)) {
+    if (nCat >= 2) break;
+    const pares = Object.entries(mapa).sort((x, y) => y[1] - x[1]);
+    if (pares.length < 2 || pares.length > 80) continue;
+    nCat++;
+    h += `<div class="sub" style="margin-top:12px">${RESUMEN_CAT[k]}</div>`;
+    const max = pares[0][1];
+    h += '<div class="dist">' + pares.slice(0, 6).map(([v, n]) =>
+      `<div class="dl"><span class="dn">${v}</span>` +
+      `<span class="db"><span style="width:${Math.max(3, 100 * n / max)}%"></span></span>` +
+      `<span class="dv">${nf(n)}</span></div>`).join("") + '</div>';
+    if (pares.length > 6) h += `<div class="nota">y ${pares.length - 6} más</div>`;
+  }
+  // numericos: min, mediana, max
+  let nNum = 0;
+  for (const [k, vals] of Object.entries(a.num)) {
+    if (nNum >= 2) break;
+    if (vals.length < 3) continue;
+    nNum++;
+    const ord = vals.slice().sort((x, y) => x - y);
+    const med = ord[Math.floor(ord.length / 2)];
+    const [uni, dec] = RESUMEN_NUM[k];
+    const fmt = v => v.toLocaleString("es-ES", { maximumFractionDigits: dec });
+    h += `<div class="sub" style="margin-top:12px">${uni}</div>`;
+    h += `<div class="dato"><span>mínimo</span><span>${fmt(ord[0])}</span></div>`;
+    h += `<div class="dato"><span>mediana</span><span>${fmt(med)}</span></div>`;
+    h += `<div class="dato"><span>máximo</span><span>${fmt(ord[ord.length - 1])}</span></div>`;
+  }
+  return h;
+}
+
 function abrirInfoCapa(id) {
   const c = CAPAS.find(x => x.id === id);
   if (!c) return;
@@ -643,6 +729,7 @@ function abrirInfoCapa(id) {
   if (f.licencia) h += `<div class="dato"><span>licencia</span><span>${String(f.licencia).slice(0,34)}</span></div>`;
   if (f.metodo) h += `<div class="dato"><span>cómo</span><span>${String(f.metodo).slice(0,44)}</span></div>`;
   if (f.url) h += `<div class="nota"><a href="${f.url}" target="_blank" rel="noopener">fuente oficial ↗</a></div>`;
+  h += bloqueResumen(id);
   h += `<div class="nota">${c.tipo === "punto" ? "Puntos" : c.tipo === "linea" ? "Líneas" : "Polígonos"}` +
        `${c.zoomMin ? " · aparece desde zoom " + c.zoomMin : ""}. ` +
        `Toca el nombre de otra capa para comparar.</div>`;
@@ -802,6 +889,12 @@ const CAPAS = [
   { id:"carburantes", grupo:"Tiempo real", label:"Carburantes (gasóleo A)", tipo:"punto", on:false,
     color:"#22c55e", fichero:"datos/carburantes.geojson", radio:3.6, zoomMin:7,
     escala:{ campo:"gasoleo_a", min:1.40, max:2.20, unidad:"€/l" } },
+  { id:"nap-lineas-metro", grupo:"Transporte", label:"Líneas de Metro Madrid", tipo:"linea", on:false,
+    color:"#38bdf8", fichero:"datos/nap_lineas_metro-madrid.geojson", peso:2.2, opacidad:.85,
+    zoomMin:9, popupTitulo:"linea" },
+  { id:"nap-lineas-cercanias", grupo:"Transporte", label:"Líneas de Cercanías", tipo:"linea", on:false,
+    color:"#c084fc", fichero:"datos/nap_lineas_cercanias-renfe.geojson", peso:2.2, opacidad:.85,
+    zoomMin:7, popupTitulo:"linea" },
   { id:"nap-metro", grupo:"Transporte", label:"Metro de Madrid (NAP)", tipo:"punto", on:false,
     color:"#38bdf8", fichero:"datos/nap_paradas_metro-madrid.geojson", radio:3.4,
     zoomMin:9, popupTitulo:"nombre" },
@@ -1027,7 +1120,8 @@ function cargar(c) {
         INDICE.push({ nombre: String(nom), lat: arr[1], lng: arr[0], capa: c.id, props: p });
       });
 
-      if (c.tipo === "punto") { datos[c.id] = feats; pintarPuntos(c); }
+      datos[c.id] = feats;      // siempre: el panel derecho analiza el GeoJSON al abrirse
+      if (c.tipo === "punto") { pintarPuntos(c); }
       else {
         // lineas y poligonos: halo debajo si se pide (solo 400/220 kV)
         if (c.halo) {
@@ -1289,8 +1383,9 @@ function pintarSis() {
   Promise.all([
     fetch("datos/ree_estado.json").then(r => r.json()).catch(() => null),
     fetch("datos/esios_prevision.json").then(r => r.json()).catch(() => null),
-    fetch("datos/ree_vivo.json").then(r => r.json()).catch(() => null)
-  ]).then(([d, p, v]) => {
+    fetch("datos/ree_vivo.json").then(r => r.json()).catch(() => null),
+    fetch("datos/omie_precio.json").then(r => r.json()).catch(() => null)
+  ]).then(([d, p, v, omie]) => {
     let h = "";
 
     /* --- EN VIVO: indicadores abiertos de ESIOS, cada 5 min --- */
@@ -1334,6 +1429,16 @@ function pintarSis() {
       if (v.series.demanda && v.series.demanda.heredado) {
         h += '<div class="nota-pie">Sin actualizar: el WAF de ESIOS bloqueó la descarga. ' +
              'Último dato bueno de las ' + (v.series.demanda.hora || "") + '.</div>';
+      }
+      if (omie && omie.horas) {
+        h += '<div class="sis-sec">Precio del mercado diario · ' + omie.fecha + '</div>';
+        h += '<div class="vivo-fila">' +
+             '<span><b>' + omie.media.toFixed(1) + '</b><i>media €/MWh</i></span>' +
+             '<span><b>' + omie.min.toFixed(1) + '</b><i>mín · ' + omie.hora_min + 'h</i></span>' +
+             '<span><b>' + omie.max.toFixed(1) + '</b><i>máx · ' + omie.hora_max + 'h</i></span>' +
+             '</div>';
+        h += '<div class="nota-pie">OMIE, mercado mayorista. No es el precio final del ' +
+             'consumidor: faltan peajes, cargos e impuestos.</div>';
       }
       h += '<div class="sis-sec">Generación del día (MWh)</div>';
     }

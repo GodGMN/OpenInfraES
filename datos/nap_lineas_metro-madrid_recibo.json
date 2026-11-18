@@ -1,0 +1,74 @@
+{
+ "fuente": "NAP · MITMA",
+ "conjunto": "metro-madrid",
+ "fichero_id": 1134,
+ "fecha_servicio": "2026-11-19",
+ "features": 30,
+ "lineas": 12,
+ "shapes": 30,
+ "tamano_kb": 1227.9,
+ "lineas_detalle": [
+  {
+   "linea": "1",
+   "trazados": 2,
+   "puntos": 5263
+  },
+  {
+   "linea": "10",
+   "trazados": 4,
+   "puntos": 2889
+  },
+  {
+   "linea": "11",
+   "trazados": 2,
+   "puntos": 338
+  },
+  {
+   "linea": "12",
+   "trazados": 2,
+   "puntos": 5918
+  },
+  {
+   "linea": "2",
+   "trazados": 2,
+   "puntos": 939
+  },
+  {
+   "linea": "4",
+   "trazados": 2,
+   "puntos": 3093
+  },
+  {
+   "linea": "5",
+   "trazados": 2,
+   "puntos": 12660
+  },
+  {
+   "linea": "6",
+   "trazados": 2,
+   "puntos": 4744
+  },
+  {
+   "linea": "7",
+   "trazados": 4,
+   "puntos": 7505
+  },
+  {
+   "linea": "8",
+   "trazados": 2,
+   "puntos": 6152
+  },
+  {
+   "linea": "9",
+   "trazados": 4,
+   "puntos": 7449
+  },
+  {
+   "linea": "R",
+   "trazados": 2,
+   "puntos": 524
+  }
+ ],
+ "descargado": "2026-11-18T20:01:07",
+ "nota": "Un LineString por shape (ida/vuelta y ramales son trazados distintos)."
+}

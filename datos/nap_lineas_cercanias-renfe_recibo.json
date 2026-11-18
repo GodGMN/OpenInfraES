@@ -1,0 +1,189 @@
+{
+ "fuente": "NAP · MITMA",
+ "conjunto": "cercanias-renfe",
+ "fichero_id": 1130,
+ "fecha_servicio": "2026-11-19",
+ "features": 135,
+ "lineas": 35,
+ "shapes": 135,
+ "tamano_kb": 2444.6,
+ "lineas_detalle": [
+  {
+   "linea": "C1",
+   "trazados": 28,
+   "puntos": 28964
+  },
+  {
+   "linea": "C10",
+   "trazados": 2,
+   "puntos": 972
+  },
+  {
+   "linea": "C1a",
+   "trazados": 2,
+   "puntos": 420
+  },
+  {
+   "linea": "C2",
+   "trazados": 15,
+   "puntos": 8497
+  },
+  {
+   "linea": "C3",
+   "trazados": 14,
+   "puntos": 7996
+  },
+  {
+   "linea": "C4",
+   "trazados": 7,
+   "puntos": 6835
+  },
+  {
+   "linea": "C4a",
+   "trazados": 2,
+   "puntos": 894
+  },
+  {
+   "linea": "C4b",
+   "trazados": 2,
+   "puntos": 1168
+  },
+  {
+   "linea": "C5",
+   "trazados": 9,
+   "puntos": 8087
+  },
+  {
+   "linea": "C5a",
+   "trazados": 2,
+   "puntos": 2154
+  },
+  {
+   "linea": "C6",
+   "trazados": 4,
+   "puntos": 2970
+  },
+  {
+   "linea": "C7",
+   "trazados": 4,
+   "puntos": 4552
+  },
+  {
+   "linea": "C8",
+   "trazados": 2,
+   "puntos": 2744
+  },
+  {
+   "linea": "C8a",
+   "trazados": 2,
+   "puntos": 2048
+  },
+  {
+   "linea": "C8b",
+   "trazados": 2,
+   "puntos": 1936
+  },
+  {
+   "linea": "C9",
+   "trazados": 1,
+   "puntos": 513
+  },
+  {
+   "linea": "R1",
+   "trazados": 2,
+   "puntos": 1244
+  },
+  {
+   "linea": "R11",
+   "trazados": 2,
+   "puntos": 1546
+  },
+  {
+   "linea": "R13",
+   "trazados": 2,
+   "puntos": 2350
+  },
+  {
+   "linea": "R14",
+   "trazados": 2,
+   "puntos": 2734
+  },
+  {
+   "linea": "R15",
+   "trazados": 2,
+   "puntos": 2848
+  },
+  {
+   "linea": "R16",
+   "trazados": 2,
+   "puntos": 2126
+  },
+  {
+   "linea": "R17",
+   "trazados": 2,
+   "puntos": 942
+  },
+  {
+   "linea": "R2",
+   "trazados": 2,
+   "puntos": 454
+  },
+  {
+   "linea": "R2N",
+   "trazados": 2,
+   "puntos": 862
+  },
+  {
+   "linea": "R2S",
+   "trazados": 2,
+   "puntos": 676
+  },
+  {
+   "linea": "R3",
+   "trazados": 2,
+   "puntos": 3692
+  },
+  {
+   "linea": "R4",
+   "trazados": 2,
+   "puntos": 1948
+  },
+  {
+   "linea": "R8",
+   "trazados": 2,
+   "puntos": 552
+  },
+  {
+   "linea": "RG1",
+   "trazados": 2,
+   "puntos": 6690
+  },
+  {
+   "linea": "RL3",
+   "trazados": 2,
+   "puntos": 1286
+  },
+  {
+   "linea": "RL4",
+   "trazados": 1,
+   "puntos": 3344
+  },
+  {
+   "linea": "RT1",
+   "trazados": 2,
+   "puntos": 622
+  },
+  {
+   "linea": "RT2",
+   "trazados": 2,
+   "puntos": 38
+  },
+  {
+   "linea": "T1",
+   "trazados": 2,
+   "puntos": 486
+  }
+ ],
+ "descargado": "2026-11-18T20:03:18",
+ "nota": "Un LineString por shape (ida/vuelta y ramales son trazados distintos)."
+}

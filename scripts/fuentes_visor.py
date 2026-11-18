@@ -262,6 +262,8 @@ def main():
         ("nap-metro", "metro-madrid", "Metro de Madrid (NAP)"),
         ("nap-cercanias", "cercanias-renfe", "Cercanías Renfe (NAP)"),
         ("nap-ave", "renfe-ave", "Renfe AVE y largo recorrido (NAP)"),
+        ("nap-lineas-metro", "lineas_metro-madrid", "Líneas de Metro Madrid"),
+        ("nap-lineas-cercanias", "lineas_cercanias-renfe", "Líneas de Cercanías"),
     ):
         r = leer("nap_%s_recibo.json" % etq, {})
         if r:
@@ -271,7 +273,7 @@ def main():
                 "licencia": "Reutilización con atribución (Ley 37/2007)",
                 "actualizado": r.get("descargado") or None,
                 "descargado": HOY,
-                "features": r.get("paradas"),
+                "features": r.get("paradas") or r.get("features"),
                 "url": "https://nap.transportes.gob.es/api",
                 "metodo": "GTFS-ZIP del NAP; cabecera `ApiKey`",
             }
