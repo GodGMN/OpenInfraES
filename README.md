@@ -98,7 +98,7 @@ Las capas que no tienen GeoJSON servido por su organismo se guardan ya vectoriza
 | Almacenamiento petrolífero (133) | **CORES** | CC BY 4.0 |
 | Red de hidrógeno (10) | **MITECO** | CC BY 4.0 |
 | Paradas Metro Madrid / Cercanías / AVE (3.223) | **NAP · MITMA** | Ley 37/2007 |
-| Cámaras de tráfico (1.977) · puntos de recarga (12.144) | **DGT** | reutilización con atribución |
+| Cámaras de tráfico (1.977) · puntos de recarga (12.144) · **incidencias en vivo (1.350)** | **DGT** | reutilización con atribución |
 | Vehículos en vivo (403) | **Renfe** (GTFS-RT) | condiciones del editor |
 | Embalses (402) | **MITECO** (Boletín Hidrológico) | Ley 37/2007 |
 | Desaladoras (28), hidrógeno (7) | **MITECO** | CC BY 4.0 |

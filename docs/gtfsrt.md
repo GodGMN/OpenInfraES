@@ -82,3 +82,22 @@ las propiedades. Se mantiene también `datos/trenes.geojson` para la capa que ya
 - **Añadir operadores** cuando haya clave: TMB, EMT Madrid, EMT Valencia, Bilbobus, Euskotren. El registro
   `FEEDS` de `scripts/gtfsrt.py` ya tiene el hueco y el estado de cada uno.
 - **Retrasos por línea** con nombre legible (hoy el `trip_id` de Renfe no es la línea).
+
+## El swagger del NAP confirma el límite
+
+`nap.transportes.gob.es/api/swagger/v1/swagger.json` está **abierto** (35 endpoints, NSwag). Los que
+podrían servir un feed RT:
+
+| Endpoint | Qué hace al pedirle un GTFS-RT |
+|---|---|
+| `GET /api/Fichero/download/{id}` | **500** «An error occurred while processing your request» |
+| `GET /api/Fichero/downloadLink/{id}` | **200** con el texto `Archivo no encontrado` |
+| `GET /api/Fichero/{conjuntoDatoId}` | 200, pero el fichero llega con `tamanio: 0`, `metadatos: []` |
+
+Es decir: el NAP **cataloga** el feed (existe, tiene `ficheroId`, se lista por tipo 10) pero **no lo
+sirve**. No es un fallo de cabecera ni de ruta: no hay binario detrás. Los 86 feeds se entregan a
+agregadores por un canal que no está en la API pública.
+
+Lo que sí da el swagger y no usábamos: `GetListByFileType/{id}`, `GetListByOrganizacion/{id}`,
+`GetListByRegion/{id}`, `historico/{conjuntoDatoId}` (versiones anteriores de cada conjunto) y
+`downloadLinkAvisos`.

@@ -280,6 +280,7 @@ def main():
     # --- DGT: NAP de Trafico (DATEX II) ---
     for capa, fich, titulo, ds in (
         ("dgt-camaras", "dgt_camaras_recibo.json", "Cámaras de tráfico (DGT)", "Cámaras DGT DATEX2 v3.7"),
+        ("dgt-incidencias", "dgt_incidencias_recibo.json", "Incidencias en tiempo real", "Incidencias DGT DATEX2 v3.7"),
         ("dgt-electrolineras", "dgt_electrolineras_recibo.json", "Puntos de recarga eléctrica", "Puntos de recarga eléctrica para vehículos"),
     ):
         r = leer(fich, {})

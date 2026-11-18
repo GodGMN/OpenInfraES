@@ -92,6 +92,52 @@ Cada uno con nº de conectores y **potencia máxima**:
 La mediana de 22 kW es el dato que ordena el debate sobre la red de recarga: la mayoría son puntos lentos
 o semilentos, no cargadores rápidos. Y el máximo de 1.000 kW convive con ellos en el mismo mapa.
 
+
+## Tráfico en tiempo real (sí, hay)
+
+El NAP de la DGT publica **feeds en vivo**, sin clave, en DATEX II. Cada petición devuelve el
+estado del instante:
+
+| Feed | URL | Tamaño |
+|---|---|---:|
+| **Incidencias** | `nap.dgt.es/datex2/v3/dgt/SituationPublication/datex2_v37.xml` | 5,8 MB |
+| **Paneles de mensaje variable** | `nap.dgt.es/datex2/v3/dgt/VmsPublication/datex2_v37.xml` | 3,7 MB |
+
+```bash
+python scripts/dgt_rt.py --incidencias            # usa la copia local
+python scripts/dgt_rt.py --incidencias --refrescar # baja el estado actual
+```
+
+### Lo que sale (medido 2026-11-16)
+
+**1.350 incidencias activas**, con carretera, kilómetro, provincia, municipio, sentido, carril y fechas:
+
+| Tipo | Incidencias |
+|---|---:|
+| Gestión de calzada o carril | 798 |
+| Otras (nombre genérico) | 411 |
+| Tráfico anormal | 48 |
+| Obstrucción | 35 |
+| Gestión de velocidad | 33 |
+| Condición no meteorológica | 15 |
+| Medioambiental | 5 |
+
+Y por subtipo: **corte de carril 320 · corte de calzada 141 · paso alternativo 130 · tráfico lento 48**.
+Gravedad: **121 de gravedad alta**, 50 media y 1.179 sin declarar.
+
+### Trampa: el tipo NO es el primer hijo
+
+`situationRecord` empieza con `situationRecordCreationTime`, `probabilityOfOccurrence`, `source`… Coger
+«el primer hijo que no sea de sistema» devuelve `situationRecordCreationReference` como tipo, y las 1.350
+incidencias salen clasificadas así. El tipo real está en los hijos que **acaban en `*Type`**
+(`roadOrCarriagewayOrLaneManagementType`, `abnormalTrafficType`, `obstructionType`…), y su **texto** es el
+subtipo. La gravedad viene aparte, en `severity`, y **falta en el 87 %** de los registros: no rellenarla
+con «baja», dejar vacío.
+
+Los subtipos llegan en inglés porque DATEX II es un estándar europeo: `laneClosures`, `carriagewayClosures`,
+`singleAlternateLineTraffic`. Traducirlos en el parser es tentador, pero entonces el dato deja de ser
+comparable con el de cualquier otro país.
+
 ## Capas en el visor
 
 Grupo **DGT · Tráfico**:
