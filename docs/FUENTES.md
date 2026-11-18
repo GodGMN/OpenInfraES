@@ -114,6 +114,30 @@ Tres conjuntos distintos, los tres oficiales:
 - **Alimenta**: **80 sismos** en 7 días.
 - **Limitaciones**: `profundidad = -1` significa **superficie o desconocida**.
 
+
+## 7bis. NAP — Punto de Acceso Nacional de transportes (MITMA)
+
+**Qué publica.** Los horarios completos (GTFS) de **169 conjuntos** de transporte de **550 operadores**:
+148 de autobús, 27 ferroviarios, 3 marítimos y 1 aéreo. También GTFS en tiempo real (86), SIRI (67) y
+NeTEx (30).
+
+- **URL oficial**: `https://nap.transportes.gob.es/api`
+- **Cómo se obtiene**: cabecera **`ApiKey`** (ni `X-Api-Key` ni `Authorization`).
+  - Catálogo: `GET /Fichero/GetList` (10,5 MB)
+  - Descarga: `GET /Fichero/downloadLink/{id}` → URL firmada de S3 que **caduca en 900 s**
+- **Licencia**: reutilización con atribución (Ley 37/2007).
+- **Frecuencia**: los conjuntos se actualizan a diario; el catálogo declara `fechaActualizacion`.
+- **Alimenta**: paradas de **Metro de Madrid (1.050)**, **Cercanías Renfe (1.167)** y
+  **Renfe AVE y largo recorrido (1.006)**, con sus líneas y frecuencias.
+- **Limitaciones**:
+  - El NAP devuelve **`200` con 0 bytes** en ráfaga: hay que reintentar.
+  - **No todos los GTFS traen `frequencies.txt`**: Metro de Madrid sí; Cercanías y AVE no, y su frecuencia
+    se calcula contando salidas reales.
+  - **`stop_sequence` no siempre empieza en `1`**: los GTFS de Renfe numeran `01`, `02`. Comparar como
+    entero o la frecuencia sale a cero sin error.
+  - En largo recorrido un «headway» no significa nada: se publican **salidas al día**, no minutos entre
+    trenes.
+
 ## 8. OpenStreetMap
 
 - **URL oficial**: <https://www.openstreetmap.org> · consultas por <https://overpass-api.de>

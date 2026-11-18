@@ -9,7 +9,7 @@
 | [`docs/PROYECTO.md`](docs/PROYECTO.md) | qué es, qué contiene, cómo está hecho, rendimiento medido y límites |
 | [`docs/FUENTES.md`](docs/FUENTES.md) | **ficha por fuente oficial**: qué publica, URL, cómo se obtiene, licencia, frecuencia y limitaciones |
 | [`docs/apis.md`](docs/apis.md) | estado técnico de cada API, con los errores literales |
-| [`docs/nap.md`](docs/nap.md) | el NAP de transporte: qué hay y por qué no responde |
+| [`docs/nap.md`](docs/nap.md) | el NAP de transporte: 169 conjuntos GTFS y la cabecera `ApiKey` que lo abre |
 | [`GUIA.md`](GUIA.md) | reglas de trabajo: cómo añadir una capa, sin editar a mano, sin inventar |
 
 **28 capas · 7 grupos · ~7.400 objetos con las capas de por defecto.** Energía (red, generación, gas,
@@ -96,6 +96,7 @@ Las capas que no tienen GeoJSON servido por su organismo se guardan ya vectoriza
 | Residuos radiactivos (14) | **ENRESA** | CC BY 4.0 |
 | Almacenamiento petrolífero (133) | **CORES** | CC BY 4.0 |
 | Red de hidrógeno (10) | **MITECO** | CC BY 4.0 |
+| Paradas Metro Madrid / Cercanías / AVE (3.223) | **NAP · MITMA** | Ley 37/2007 |
 | Embalses (402) | **MITECO** (Boletín Hidrológico) | Ley 37/2007 |
 | Desaladoras (28), hidrógeno (7) | **MITECO** | CC BY 4.0 |
 | Nuclear (7 reactores) | **CSN** | CC BY 4.0 |

@@ -106,6 +106,8 @@ ORGANISMOS = {
     "estaciones-cercanias": "Renfe", "carburantes": "MITECO", "demarcaciones": "MITECO",
     "eolicos": "MITECO", "solares": "MITECO", "residuos": "ENRESA",
     "petrolifero": "CORES", "h2red": "MITECO",
+    "nap-metro": "NAP · MITMA", "nap-cercanias": "NAP · MITMA",
+    "nap-ave": "NAP · MITMA",
 }
 
 

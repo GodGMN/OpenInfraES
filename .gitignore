@@ -39,12 +39,14 @@ r.json
 w.txt
 a.xml
 
-# Restos de pruebas en la raiz: solo el visor y su redirección son HTML versionados
+# Restos de pruebas en la raiz: solo el visor es HTML versionado
 /*.html
-!/index.html
 !/mapa.html
 
 # Nunca en la raiz: respuestas de prueba
 /*.json
 /*.xml
 !/package.json
+
+# El catalogo NAP son 10 MB y se regenera con scripts/nap.py --catalogo
+datos/nap_catalogo.json

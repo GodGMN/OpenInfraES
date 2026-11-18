@@ -256,6 +256,26 @@ def main():
                              "descargado": HOY, "features": r.get("features"),
                              "url": url, "metodo": met}
 
+
+    # --- NAP: paradas de GTFS (Metro, Cercanías, AVE) ---
+    for capa, etq, titulo in (
+        ("nap-metro", "metro-madrid", "Metro de Madrid (NAP)"),
+        ("nap-cercanias", "cercanias-renfe", "Cercanías Renfe (NAP)"),
+        ("nap-ave", "renfe-ave", "Renfe AVE y largo recorrido (NAP)"),
+    ):
+        r = leer("nap_%s_recibo.json" % etq, {})
+        if r:
+            fuentes[capa] = {
+                "capa": capa, "titulo": titulo,
+                "fuente": "NAP · MITMA", "editor": "NAP · MITMA",
+                "licencia": "Reutilización con atribución (Ley 37/2007)",
+                "actualizado": r.get("descargado") or None,
+                "descargado": HOY,
+                "features": r.get("paradas"),
+                "url": "https://nap.transportes.gob.es/api",
+                "metodo": "GTFS-ZIP del NAP; cabecera `ApiKey`",
+            }
+
     sim = leer("simplificado/_recibo.json", {})
     simpl = {os.path.basename(c["id"]): c for c in sim.get("capas", [])}
 

@@ -1,0 +1,24 @@
+{
+ "fuente": "NAP · MITMA",
+ "url": "https://nap.transportes.gob.es/api/Fichero/GetList",
+ "cabecera": "ApiKey",
+ "conjuntos": 169,
+ "operadores": 550,
+ "por_tipo": {
+  "Aéreo": 1,
+  "Autobús": 148,
+  "Ferroviario": 27,
+  "Marítimo": 3
+ },
+ "por_formato": {
+  "TXT AECFA": 1,
+  "GTFS-ZIP": 169,
+  "GTFS RT": 86,
+  "SIRI": 67,
+  "NetEx": 30,
+  "Documento pdf": 18
+ },
+ "max_paradas_un_conjunto": 41450,
+ "max_viajes_un_conjunto": 209561,
+ "descargado": "2026-11-18T15:19:50"
+}

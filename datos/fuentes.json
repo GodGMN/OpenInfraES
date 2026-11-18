@@ -9,7 +9,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-07",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 1382,
    "url": "https://www.miteco.gob.es",
    "metodo": "Registro de instalaciones de producción",
@@ -23,7 +23,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-07",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "plantas-solares": {
    "capa": "plantas-solares",
@@ -32,7 +32,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-21",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 1330,
    "url": "https://www.miteco.gob.es",
    "metodo": "Registro de instalaciones de producción",
@@ -46,7 +46,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-21",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "gas-regasificacion": {
    "capa": "gas-regasificacion",
@@ -55,7 +55,7 @@
    "editor": "Enagás",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 7,
    "url": "https://www.enagas.es",
    "metodo": "Plantas de regasificación declaradas",
@@ -69,7 +69,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "gas-almacenamiento": {
    "capa": "gas-almacenamiento",
@@ -78,7 +78,7 @@
    "editor": "Enagás",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-09",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 5,
    "url": "https://www.enagas.es",
    "metodo": "Almacenamientos subterráneos",
@@ -92,7 +92,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-09",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "gas-interconexiones": {
    "capa": "gas-interconexiones",
@@ -101,7 +101,7 @@
    "editor": "Enagás",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 6,
    "url": "https://www.enagas.es",
    "metodo": "Interconexiones internacionales",
@@ -115,7 +115,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "refinerias": {
    "capa": "refinerias",
@@ -124,7 +124,7 @@
    "editor": "CORES",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-09",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 10,
    "url": "https://www.cores.es",
    "metodo": "Refinerías del sistema petrolífero",
@@ -138,7 +138,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-09",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "almacenamiento-petrolifero": {
    "capa": "almacenamiento-petrolifero",
@@ -147,7 +147,7 @@
    "editor": "CORES",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 133,
    "url": "https://www.cores.es",
    "metodo": "Almacenamiento de productos petrolíferos",
@@ -161,7 +161,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "nuclear": {
    "capa": "nuclear",
@@ -170,7 +170,7 @@
    "editor": "CSN",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 7,
    "url": "https://www.csn.es",
    "metodo": "Centrales y reactores autorizados",
@@ -184,7 +184,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "residuos-radiactivos": {
    "capa": "residuos-radiactivos",
@@ -193,7 +193,7 @@
    "editor": "ENRESA",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 14,
    "url": "https://www.enresa.es",
    "metodo": "Instalaciones de gestión de residuos",
@@ -207,7 +207,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "electricidad-interconexiones": {
    "capa": "electricidad-interconexiones",
@@ -216,7 +216,7 @@
    "editor": "REE",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-06",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 5,
    "url": "https://www.ree.es",
    "metodo": "Interconexiones del sistema eléctrico",
@@ -230,7 +230,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-06",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "red-electrica": {
    "capa": "red-electrica",
@@ -239,7 +239,7 @@
    "editor": "IGN",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-07",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 659,
    "url": "https://www.ign.es",
    "metodo": "BTN Continua: red y recintos de subestación",
@@ -253,7 +253,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-07",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "conducciones-combustible": {
    "capa": "conducciones-combustible",
@@ -262,7 +262,7 @@
    "editor": "Enagás",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-13",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 2,
    "url": "https://www.enagas.es",
    "metodo": "Conducciones de gas",
@@ -276,7 +276,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-13",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "generacion-electrica-provincia": {
    "capa": "generacion-electrica-provincia",
@@ -285,7 +285,7 @@
    "editor": "REE",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-13",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 52,
    "url": "https://www.ree.es",
    "metodo": "Reparto provincial de generación",
@@ -299,7 +299,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-13",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "hidrogeno-produccion": {
    "capa": "hidrogeno-produccion",
@@ -308,7 +308,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 7,
    "url": "https://www.miteco.gob.es",
    "metodo": "Proyectos de Interés Común (PCI)",
@@ -322,7 +322,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "agua-embalsada": {
    "capa": "agua-embalsada",
@@ -331,7 +331,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-11-10",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 402,
    "url": "https://www.miteco.gob.es",
    "metodo": "Boletín Hidrológico, parte semanal",
@@ -345,7 +345,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-11-10",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "desaladoras": {
    "capa": "desaladoras",
@@ -354,7 +354,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-31",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 28,
    "url": "https://www.miteco.gob.es",
    "metodo": "Instalaciones de desalación",
@@ -368,7 +368,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-31",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "hidrogeno-red": {
    "capa": "hidrogeno-red",
@@ -377,7 +377,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-06",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 10,
    "url": "https://www.miteco.gob.es",
    "metodo": "Red de hidrógeno (PCI)",
@@ -391,7 +391,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-06",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "puertos-interes-general": {
    "capa": "puertos-interes-general",
@@ -400,7 +400,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 45,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__PUERTOS/1 — query ArcGIS REST, paginado de 500 en 500",
@@ -414,7 +414,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "terminales-portuarias": {
    "capa": "terminales-portuarias",
@@ -423,7 +423,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 440,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__PUERTOS/3 — query ArcGIS REST, paginado de 500 en 500",
@@ -437,7 +437,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "terminales-aeropuerto": {
    "capa": "terminales-aeropuerto",
@@ -446,7 +446,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 102,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__AEROPUERTOS/1 — query ArcGIS REST, paginado de 500 en 500",
@@ -460,7 +460,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "pistas-aeropuerto": {
    "capa": "pistas-aeropuerto",
@@ -469,7 +469,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 56,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__AEROPUERTOS/2 — query ArcGIS REST, paginado de 500 en 500",
@@ -483,7 +483,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "terminales-mercancias": {
    "capa": "terminales-mercancias",
@@ -492,7 +492,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 383,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__TERMINALES_INTERMODALES/1 — query ArcGIS REST, paginado de 500 en 500",
@@ -506,7 +506,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "estaciones-gas": {
    "capa": "estaciones-gas",
@@ -515,7 +515,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 11485,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/7__COMBUSTIBLES_ALTERNATIVOS/457 — query ArcGIS REST, paginado de 500 en 500",
@@ -529,7 +529,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "edar": {
    "capa": "edar",
@@ -537,8 +537,8 @@
    "fuente": "OpenStreetMap",
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
-   "actualizado": "2026-11-16",
-   "descargado": "2026-11-16",
+   "actualizado": "2026-11-18",
+   "descargado": "2026-11-18",
    "features": 3034,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 1644 con nombre",
@@ -551,8 +551,8 @@
     "nota": "No es el inventario oficial del MITECO: es lo que está mapeado en OSM."
    },
    "fecha_dato": null,
-   "fecha_publicacion": "2026-11-16",
-   "fecha_descarga": "2026-11-16"
+   "fecha_publicacion": "2026-11-18",
+   "fecha_descarga": "2026-11-18"
   },
   "etap": {
    "capa": "etap",
@@ -560,8 +560,8 @@
    "fuente": "OpenStreetMap",
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
-   "actualizado": "2026-11-16",
-   "descargado": "2026-11-16",
+   "actualizado": "2026-11-18",
+   "descargado": "2026-11-18",
    "features": 1551,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 994 con nombre",
@@ -574,8 +574,8 @@
     "nota": ""
    },
    "fecha_dato": null,
-   "fecha_publicacion": "2026-11-16",
-   "fecha_descarga": "2026-11-16"
+   "fecha_publicacion": "2026-11-18",
+   "fecha_descarga": "2026-11-18"
   },
   "agua-conducciones": {
    "capa": "agua-conducciones",
@@ -583,8 +583,8 @@
    "fuente": "OpenStreetMap",
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
-   "actualizado": "2026-11-16",
-   "descargado": "2026-11-16",
+   "actualizado": "2026-11-18",
+   "descargado": "2026-11-18",
    "features": 10895,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 10895 con nombre",
@@ -597,8 +597,8 @@
     "nota": "Fichero crudo del que salen las capas Trasvases y Canales."
    },
    "fecha_dato": null,
-   "fecha_publicacion": "2026-11-16",
-   "fecha_descarga": "2026-11-16"
+   "fecha_publicacion": "2026-11-18",
+   "fecha_descarga": "2026-11-18"
   },
   "carreteras": {
    "capa": "carreteras",
@@ -607,7 +607,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 1602,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "query ArcGIS REST, paginado de 500 en 500",
@@ -621,7 +621,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "puertos": {
    "capa": "puertos",
@@ -630,7 +630,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 45,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__PUERTOS/1 — query ArcGIS REST, paginado de 500 en 500",
@@ -644,7 +644,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "terminales-puerto": {
    "capa": "terminales-puerto",
@@ -653,7 +653,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 440,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__PUERTOS/3 — query ArcGIS REST, paginado de 500 en 500",
@@ -667,7 +667,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "terminales-aero": {
    "capa": "terminales-aero",
@@ -676,7 +676,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 102,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__AEROPUERTOS/1 — query ArcGIS REST, paginado de 500 en 500",
@@ -690,7 +690,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "intermodales": {
    "capa": "intermodales",
@@ -699,7 +699,7 @@
    "editor": "Ministerio de Transportes (ArcGIS REST)",
    "licencia": "CC-BY-4.0 (scne.es)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 383,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__TERMINALES_INTERMODALES/1 — query ArcGIS REST, paginado de 500 en 500",
@@ -713,7 +713,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "l400": {
    "capa": "l400",
@@ -722,7 +722,7 @@
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant)",
@@ -736,7 +736,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "l220": {
    "capa": "l220",
@@ -745,7 +745,7 @@
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant)",
@@ -759,7 +759,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "gasoductos": {
    "capa": "gasoductos",
@@ -768,7 +768,7 @@
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant)",
@@ -782,7 +782,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "hidro": {
    "capa": "hidro",
@@ -791,7 +791,7 @@
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant)",
@@ -805,7 +805,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "subestaciones": {
    "capa": "subestaciones",
@@ -814,7 +814,7 @@
    "editor": "IGN",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-07",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 659,
    "url": "https://www.ign.es",
    "metodo": "BTN Continua: red y recintos de subestación",
@@ -828,7 +828,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-07",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "eolicos": {
    "capa": "eolicos",
@@ -837,7 +837,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-07",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 1382,
    "url": "https://www.miteco.gob.es",
    "metodo": "Registro de instalaciones de producción",
@@ -851,7 +851,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-07",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "solares": {
    "capa": "solares",
@@ -860,7 +860,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-21",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 1330,
    "url": "https://www.miteco.gob.es",
    "metodo": "Registro de instalaciones de producción",
@@ -874,7 +874,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-21",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "residuos": {
    "capa": "residuos",
@@ -883,7 +883,7 @@
    "editor": "ENRESA",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 14,
    "url": "https://www.enresa.es",
    "metodo": "Instalaciones de gestión de residuos",
@@ -897,7 +897,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "petrolifero": {
    "capa": "petrolifero",
@@ -906,7 +906,7 @@
    "editor": "CORES",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 133,
    "url": "https://www.cores.es",
    "metodo": "Almacenamiento de productos petrolíferos",
@@ -920,7 +920,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "h2red": {
    "capa": "h2red",
@@ -929,7 +929,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-06",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 10,
    "url": "https://www.miteco.gob.es",
    "metodo": "Red de hidrógeno (PCI)",
@@ -943,7 +943,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-06",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "interelec": {
    "capa": "interelec",
@@ -952,7 +952,7 @@
    "editor": "REE",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-06",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 5,
    "url": "https://www.ree.es",
    "metodo": "Interconexiones del sistema eléctrico",
@@ -966,7 +966,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-06",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "regas": {
    "capa": "regas",
@@ -975,7 +975,7 @@
    "editor": "Enagás",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 7,
    "url": "https://www.enagas.es",
    "metodo": "Plantas de regasificación declaradas",
@@ -989,7 +989,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "gasalm": {
    "capa": "gasalm",
@@ -998,7 +998,7 @@
    "editor": "Enagás",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-08-09",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 5,
    "url": "https://www.enagas.es",
    "metodo": "Almacenamientos subterráneos",
@@ -1012,7 +1012,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-08-09",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "embalses": {
    "capa": "embalses",
@@ -1021,7 +1021,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-11-10",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 402,
    "url": "https://www.miteco.gob.es",
    "metodo": "Boletín Hidrológico, parte semanal",
@@ -1035,7 +1035,7 @@
    },
    "fecha_dato": "2026-11-10",
    "fecha_publicacion": "2026-11-10",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "h2": {
    "capa": "h2",
@@ -1044,7 +1044,7 @@
    "editor": "MITECO",
    "licencia": "CC-BY-4.0",
    "actualizado": "2026-09-22",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 7,
    "url": "https://www.miteco.gob.es",
    "metodo": "Proyectos de Interés Común (PCI)",
@@ -1058,7 +1058,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-09-22",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "gasgen": {
    "capa": "gasgen",
@@ -1067,7 +1067,7 @@
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant) · subconjunto: technology_normalized in (ccgt, fuel_gas)",
@@ -1081,7 +1081,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "resto": {
    "capa": "resto",
@@ -1090,7 +1090,7 @@
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": null,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (power=line, pipeline, plant) · subconjunto: resto de tecnologias",
@@ -1104,7 +1104,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "trasvases": {
    "capa": "trasvases",
@@ -1112,8 +1112,8 @@
    "fuente": "OpenStreetMap",
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
-   "actualizado": "2026-11-16",
-   "descargado": "2026-11-16",
+   "actualizado": "2026-11-18",
+   "descargado": "2026-11-18",
    "features": 26,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 118 tramos unidos en 26 trazos por scripts/unir_trasvases.py",
@@ -1126,8 +1126,8 @@
     "nota": "118 tramos unidos en 26 trazos. No existe capa oficial abierta."
    },
    "fecha_dato": null,
-   "fecha_publicacion": "2026-11-16",
-   "fecha_descarga": "2026-11-16"
+   "fecha_publicacion": "2026-11-18",
+   "fecha_descarga": "2026-11-18"
   },
   "canales": {
    "capa": "canales",
@@ -1135,8 +1135,8 @@
    "fuente": "OpenStreetMap",
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
-   "actualizado": "2026-11-16",
-   "descargado": "2026-11-16",
+   "actualizado": "2026-11-18",
+   "descargado": "2026-11-18",
    "features": 10777,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · resto: canales de riego, acequias y aducciones",
@@ -1149,8 +1149,8 @@
     "nota": "Acequias históricas: muchas con siglos de historia."
    },
    "fecha_dato": null,
-   "fecha_publicacion": "2026-11-16",
-   "fecha_descarga": "2026-11-16"
+   "fecha_publicacion": "2026-11-18",
+   "fecha_descarga": "2026-11-18"
   },
   "rios": {
    "capa": "rios",
@@ -1159,7 +1159,7 @@
    "editor": "colaboradores de OSM",
    "licencia": "ODbL 1.0",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 260,
    "url": "https://www.openstreetmap.org",
    "metodo": "Overpass API (man_made=*) · 14255 tramos agrupados, mínimo 12 km; caudal por Open-Meteo Flood (GloFAS)",
@@ -1173,7 +1173,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "carburantes": {
    "capa": "carburantes",
@@ -1182,7 +1182,7 @@
    "editor": "Secretaría de Estado de Energía",
    "licencia": "Reutilización con atribución (Ley 37/2007)",
    "actualizado": "16/11/2026 18:05:15",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 11433,
    "url": "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/",
    "metodo": "GET al JSON de estaciones terrestres; coma decimal",
@@ -1196,7 +1196,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "16/11/2026 18:05:15",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "demarcaciones": {
    "capa": "demarcaciones",
@@ -1205,7 +1205,7 @@
    "editor": "MITECO · SIG",
    "licencia": "Reutilización con atribución (Ley 37/2007)",
    "actualizado": null,
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 25,
    "url": "https://sig.miteco.gob.es/arcgis/rest/services/25830/aguaHidroDemarcaciones",
    "metodo": "query ArcGIS REST, maxAllowableOffset 0.0005",
@@ -1219,7 +1219,7 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": null,
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
   },
   "sismos": {
    "capa": "sismos",
@@ -1228,7 +1228,7 @@
    "editor": "seismicportal.eu",
    "licencia": "abierta con atribución",
    "actualizado": "2026-11-09",
-   "descargado": "2026-11-16",
+   "descargado": "2026-11-18",
    "features": 80,
    "url": "https://www.seismicportal.eu/fdsnws/event/1/query",
    "metodo": "FDSN query con bbox de Espana",
@@ -1242,7 +1242,76 @@
    },
    "fecha_dato": null,
    "fecha_publicacion": "2026-11-09",
-   "fecha_descarga": "2026-11-16"
+   "fecha_descarga": "2026-11-18"
+  },
+  "nap-metro": {
+   "capa": "nap-metro",
+   "titulo": "Metro de Madrid (NAP)",
+   "fuente": "NAP · MITMA",
+   "editor": "NAP · MITMA",
+   "licencia": "Reutilización con atribución (Ley 37/2007)",
+   "actualizado": null,
+   "descargado": "2026-11-18",
+   "features": 1050,
+   "url": "https://nap.transportes.gob.es/api",
+   "metodo": "GTFS-ZIP del NAP; cabecera `ApiKey`",
+   "organismo": "NAP · MITMA",
+   "publica_via": "NAP · MITMA",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "NAP · MITMA",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": null,
+   "fecha_descarga": "2026-11-18"
+  },
+  "nap-cercanias": {
+   "capa": "nap-cercanias",
+   "titulo": "Cercanías Renfe (NAP)",
+   "fuente": "NAP · MITMA",
+   "editor": "NAP · MITMA",
+   "licencia": "Reutilización con atribución (Ley 37/2007)",
+   "actualizado": null,
+   "descargado": "2026-11-18",
+   "features": 1167,
+   "url": "https://nap.transportes.gob.es/api",
+   "metodo": "GTFS-ZIP del NAP; cabecera `ApiKey`",
+   "organismo": "NAP · MITMA",
+   "publica_via": "NAP · MITMA",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "NAP · MITMA",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": null,
+   "fecha_descarga": "2026-11-18"
+  },
+  "nap-ave": {
+   "capa": "nap-ave",
+   "titulo": "Renfe AVE y largo recorrido (NAP)",
+   "fuente": "NAP · MITMA",
+   "editor": "NAP · MITMA",
+   "licencia": "Reutilización con atribución (Ley 37/2007)",
+   "actualizado": null,
+   "descargado": "2026-11-18",
+   "features": 1006,
+   "url": "https://nap.transportes.gob.es/api",
+   "metodo": "GTFS-ZIP del NAP; cabecera `ApiKey`",
+   "organismo": "NAP · MITMA",
+   "publica_via": "NAP · MITMA",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "NAP · MITMA",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": null,
+   "fecha_descarga": "2026-11-18"
   }
  },
  "simplificacion": {
@@ -1391,6 +1460,6 @@
    "kb": 18
   }
  },
- "total_capas": 54,
+ "total_capas": 57,
  "nota_cadena": "Cada capa declara productor (quien genera el dato), publica (quien lo sirve tal como lo consumimos) y consume (nosotros). Son tres fechas distintas: la del dato, la de publicación y la de descarga."
 }
