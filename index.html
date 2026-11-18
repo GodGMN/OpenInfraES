@@ -528,8 +528,9 @@ function fichaTren(p, c) {
 function ficha(p, c) {
   const titulo = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Aeropuerto || p.Carretera ||
                  p.Rotulo || p.rotulo || p.Direccion || p.direccion || p.Nombre_plataforma ||
-                 (p.magnitud != null ? "Terremoto M" + p.magnitud :
-                  (c.popupTitulo && p[c.popupTitulo] ? String(p[c.popupTitulo]) : "Sin nombre")) +
+                 (p.mensaje ? p.mensaje + (p.carretera ? " — " + p.carretera : "") :
+                  (p.magnitud != null ? "Terremoto M" + p.magnitud :
+                  (c.popupTitulo && p[c.popupTitulo] ? String(p[c.popupTitulo]) : "Sin nombre"))) +
                  (c.popupTitulo && p.km ? " · km " + p.km : "");
   const estado = [p.categoria, p.estado_registro, p.verif]
     .filter(v => v && !/^[A-Z0-9_]+$/.test(String(v))).join(" · ");
@@ -570,6 +571,8 @@ function ficha(p, c) {
 
 /* ficha de un grupo agregado: al alejar, un punto son N instalaciones */
 function etiquetaCorta(p, c) {
+  // un panel de mensaje variable vale por lo que DICE, no por la carretera donde está
+  if (p.mensaje) return p.mensaje + (p.carretera ? " — " + p.carretera : "");
   const campos = [c.popupTitulo, "nombre", "name", "Nombre", "Nombre_terminal",
                   "Rotulo", "rotulo", "Direccion", "direccion", "carretera", "label"];
   for (const k of campos) {
@@ -782,6 +785,9 @@ const CAPAS = [
     color:"#fb7185", fichero:"datos/dgt_camaras.geojson", radio:4, zoomMin:7, zoomDetalle:11,
     // sin `siempreIndividual`: 1.977 camaras sueltas a zoom nacional son una masa en la
     // que no se puede pinchar ninguna. Agrupadas, la burbuja abre una lista pinchable.
+    popupTitulo:"carretera" },
+  { id:"dgt-paneles", grupo:"DGT · Tráfico", label:"Paneles de mensaje variable", tipo:"punto", on:false,
+    color:"#22d3ee", fichero:"datos/dgt_paneles.geojson", radio:4.4, zoomMin:6, zoomDetalle:11,
     popupTitulo:"carretera" },
   { id:"dgt-incidencias", grupo:"DGT · Tráfico", label:"Incidencias en tiempo real", tipo:"punto", on:false,
     color:"#f97316", fichero:"datos/dgt_incidencias.geojson", radio:5, zoomMin:6, zoomDetalle:11,

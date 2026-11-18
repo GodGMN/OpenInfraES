@@ -108,7 +108,7 @@ ORGANISMOS = {
     "petrolifero": "CORES", "h2red": "MITECO",
     "nap-metro": "NAP · MITMA", "nap-cercanias": "NAP · MITMA",
     "nap-ave": "NAP · MITMA",
-    "dgt-camaras": "DGT", "dgt-incidencias": "DGT", "dgt-electrolineras": "DGT", "gtfsrt": "Renfe", "aemet-zonas": "AEMET",
+    "dgt-camaras": "DGT", "dgt-incidencias": "DGT", "dgt-paneles": "DGT", "dgt-electrolineras": "DGT", "gtfsrt": "Renfe", "aemet-zonas": "AEMET",
 }
 
 

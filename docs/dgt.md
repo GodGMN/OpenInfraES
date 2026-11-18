@@ -138,6 +138,45 @@ Los subtipos llegan en inglés porque DATEX II es un estándar europeo: `laneClo
 `singleAlternateLineTraffic`. Traducirlos en el parser es tentador, pero entonces el dato deja de ser
 comparable con el de cualquier otro país.
 
+
+## Paneles de mensaje variable: lo que dice la carretera ahora
+
+1.019 paneles con mensaje y posición. **El texto y la ubicación están en dos ficheros distintos** y hay que
+cruzarlos:
+
+| Fichero | Qué trae | Clave |
+|---|---|---|
+| `VmsPublication/datex2_v37.xml` | el mensaje | `vmsControllerReference@id` |
+| `DevicePublication/vms_datex2_v37.xml` | lat/lon, carretera, provincia | `device@id` |
+
+El mismo número en los dos (`167938`). Sin el cruce hay posiciones sin mensaje o mensajes sin mapa.
+
+```bash
+python scripts/dgt_rt.py --paneles
+```
+
+### Lo que dicen los paneles (2026-11-18)
+
+| Mensaje | Paneles |
+|---|---:|
+| MODERE LA VELOCIDAD | 102 |
+| CON LLUVIA MODERE VELOCIDAD | 99 |
+| CON LLUVIA MODERE LA VELOCIDAD · CON CHOIVA MODERE A VELOCIDADE | 94 |
+| VELOCIDAD CONTROLADA POR RADAR | 77 |
+| SOL BAJO MODERE VELOCIDAD | 31 |
+
+- **Son bilingües** (castellano y gallego/catalán en la misma línea): es el mismo panel mostrando dos
+  idiomas alternos, no dos mensajes.
+- **El texto viene con saltos de línea y relleno de ancho fijo** de la matriz del panel
+  (`'MODERE
+     LA
+ VELOCIDAD'`). Hay que colapsar los espacios o el popup sale escalonado.
+- **Se repiten por índice de mensaje**: un controlador puede tener dos mensajes alternos
+  (`messageIndex 1` y `2`), por eso el mismo panel puede aparecer con dos textos.
+
+Capa **«Paneles de mensaje variable»** en DGT · Tráfico. En la lista y en la ficha se muestra el
+**mensaje**, no la carretera: un panel vale por lo que dice.
+
 ## Capas en el visor
 
 Grupo **DGT · Tráfico**:

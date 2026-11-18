@@ -27,6 +27,7 @@ UA = {"User-Agent": "OpenInfraES/1.0", "Accept": "application/xml"}
 FEEDS = {
     "incidencias": "https://nap.dgt.es/datex2/v3/dgt/SituationPublication/datex2_v37.xml",
     "paneles": "https://nap.dgt.es/datex2/v3/dgt/VmsPublication/datex2_v37.xml",
+    "paneles_loc": "https://nap.dgt.es/datex2/v3/dgt/DevicePublication/vms_datex2_v37.xml",
 }
 
 
@@ -134,13 +135,103 @@ def incidencias(ruta):
     return feats
 
 
+
+
+def paneles():
+    """Paneles de mensaje variable: el texto va en un feed y la posicion en OTRO.
+
+    `VmsPublication` trae el mensaje y una referencia `vmsControllerReference@id`; la lat/lon
+    esta en `DevicePublication`, donde `device@id` es el mismo numero. Sin cruzar los dos no
+    hay ni mapa ni mensaje.
+    """
+    ruta_msg = descarga("paneles")
+    ruta_loc = descarga("paneles_loc")
+
+    # 1. posiciones
+    pos = {}
+    for _, el in ET.iterparse(ruta_loc, events=("end",)):
+        if local(el.tag) != "device":
+            continue
+        did = el.get("id")
+        lat = texto(el, "latitude")
+        lon = texto(el, "longitude")
+        if did and lat and lon:
+            try:
+                pos[did] = (float(lon), float(lat), texto(el, "roadName") or "",
+                            texto(el, "province") or "")
+            except ValueError:
+                pass
+        el.clear()
+    print("  %d paneles con posición" % len(pos))
+
+    # 2. mensajes, agrupados por controlador
+    mensajes = {}
+    for _, el in ET.iterparse(ruta_msg, events=("end",)):
+        if local(el.tag) != "vmsControllerStatus":
+            continue
+        cid = None
+        for h in el.iter():
+            if local(h.tag) == "vmsControllerReference":
+                cid = h.get("id")
+                break
+        if not cid:
+            el.clear()
+            continue
+        lineas = []
+        for h in el.iter():
+            if local(h.tag) == "textLine" and (h.text or "").strip():
+                # el texto viene con saltos y espacios de relleno del panel
+                limpio = " ".join((h.text or "").split())
+                if limpio:
+                    lineas.append(limpio)
+        if lineas:
+            mensajes.setdefault(cid, [])
+            for l in lineas:
+                if l not in mensajes[cid]:
+                    mensajes[cid].append(l)
+        el.clear()
+    print("  %d controladores con mensaje" % len(mensajes))
+
+    feats = []
+    for cid, lineas in mensajes.items():
+        p = pos.get(cid)
+        if not p:
+            continue
+        lon, lat, carretera, provincia = p
+        feats.append({"type": "Feature",
+                      "geometry": {"type": "Point", "coordinates": [lon, lat]},
+                      "properties": {"panel": cid, "mensaje": " · ".join(lineas)[:180],
+                                     "carretera": carretera, "provincia": provincia}})
+
+    json.dump({"type": "FeatureCollection", "features": feats},
+              open(os.path.join(DEST, "dgt_paneles.geojson"), "w", encoding="utf-8"),
+              ensure_ascii=False)
+
+    from collections import Counter
+    top = Counter(" · ".join(v) for v in mensajes.values())
+    recibo = {"fuente": "DGT · NAP de Tráfico", "dataset": "Paneles DGT DATEX2 v3.7",
+              "url": FEEDS["paneles"], "url_localizaciones": FEEDS["paneles_loc"],
+              "licencia": "reutilización con atribución",
+              "features": len(feats), "paneles_localizados": len(pos),
+              "descargado": datetime.datetime.now().isoformat(timespec="seconds"),
+              "mensajes_top": [{"texto": t, "paneles": n} for t, n in top.most_common(10)]}
+    json.dump(recibo, open(os.path.join(DEST, "dgt_paneles_recibo.json"), "w",
+                           encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("  %d paneles con mensaje y posición" % len(feats))
+    for t, n in top.most_common(6):
+        print("   %-46s x%d" % (t[:46], n))
+
+
 def main():
     ap = argparse.ArgumentParser(description="DGT · tráfico en tiempo real")
     ap.add_argument("--incidencias", action="store_true")
+    ap.add_argument("--paneles", action="store_true")
     ap.add_argument("--refrescar", action="store_true", help="fuerza descarga nueva")
     a = ap.parse_args()
     if a.incidencias:
         incidencias(descarga("incidencias", a.refrescar))
+    elif a.paneles:
+        paneles()
     else:
         ap.print_help()
 

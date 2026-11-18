@@ -1336,6 +1336,29 @@
    "fecha_publicacion": null,
    "fecha_descarga": "2026-11-18"
   },
+  "dgt-paneles": {
+   "capa": "dgt-paneles",
+   "titulo": "Paneles de mensaje variable",
+   "fuente": "DGT",
+   "editor": "DGT · NAP de Tráfico",
+   "licencia": "reutilización con atribución",
+   "actualizado": null,
+   "descargado": "2026-11-18",
+   "features": 1019,
+   "url": "https://nap.dgt.es",
+   "metodo": "DATEX II v3 (XML) del NAP de Tráfico · Paneles DGT DATEX2 v3.7",
+   "organismo": "DGT",
+   "publica_via": "DGT · NAP de Tráfico",
+   "cadena": {
+    "productor": "no declarado por el editor",
+    "publica": "DGT · NAP de Tráfico",
+    "consume": "OpenInfraES (descarga directa del fichero)",
+    "nota": ""
+   },
+   "fecha_dato": null,
+   "fecha_publicacion": null,
+   "fecha_descarga": "2026-11-18"
+  },
   "dgt-incidencias": {
    "capa": "dgt-incidencias",
    "titulo": "Incidencias en tiempo real",
@@ -1575,6 +1598,6 @@
    "kb": 18
   }
  },
- "total_capas": 62,
+ "total_capas": 63,
  "nota_cadena": "Cada capa declara productor (quien genera el dato), publica (quien lo sirve tal como lo consumimos) y consume (nosotros). Son tres fechas distintas: la del dato, la de publicación y la de descarga."
 }
