@@ -1,0 +1,952 @@
+# OpenInfraES architecture · terms: https://caviri.github.io/c4-model-agentic-plugin/ontology/c4 , https://caviri.github.io/c4-model-agentic-plugin/ontology/c4-view
+@prefix c4: <https://caviri.github.io/c4-model-agentic-plugin/ontology/c4#> .
+@prefix c4v: <https://caviri.github.io/c4-model-agentic-plugin/ontology/c4-view#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <https://schema.org/> .
+@prefix : <https://github.com/Ntizar/OpenInfraES#> .
+
+:model:openinfraes a c4:Model ;
+    dcterms:title "OpenInfraES architecture" ;
+    rdfs:label "OpenInfraES" ;
+    dcterms:description "Base de datos de infraestructura española y el mapa que la indexa. Sin backend: scripts que descargan de los organismos, un almacén de datos con su recibo de procedencia, un visor estático y dos puertas que impiden publicar un dato que no cuadre. Empieza por «Conectores» y sigue el flujo «Refresco de datos vivos»." ;
+    dcterms:identifier "openinfraes" ;
+    dcterms:conformsTo <https://caviri.github.io/c4-model-agentic-plugin/ontology/c4>,
+        <https://caviri.github.io/c4-model-agentic-plugin/ontology/c4-view> ;
+    dcterms:source <https://github.com/Ntizar/OpenInfraES> ;
+    c4:branch "main" ;
+    c4v:subtitle "Ntizar/OpenInfraES" ;
+    c4v:toolbarTitle "Arquitectura de OpenInfraES" ;
+    c4v:startLevel 2 ;
+    c4v:defaultPins ( :lector :openinfraes :visor :almacen :gates :energia ) ;
+    c4v:levelNames ( "Contexto" "Contenedores" "Componentes" "Código" ) ;
+    dcterms:hasPart :lector, :openinfraes, :osm, :ign, :miteco, :energia, :transporte, :riesgo, :github .
+
+:lector a c4:Element, c4:Person ;
+    rdfs:label "Lector del mapa" ;
+    dcterms:identifier "lector" ;
+    dcterms:description "Quien abre el visor para mirar la red eléctrica, el agua o el transporte. Enciende capas, busca elementos y abre fichas." ;
+    c4:summary "consulta la infraestructura" ;
+    c4:tag "PERSON · CIUDADANO" ;
+    c4:level 1 ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4v:order 1 ;
+    c4v:style "highlight" ;
+    c4:uses :openinfraes .
+
+:openinfraes a c4:Element, c4:SoftwareSystem ;
+    rdfs:label "OpenInfraES" ;
+    dcterms:identifier "openinfraes" ;
+    dcterms:description "El producto completo: pipeline de datos + almacén + visor publicado en GitHub Pages. No tiene servidor propio ni base de datos relacional." ;
+    c4:summary "infraestructura de España en datos" ;
+    c4:tag "SOFTWARE SYSTEM · WEB ESTÁTICA" ;
+    c4:level 1 ;
+    c4:technology "Python", "JavaScript", "GitHub Pages" ;
+    c4v:technologyList ( "Python" "JavaScript" "GitHub Pages" ) ;
+    c4:path "README.md" ;
+    c4:line 1 ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4v:order 2 ;
+    dcterms:hasPart :visor, :conectores, :almacen, :gates .
+
+:osm a c4:Element, c4:SoftwareSystem, c4:ExternalSystem ;
+    rdfs:label "OpenStreetMap" ;
+    dcterms:identifier "osm" ;
+    dcterms:description "Fuente comunitaria (ODbL): red de 220/400 kV, conducciones de agua y parte del transporte. Obliga a compartir igual el derivado." ;
+    c4:summary "red, agua, transporte" ;
+    c4:tag "EXTERNAL · OVERPASS" ;
+    c4:level 1 ;
+    rdfs:seeAlso <https://overpass-api.de> ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4v:order 3 .
+
+:ign a c4:Element, c4:SoftwareSystem, c4:ExternalSystem ;
+    rdfs:label "IGN · WMTS" ;
+    dcterms:identifier "ign" ;
+    dcterms:description "Cartografía de fondo del mapa, servida por WMTS público del IGN. Se consume en tiempo de lectura, no se descarga al repo." ;
+    c4:summary "teselas base sin clave" ;
+    c4:tag "EXTERNAL · CARTOGRAFÍA" ;
+    c4:level 1 ;
+    rdfs:seeAlso <https://www.ign.es> ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4v:order 4 .
+
+:miteco a c4:Element, c4:SoftwareSystem, c4:ExternalSystem ;
+    rdfs:label "MITECO" ;
+    dcterms:identifier "miteco" ;
+    dcterms:description "Embalses y parte hidrológica, registro de plantas de generación, residuos radiactivos y demarcaciones hidrográficas." ;
+    c4:summary "embalses y plantas" ;
+    c4:tag "EXTERNAL · AGUA" ;
+    c4:level 1 ;
+    rdfs:seeAlso <https://www.miteco.gob.es> ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4v:order 5 .
+
+:energia a c4:Element, c4:SoftwareSystem, c4:ExternalSystem ;
+    rdfs:label "REE · ESIOS · OMIE" ;
+    dcterms:identifier "energia" ;
+    dcterms:description "Sistema eléctrico en vivo: demanda, mix de generación, precio, previsión e intercambios. ENTSO-E cubre lo que ESIOS no publica." ;
+    c4:summary "demanda, mix, precio" ;
+    c4:tag "EXTERNAL · ELÉCTRICO" ;
+    c4:level 1 ;
+    rdfs:seeAlso <https://www.ree.es> ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4v:order 6 .
+
+:transporte a c4:Element, c4:SoftwareSystem, c4:ExternalSystem ;
+    rdfs:label "MITMA · NAP · Renfe" ;
+    dcterms:identifier "transporte" ;
+    dcterms:description "Carreteras y puertos (MITMA, visor Hermes), catálogo y líneas (NAP), vehículos de Cercanías (GTFS-RT) y tráfico de la DGT." ;
+    c4:summary "trenes, puertos, DGT" ;
+    c4:tag "EXTERNAL · TRANSPORTE" ;
+    c4:level 1 ;
+    rdfs:seeAlso <https://nap.transportes.gob.es> ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4v:order 7 .
+
+:riesgo a c4:Element, c4:SoftwareSystem, c4:ExternalSystem ;
+    rdfs:label "CSN · EMSC · AEMET" ;
+    dcterms:identifier "riesgo" ;
+    dcterms:description "Sismicidad de la última semana (CSN/EMSC) y avisos meteorológicos de AEMET vía Meteoalarm." ;
+    c4:summary "sismos y avisos" ;
+    c4:tag "EXTERNAL · RIESGO" ;
+    c4:level 1 ;
+    rdfs:seeAlso <https://www.igme.es> ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4v:order 8 .
+
+:github a c4:Element, c4:SoftwareSystem, c4:ExternalSystem ;
+    rdfs:label "GitHub · Pages" ;
+    dcterms:identifier "github" ;
+    dcterms:description "Aloja el repositorio, sirve el sitio estático desde la raíz y ejecuta los workflows que refrescan los datos." ;
+    c4:summary "publica y ejecuta el CI" ;
+    c4:tag "EXTERNAL · PLATAFORMA" ;
+    c4:level 1 ;
+    rdfs:seeAlso <https://ntizar.github.io/OpenInfraES/> ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4v:order 9 ;
+    c4:uses :visor .
+
+:visor a c4:Element, c4:Container ;
+    rdfs:label "Visor del mapa" ;
+    dcterms:identifier "visor" ;
+    dcterms:description "Página única de 2.588 líneas. Declara las 53 capas en un array y las carga bajo demanda con fetch; nada se descarga hasta que se enciende." ;
+    c4:summary "index.html y 53 capas" ;
+    c4:tag "CONTAINER · LEAFLET" ;
+    c4:level 2 ;
+    c4:technology "HTML", "JavaScript", "Leaflet" ;
+    c4v:technologyList ( "HTML" "JavaScript" "Leaflet" ) ;
+    c4:path "index.html" ;
+    dcterms:isPartOf :openinfraes ;
+    c4v:order 10 ;
+    c4v:style "highlight" ;
+    dcterms:hasPart :cfg-capas, :motor-capas, :render, :ficha, :leyenda, :procedencia-ui, :api-visual, :ciclo-capa ;
+    c4:uses :ign .
+
+:conectores a c4:Element, c4:Container ;
+    rdfs:label "Conectores" ;
+    dcterms:identifier "conectores" ;
+    dcterms:description "Jobs batch que se ejecutan en local o en Actions: descargan del organismo, normalizan, simplifican si pesa y escriben el dato con su recibo." ;
+    c4:summary "39 scripts, uno por fuente" ;
+    c4:tag "CONTAINER · PYTHON" ;
+    c4:level 2 ;
+    c4:technology "Python 3.12", "requests" ;
+    c4v:technologyList ( "Python 3.12" "requests" ) ;
+    c4:path "scripts/" ;
+    dcterms:isPartOf :openinfraes ;
+    c4v:order 11 ;
+    dcterms:hasPart :conectores-fuente, :normaliza, :simplificar, :agregados, :procedencia, :snapshot .
+
+:almacen a c4:Element, c4:Container, c4:DataStore ;
+    rdfs:label "Datos" ;
+    dcterms:identifier "almacen" ;
+    dcterms:description "El activo del proyecto: GeoJSON por capa, agregados CSV, fuentes.json y catalogo.json. Cada fichero lleva su recibo de procedencia y fecha." ;
+    c4:summary "73 geojson + 30 recibos" ;
+    c4:tag "DATA STORE · GEOJSON" ;
+    c4:level 2 ;
+    c4:technology "GeoJSON", "CSV", "JSON" ;
+    c4v:technologyList ( "GeoJSON" "CSV" "JSON" ) ;
+    c4:path "datos/" ;
+    dcterms:isPartOf :openinfraes ;
+    c4v:order 12 ;
+    c4v:style "highlight" .
+
+:gates a c4:Element, c4:Container ;
+    rdfs:label "Arnés de datos" ;
+    dcterms:identifier "gates" ;
+    dcterms:description "Las dos puertas del proyecto: cuadres de datos y cifras de la documentación. Si una no pasa, el dato no sale." ;
+    c4:summary "valida antes de publicar" ;
+    c4:tag "CONTAINER · CI" ;
+    c4:level 2 ;
+    c4:technology "Python", "GitHub Actions" ;
+    c4v:technologyList ( "Python" "GitHub Actions" ) ;
+    c4:path "scripts/validar.py" ;
+    dcterms:isPartOf :openinfraes ;
+    c4v:order 13 ;
+    c4v:style "highlight" ;
+    dcterms:hasPart :validador, :cifras, :workflows .
+
+:cfg-capas a c4:Element, c4:Component ;
+    rdfs:label "CAPAS (declaración)" ;
+    dcterms:identifier "cfg-capas" ;
+    dcterms:description "Array que define cada capa: grupo, fichero, estilo, zoomMin, filtro y campos de la ficha. Añadir una capa es añadir una entrada aquí." ;
+    c4:summary "una entrada por capa" ;
+    c4:tag "CONFIG · 53 CAPAS" ;
+    c4:level 3 ;
+    c4:path "index.html" ;
+    c4:line 925 ;
+    dcterms:isPartOf :visor ;
+    c4v:order 14 ;
+    c4:uses :motor-capas .
+
+:motor-capas a c4:Element, c4:Component ;
+    rdfs:label "Motor de capas" ;
+    dcterms:identifier "motor-capas" ;
+    dcterms:description "Un solo camino para encender una capa: checkbox, vistas temáticas, enlace permanente y API llaman a ponerCapa(). cargar() hace un fetch por sesión." ;
+    c4:summary "ponerCapa: un camino" ;
+    c4:tag "COMPONENT · JS" ;
+    c4:level 3 ;
+    c4:path "index.html" ;
+    c4:line 1922 ;
+    dcterms:isPartOf :visor ;
+    c4v:order 15 ;
+    c4v:style "highlight" ;
+    dcterms:hasPart :fn-ponercapa, :fn-cargar ;
+    c4:uses :render, :leyenda, :ciclo-capa, :almacen .
+
+:render a c4:Element, c4:Component ;
+    rdfs:label "Render del mapa" ;
+    dcterms:identifier "render" ;
+    dcterms:description "Dibuja puntos (sólo los de la vista) y geometrías con L.geoJSON, con trazo oscuro en polígonos y atenuación por debajo de zoomMin." ;
+    c4:summary "puntos y polígonos" ;
+    c4:tag "COMPONENT · LEAFLET" ;
+    c4:level 3 ;
+    c4:path "index.html" ;
+    c4:line 1736 ;
+    dcterms:isPartOf :visor ;
+    c4v:order 16 ;
+    c4:uses :ficha .
+
+:ficha a c4:Element, c4:Component ;
+    rdfs:label "Ficha del elemento" ;
+    dcterms:identifier "ficha" ;
+    dcterms:description "Panel de un elemento: métricas destacadas, atributos humanizados, procedencia con licencia y fecha, y qué hay a menos de 30 km." ;
+    c4:summary "métricas y procedencia" ;
+    c4:tag "COMPONENT · JS" ;
+    c4:level 3 ;
+    c4:path "index.html" ;
+    c4:line 1638 ;
+    dcterms:isPartOf :visor ;
+    c4v:order 17 ;
+    dcterms:hasPart :fn-abrirficha ;
+    c4:uses :procedencia-ui .
+
+:leyenda a c4:Element, c4:Component ;
+    rdfs:label "Leyenda" ;
+    dcterms:identifier "leyenda" ;
+    dcterms:description "Recalcula la leyenda al cambiar capas; para capas con escala pinta la rampa con sus extremos en vez de una lista." ;
+    c4:summary "rampas y colores" ;
+    c4:tag "COMPONENT · JS" ;
+    c4:level 3 ;
+    c4:path "index.html" ;
+    c4:line 1314 ;
+    dcterms:isPartOf :visor ;
+    c4v:order 18 .
+
+:procedencia-ui a c4:Element, c4:Component ;
+    rdfs:label "Panel de fuentes" ;
+    dcterms:identifier "procedencia-ui" ;
+    dcterms:description "Lee fuentes.json y catalogo.json al arrancar y los pinta como tabla de procedencia dentro del visor." ;
+    c4:summary "procedencia por capa" ;
+    c4:tag "COMPONENT · JS" ;
+    c4:level 3 ;
+    c4:path "index.html" ;
+    c4:line 2080 ;
+    dcterms:isPartOf :visor ;
+    c4v:order 19 ;
+    c4:uses :almacen .
+
+:api-visual a c4:Element, c4:Component ;
+    rdfs:label "API de consola" ;
+    dcterms:identifier "api-visual" ;
+    dcterms:description "window.OpenInfraES: abrir(capa, i, zoom), estados(), fuentes() y bench() para medir el arrastre. Lo usa el arnés y las capturas." ;
+    c4:summary "OpenInfraES.*" ;
+    c4:tag "COMPONENT · JS" ;
+    c4:level 3 ;
+    c4:path "index.html" ;
+    c4:line 2457 ;
+    dcterms:isPartOf :visor ;
+    c4v:order 20 ;
+    c4:uses :motor-capas, :ficha .
+
+:ciclo-capa a c4:Element, c4:Component ;
+    rdfs:label "Ciclo de una capa" ;
+    dcterms:identifier "ciclo-capa" ;
+    dcterms:description "Estados por los que pasa una capa en el visor. Un fallo de red deja __cargada en false para poder reintentar al volver a encenderla." ;
+    c4:summary "apagada a cargada" ;
+    c4:tag "CLASS · ESTADOS" ;
+    c4:level 3 ;
+    c4:path "index.html" ;
+    c4:line 1912 ;
+    dcterms:isPartOf :visor ;
+    c4v:order 21 ;
+    dcterms:hasPart :st-apagada, :st-cargando, :st-cargada, :st-fallo .
+
+:st-apagada a c4:Element, c4:State ;
+    rdfs:label "apagada" ;
+    dcterms:identifier "st-apagada" ;
+    dcterms:description "La capa está declarada en CAPAS pero no en el mapa." ;
+    c4:level 4 ;
+    c4:initial true ;
+    dcterms:isPartOf :ciclo-capa ;
+    c4v:order 22 ;
+    c4:transitionsTo :st-cargando .
+
+:st-cargando a c4:Element, c4:State ;
+    rdfs:label "cargando" ;
+    dcterms:identifier "st-cargando" ;
+    dcterms:description "fetch del GeoJSON en curso (una sola vez por sesión)." ;
+    c4:level 4 ;
+    dcterms:isPartOf :ciclo-capa ;
+    c4v:order 23 ;
+    c4:transitionsTo :st-cargada, :st-fallo .
+
+:st-cargada a c4:Element, c4:State ;
+    rdfs:label "cargada" ;
+    dcterms:identifier "st-cargada" ;
+    dcterms:description "Features en datos[id], pintados en el mapa e indexados para el buscador." ;
+    c4:level 4 ;
+    c4:final true ;
+    dcterms:isPartOf :ciclo-capa ;
+    c4v:order 24 ;
+    c4:transitionsTo :st-apagada .
+
+:st-fallo a c4:Element, c4:State ;
+    rdfs:label "fallo" ;
+    dcterms:identifier "st-fallo" ;
+    dcterms:description "El fetch falló: el contador queda en «—» y la capa se puede reintentar." ;
+    c4:level 4 ;
+    dcterms:isPartOf :ciclo-capa ;
+    c4v:order 25 ;
+    c4:transitionsTo :st-cargando .
+
+:conectores-fuente a c4:Element, c4:Component ;
+    rdfs:label "Conectores por fuente" ;
+    dcterms:identifier "conectores-fuente" ;
+    dcterms:description "Un script por organismo (descargar, hermes, nap, gtfsrt, dgt_rt, entsoe, omie, ree_vivo, sismos, irewater…). Escribe su recibo de descarga." ;
+    c4:summary "descarga por organismo" ;
+    c4:tag "COMPONENT · PYTHON" ;
+    c4:level 3 ;
+    c4:path "scripts/descargar.py" ;
+    dcterms:isPartOf :conectores ;
+    c4v:order 26 ;
+    c4:uses :osm, :miteco, :energia, :transporte, :riesgo, :normaliza, :simplificar .
+
+:normaliza a c4:Element, c4:Component ;
+    rdfs:label "normaliza.py" ;
+    dcterms:identifier "normaliza" ;
+    dcterms:description "Provincia y comunidad autónoma siempre por código oficial, nunca por nombre: el nombre cambia y el cruce por texto pierde datos en silencio." ;
+    c4:summary "provincias por código" ;
+    c4:tag "NORMALIZACIÓN" ;
+    c4:level 3 ;
+    c4:path "scripts/normaliza.py" ;
+    dcterms:isPartOf :conectores ;
+    c4v:order 27 ;
+    c4:uses :almacen .
+
+:simplificar a c4:Element, c4:Component ;
+    rdfs:label "simplificar.py" ;
+    dcterms:identifier "simplificar" ;
+    dcterms:description "Simplifica geometrías para el visor y deja un recibo con vértices antes y después (94.000 vértices cuestan un frame por arrastre)." ;
+    c4:summary "Douglas-Peucker" ;
+    c4:tag "GEOMETRÍA" ;
+    c4:level 3 ;
+    c4:path "scripts/simplificar.py" ;
+    dcterms:isPartOf :conectores ;
+    c4v:order 28 ;
+    c4:uses :almacen .
+
+:agregados a c4:Element, c4:Component ;
+    rdfs:label "agregar.py" ;
+    dcterms:identifier "agregados" ;
+    dcterms:description "Convierte los GeoJSON de red y plantas en CSV por tensión, operador, tecnología y comunidad autónoma." ;
+    c4:summary "CSV reutilizables" ;
+    c4:tag "AGREGADOS" ;
+    c4:level 3 ;
+    c4:path "scripts/agregar.py" ;
+    dcterms:isPartOf :conectores ;
+    c4v:order 29 ;
+    c4:uses :almacen .
+
+:procedencia a c4:Element, c4:Component ;
+    rdfs:label "Procedencia" ;
+    dcterms:identifier "procedencia" ;
+    dcterms:description "fuentes_visor.py, catalogo.py y cadenas.py: generan fuentes.json y catalogo.json desde los recibos reales, separando fecha de dato, publicación y descarga." ;
+    c4:summary "fuentes y catálogo" ;
+    c4:tag "CONTRATO" ;
+    c4:level 3 ;
+    c4:path "scripts/fuentes_visor.py" ;
+    dcterms:isPartOf :conectores ;
+    c4v:order 30 ;
+    c4:uses :almacen .
+
+:snapshot a c4:Element, c4:Component ;
+    rdfs:label "snapshot.py" ;
+    dcterms:identifier "snapshot" ;
+    dcterms:description "Archiva una foto diaria de los datos vivos para poder responder «¿cómo ha evolucionado esto?»." ;
+    c4:summary "foto diaria del dato" ;
+    c4:tag "SERIE" ;
+    c4:level 3 ;
+    c4:path "scripts/snapshot.py" ;
+    dcterms:isPartOf :conectores ;
+    c4v:order 31 ;
+    c4:uses :almacen .
+
+:validador a c4:Element, c4:Component ;
+    rdfs:label "validar.py" ;
+    dcterms:identifier "validador" ;
+    dcterms:description "Comprueba GeoJSON mínimos, cuadres de los agregados y conteos declarados. Termina en RESULTADO: VERDE o ROJO." ;
+    c4:summary "recibos y conteos" ;
+    c4:tag "GATE" ;
+    c4:level 3 ;
+    c4:path "scripts/validar.py" ;
+    c4:line 35 ;
+    dcterms:isPartOf :gates ;
+    c4v:order 32 ;
+    dcterms:hasPart :fn-validar ;
+    c4:uses :almacen .
+
+:cifras a c4:Element, c4:Component ;
+    rdfs:label "cifras.py" ;
+    dcterms:identifier "cifras" ;
+    dcterms:description "Reescribe la tabla de capas del README entre marcas y con --check falla si la prosa se ha desfasado del dato." ;
+    c4:summary "tabla del README" ;
+    c4:tag "GATE" ;
+    c4:level 3 ;
+    c4:path "scripts/cifras.py" ;
+    c4:line 168 ;
+    dcterms:isPartOf :gates ;
+    c4v:order 33 ;
+    dcterms:hasPart :fn-cifras ;
+    c4:uses :almacen .
+
+:workflows a c4:Element, c4:Component ;
+    rdfs:label "GitHub Actions" ;
+    dcterms:identifier "workflows" ;
+    dcterms:description "refresco.yml relanza las capas vivas cada 30 minutos y commitea; validar.yml valida en cada push a main." ;
+    c4:summary "refresco cada 30 min" ;
+    c4:tag "ORQUESTADOR" ;
+    c4:level 3 ;
+    c4:path ".github/workflows/refresco.yml" ;
+    dcterms:isPartOf :gates ;
+    c4v:order 34 ;
+    c4:uses :conectores-fuente, :validador, :cifras, :github .
+
+:fn-ponercapa a c4:Element, c4:CodeElement ;
+    rdfs:label "ponerCapa()" ;
+    dcterms:identifier "fn-ponercapa" ;
+    dcterms:description "Sincroniza checkbox, mapa, leyenda y contador; en lote lo hace una vez al final." ;
+    c4:tag "FUNCIÓN · JS" ;
+    c4:level 4 ;
+    c4:path "index.html" ;
+    c4:line 1922 ;
+    dcterms:isPartOf :motor-capas ;
+    c4v:order 35 .
+
+:fn-cargar a c4:Element, c4:CodeElement ;
+    rdfs:label "cargar()" ;
+    dcterms:identifier "fn-cargar" ;
+    dcterms:description "fetch del GeoJSON con versión, guarda features en datos[id] y llama a pintarPuntos." ;
+    c4:tag "FUNCIÓN · JS" ;
+    c4:level 4 ;
+    c4:path "index.html" ;
+    c4:line 1804 ;
+    dcterms:isPartOf :motor-capas ;
+    c4v:order 36 .
+
+:fn-abrirficha a c4:Element, c4:CodeElement ;
+    rdfs:label "abrirFicha()" ;
+    dcterms:identifier "fn-abrirficha" ;
+    dcterms:description "Construye la ficha del elemento y busca vecinos en capas ya cargadas." ;
+    c4:tag "FUNCIÓN · JS" ;
+    c4:level 4 ;
+    c4:path "index.html" ;
+    c4:line 1638 ;
+    dcterms:isPartOf :ficha ;
+    c4v:order 37 .
+
+:fn-validar a c4:Element, c4:CodeElement ;
+    rdfs:label "main() · validar" ;
+    dcterms:identifier "fn-validar" ;
+    dcterms:description "Cuadres de agregados y conteos declarados; rc=1 si algo no cuadra." ;
+    c4:tag "FUNCIÓN · PY" ;
+    c4:level 4 ;
+    c4:path "scripts/validar.py" ;
+    c4:line 35 ;
+    dcterms:isPartOf :validador ;
+    c4v:order 38 .
+
+:fn-cifras a c4:Element, c4:CodeElement ;
+    rdfs:label "main() · cifras" ;
+    dcterms:identifier "fn-cifras" ;
+    dcterms:description "Con --check compara la tabla publicada con lo medido y falla si difieren." ;
+    c4:tag "FUNCIÓN · PY" ;
+    c4:level 4 ;
+    c4:path "scripts/cifras.py" ;
+    c4:line 168 ;
+    dcterms:isPartOf :cifras ;
+    c4v:order 39 .
+
+:rel:1 a c4:Relationship ;
+    c4:source :lector ;
+    c4:target :openinfraes ;
+    rdfs:label "abre el mapa" ;
+    c4v:order 1 ;
+    c4v:style "accent" .
+
+:rel:2 a c4:Relationship ;
+    c4:source :conectores-fuente ;
+    c4:target :osm ;
+    rdfs:label "Overpass" ;
+    c4:summaryLabel "descarga del organismo" ;
+    c4v:order 2 ;
+    c4v:dashed true .
+
+:rel:3 a c4:Relationship ;
+    c4:source :conectores-fuente ;
+    c4:target :miteco ;
+    rdfs:label "agua y plantas" ;
+    c4:summaryLabel "descarga del organismo" ;
+    c4v:order 3 ;
+    c4v:dashed true .
+
+:rel:4 a c4:Relationship ;
+    c4:source :conectores-fuente ;
+    c4:target :energia ;
+    rdfs:label "demanda y mix" ;
+    c4:summaryLabel "descarga del organismo" ;
+    c4v:order 4 ;
+    c4v:dashed true .
+
+:rel:5 a c4:Relationship ;
+    c4:source :conectores-fuente ;
+    c4:target :transporte ;
+    rdfs:label "NAP y GTFS-RT" ;
+    c4:summaryLabel "descarga del organismo" ;
+    c4v:order 5 ;
+    c4v:dashed true .
+
+:rel:6 a c4:Relationship ;
+    c4:source :conectores-fuente ;
+    c4:target :riesgo ;
+    rdfs:label "sismos y avisos" ;
+    c4:summaryLabel "descarga del organismo" ;
+    c4v:order 6 ;
+    c4v:dashed true .
+
+:rel:7 a c4:Relationship ;
+    c4:source :visor ;
+    c4:target :ign ;
+    rdfs:label "pide teselas" ;
+    c4v:order 7 .
+
+:rel:8 a c4:Relationship ;
+    c4:source :cfg-capas ;
+    c4:target :motor-capas ;
+    rdfs:label "declara 53 capas" ;
+    c4v:order 8 .
+
+:rel:9 a c4:Relationship ;
+    c4:source :motor-capas ;
+    c4:target :render ;
+    rdfs:label "pinta" ;
+    c4v:order 9 .
+
+:rel:10 a c4:Relationship ;
+    c4:source :render ;
+    c4:target :ficha ;
+    rdfs:label "clic en símbolo" ;
+    c4v:order 10 .
+
+:rel:11 a c4:Relationship ;
+    c4:source :motor-capas ;
+    c4:target :leyenda ;
+    rdfs:label "avisa cambio" ;
+    c4v:order 11 .
+
+:rel:12 a c4:Relationship ;
+    c4:source :ficha ;
+    c4:target :procedencia-ui ;
+    rdfs:label "pide fuente" ;
+    c4v:order 12 .
+
+:rel:13 a c4:Relationship ;
+    c4:source :api-visual ;
+    c4:target :motor-capas ;
+    rdfs:label "enciende capa" ;
+    c4v:order 13 .
+
+:rel:14 a c4:Relationship ;
+    c4:source :api-visual ;
+    c4:target :ficha ;
+    rdfs:label "abre por índice" ;
+    c4v:order 14 .
+
+:rel:15 a c4:Relationship ;
+    c4:source :motor-capas ;
+    c4:target :ciclo-capa ;
+    rdfs:label "cambia estado" ;
+    c4v:order 15 .
+
+:rel:16 a c4:Relationship ;
+    c4:source :motor-capas ;
+    c4:target :almacen ;
+    rdfs:label "fetch GeoJSON" ;
+    c4:summaryLabel "datos estáticos" ;
+    c4v:order 16 .
+
+:rel:17 a c4:Relationship ;
+    c4:source :procedencia-ui ;
+    c4:target :almacen ;
+    rdfs:label "lee fuentes.json" ;
+    c4:summaryLabel "datos estáticos" ;
+    c4v:order 17 .
+
+:rel:18 a c4:Relationship ;
+    c4:source :conectores-fuente ;
+    c4:target :normaliza ;
+    rdfs:label "normaliza" ;
+    c4v:order 18 .
+
+:rel:19 a c4:Relationship ;
+    c4:source :conectores-fuente ;
+    c4:target :simplificar ;
+    rdfs:label "simplifica" ;
+    c4v:order 19 .
+
+:rel:20 a c4:Relationship ;
+    c4:source :normaliza ;
+    c4:target :almacen ;
+    rdfs:label "escribe GeoJSON" ;
+    c4:summaryLabel "ficheros en datos/" ;
+    c4v:order 20 .
+
+:rel:21 a c4:Relationship ;
+    c4:source :simplificar ;
+    c4:target :almacen ;
+    rdfs:label "escribe simplificado" ;
+    c4:summaryLabel "ficheros en datos/" ;
+    c4v:order 21 .
+
+:rel:22 a c4:Relationship ;
+    c4:source :procedencia ;
+    c4:target :almacen ;
+    rdfs:label "escribe fuentes.json" ;
+    c4:summaryLabel "ficheros en datos/" ;
+    c4v:order 22 .
+
+:rel:23 a c4:Relationship ;
+    c4:source :agregados ;
+    c4:target :almacen ;
+    rdfs:label "escribe CSV" ;
+    c4:summaryLabel "ficheros en datos/" ;
+    c4v:order 23 .
+
+:rel:24 a c4:Relationship ;
+    c4:source :snapshot ;
+    c4:target :almacen ;
+    rdfs:label "archiva la foto" ;
+    c4:summaryLabel "ficheros en datos/" ;
+    c4v:order 24 .
+
+:rel:25 a c4:Relationship ;
+    c4:source :workflows ;
+    c4:target :conectores-fuente ;
+    rdfs:label "lanza refresco" ;
+    c4v:order 25 ;
+    c4v:dashed true .
+
+:rel:26 a c4:Relationship ;
+    c4:source :workflows ;
+    c4:target :validador ;
+    rdfs:label "valida antes" ;
+    c4v:order 26 .
+
+:rel:27 a c4:Relationship ;
+    c4:source :workflows ;
+    c4:target :cifras ;
+    rdfs:label "comprueba cifras" ;
+    c4v:order 27 .
+
+:rel:28 a c4:Relationship ;
+    c4:source :validador ;
+    c4:target :almacen ;
+    rdfs:label "lee recibos" ;
+    c4:summaryLabel "puertas del dato" ;
+    c4v:order 28 .
+
+:rel:29 a c4:Relationship ;
+    c4:source :cifras ;
+    c4:target :almacen ;
+    rdfs:label "mide la tabla" ;
+    c4:summaryLabel "puertas del dato" ;
+    c4v:order 29 .
+
+:rel:30 a c4:Relationship ;
+    c4:source :workflows ;
+    c4:target :github ;
+    rdfs:label "commit y push" ;
+    c4v:order 30 .
+
+:rel:31 a c4:Relationship ;
+    c4:source :github ;
+    c4:target :visor ;
+    rdfs:label "sirve la web" ;
+    c4v:order 31 .
+
+:rel:32 a c4:Relationship, c4:Transition ;
+    c4:source :st-apagada ;
+    c4:target :st-cargando ;
+    rdfs:label "ponerCapa on" ;
+    c4v:order 32 .
+
+:rel:33 a c4:Relationship, c4:Transition ;
+    c4:source :st-cargando ;
+    c4:target :st-cargada ;
+    rdfs:label "fetch ok" ;
+    c4v:order 33 .
+
+:rel:34 a c4:Relationship, c4:Transition ;
+    c4:source :st-cargando ;
+    c4:target :st-fallo ;
+    rdfs:label "fetch falla" ;
+    c4v:order 34 .
+
+:rel:35 a c4:Relationship, c4:Transition ;
+    c4:source :st-fallo ;
+    c4:target :st-cargando ;
+    rdfs:label "reintento" ;
+    c4v:order 35 .
+
+:rel:36 a c4:Relationship, c4:Transition ;
+    c4:source :st-cargada ;
+    c4:target :st-apagada ;
+    rdfs:label "ponerCapa off" ;
+    c4v:order 36 .
+
+:scenario:encender-capa a c4:Scenario ;
+    rdfs:label "Encender una capa" ;
+    dcterms:identifier "encender-capa" ;
+    dcterms:description "El camino único que comparten checkbox, vistas temáticas, enlace permanente y API." ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4:primaryActor :lector ;
+    c4:goal "Ver en el mapa una de las 53 capas sin descargar las demás." ;
+    c4:trigger "Clic en el checkbox de la capa, una vista temática o la API de consola." ;
+    c4:precondition "La capa está declarada en CAPAS y su fichero existe en datos/." ;
+    c4:outcome "Capa pintada, leyenda y contador actualizados; el fichero se ha pedido una sola vez." ;
+    c4v:order 1 ;
+    c4:hasStep :step:encender-capa:1, :step:encender-capa:2, :step:encender-capa:3, :step:encender-capa:4,
+        :step:encender-capa:5, :step:encender-capa:6, :step:encender-capa:7 .
+
+:step:encender-capa:1 a c4:Step ;
+    c4:inScenario :scenario:encender-capa ;
+    schema:position 1 ;
+    c4:source :lector ;
+    c4:target :motor-capas ;
+    rdfs:label "ponerCapa(id, true)" .
+
+:step:encender-capa:2 a c4:Step ;
+    c4:inScenario :scenario:encender-capa ;
+    schema:position 2 ;
+    c4:source :motor-capas ;
+    c4:target :ciclo-capa ;
+    rdfs:label "a cargando" .
+
+:step:encender-capa:3 a c4:Step ;
+    c4:inScenario :scenario:encender-capa ;
+    schema:position 3 ;
+    c4:source :motor-capas ;
+    c4:target :almacen ;
+    rdfs:label "GET fichero?v=VER" .
+
+:step:encender-capa:4 a c4:Step ;
+    c4:inScenario :scenario:encender-capa ;
+    schema:position 4 ;
+    c4:source :almacen ;
+    c4:target :motor-capas ;
+    rdfs:label "features" ;
+    c4:isReply true .
+
+:step:encender-capa:5 a c4:Step ;
+    c4:inScenario :scenario:encender-capa ;
+    schema:position 5 ;
+    c4:source :motor-capas ;
+    c4:target :render ;
+    rdfs:label "pintaPuntos / L.geoJSON" .
+
+:step:encender-capa:6 a c4:Step ;
+    c4:inScenario :scenario:encender-capa ;
+    schema:position 6 ;
+    c4:source :motor-capas ;
+    c4:target :leyenda ;
+    rdfs:label "actualizarLeyenda()" .
+
+:step:encender-capa:7 a c4:Step ;
+    c4:inScenario :scenario:encender-capa ;
+    schema:position 7 ;
+    c4:source :motor-capas ;
+    c4:target :ciclo-capa ;
+    rdfs:label "a cargada" .
+
+:scenario:abrir-ficha a c4:Scenario ;
+    rdfs:label "Abrir la ficha de un elemento" ;
+    dcterms:identifier "abrir-ficha" ;
+    dcterms:description "Del símbolo en el mapa a la procedencia y a los vecinos a menos de 30 km." ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4:primaryActor :lector ;
+    c4:goal "Saber qué es ese punto, de dónde sale el dato y qué infraestructura tiene al lado." ;
+    c4:trigger "Clic en un símbolo del mapa." ;
+    c4:precondition "La capa del elemento está encendida y cargada." ;
+    c4:outcome "Ficha con métricas, atributos, procedencia con licencia y fecha, y vecinos pinchables." ;
+    c4v:order 2 ;
+    c4:hasStep :step:abrir-ficha:1, :step:abrir-ficha:2, :step:abrir-ficha:3, :step:abrir-ficha:4,
+        :step:abrir-ficha:5, :step:abrir-ficha:6, :step:abrir-ficha:7 .
+
+:step:abrir-ficha:1 a c4:Step ;
+    c4:inScenario :scenario:abrir-ficha ;
+    schema:position 1 ;
+    c4:source :lector ;
+    c4:target :render ;
+    rdfs:label "clic en el símbolo" .
+
+:step:abrir-ficha:2 a c4:Step ;
+    c4:inScenario :scenario:abrir-ficha ;
+    schema:position 2 ;
+    c4:source :render ;
+    c4:target :ficha ;
+    rdfs:label "abrirFicha(properties)" .
+
+:step:abrir-ficha:3 a c4:Step ;
+    c4:inScenario :scenario:abrir-ficha ;
+    schema:position 3 ;
+    c4:source :ficha ;
+    c4:target :procedencia-ui ;
+    rdfs:label "¿de qué capa sale?" .
+
+:step:abrir-ficha:4 a c4:Step ;
+    c4:inScenario :scenario:abrir-ficha ;
+    schema:position 4 ;
+    c4:source :procedencia-ui ;
+    c4:target :almacen ;
+    rdfs:label "lee fuentes.json" .
+
+:step:abrir-ficha:5 a c4:Step ;
+    c4:inScenario :scenario:abrir-ficha ;
+    schema:position 5 ;
+    c4:source :almacen ;
+    c4:target :procedencia-ui ;
+    rdfs:label "organismo, licencia, fecha" ;
+    c4:isReply true .
+
+:step:abrir-ficha:6 a c4:Step ;
+    c4:inScenario :scenario:abrir-ficha ;
+    schema:position 6 ;
+    c4:source :ficha ;
+    c4:target :render ;
+    rdfs:label "busca a 30 km" .
+
+:step:abrir-ficha:7 a c4:Step ;
+    c4:inScenario :scenario:abrir-ficha ;
+    schema:position 7 ;
+    c4:source :render ;
+    c4:target :ficha ;
+    rdfs:label "vecinos pinchables" ;
+    c4:isReply true .
+
+:scenario:refresco-vivo a c4:Scenario ;
+    rdfs:label "Refresco de datos vivos" ;
+    dcterms:identifier "refresco-vivo" ;
+    dcterms:description "El flujo que mantiene frescas las capas de demanda, precio, avisos y sismos." ;
+    dcterms:isPartOf :model:openinfraes ;
+    c4:goal "Que el visor enseñe el dato de hace menos de 30 minutos, con su recibo al día." ;
+    c4:trigger "Cron de GitHub Actions cada 30 minutos." ;
+    c4:precondition "Las claves que necesiten las fuentes están como secret; si falta una, ese paso se salta." ;
+    c4:outcome "datos/ regenerado y commiteado por el bot; la fecha del recibo dice de cuándo es." ;
+    c4v:order 3 ;
+    c4:hasStep :step:refresco-vivo:1, :step:refresco-vivo:2, :step:refresco-vivo:3, :step:refresco-vivo:4,
+        :step:refresco-vivo:5, :step:refresco-vivo:6, :step:refresco-vivo:7, :step:refresco-vivo:8,
+        :step:refresco-vivo:9, :step:refresco-vivo:10 .
+
+:step:refresco-vivo:1 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 1 ;
+    c4:source :workflows ;
+    c4:target :conectores-fuente ;
+    rdfs:label "cron */30 * * * *" .
+
+:step:refresco-vivo:2 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 2 ;
+    c4:source :conectores-fuente ;
+    c4:target :energia ;
+    rdfs:label "ree_vivo · omie · entsoe" .
+
+:step:refresco-vivo:3 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 3 ;
+    c4:source :energia ;
+    c4:target :conectores-fuente ;
+    rdfs:label "JSON" ;
+    c4:isReply true .
+
+:step:refresco-vivo:4 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 4 ;
+    c4:source :conectores-fuente ;
+    c4:target :normaliza ;
+    rdfs:label "normaliza campos" .
+
+:step:refresco-vivo:5 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 5 ;
+    c4:source :normaliza ;
+    c4:target :almacen ;
+    rdfs:label "escribe + recibo" .
+
+:step:refresco-vivo:6 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 6 ;
+    c4:source :workflows ;
+    c4:target :validador ;
+    rdfs:label "python validar.py" .
+
+:step:refresco-vivo:7 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 7 ;
+    c4:source :validador ;
+    c4:target :almacen ;
+    rdfs:label "lee recibos y conteos" .
+
+:step:refresco-vivo:8 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 8 ;
+    c4:source :validador ;
+    c4:target :workflows ;
+    rdfs:label "VERDE" ;
+    c4:isReply true .
+
+:step:refresco-vivo:9 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 9 ;
+    c4:source :workflows ;
+    c4:target :github ;
+    rdfs:label "commit datos/" .
+
+:step:refresco-vivo:10 a c4:Step ;
+    c4:inScenario :scenario:refresco-vivo ;
+    schema:position 10 ;
+    c4:source :github ;
+    c4:target :visor ;
+    rdfs:label "sirve la web nueva" .

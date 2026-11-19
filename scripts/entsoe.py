@@ -264,12 +264,15 @@ def unidades(fecha):
 
 
 # Codigos PSR de ENTSO-E (documentType A75)
+# Códigos PSR de ENTSO-E (documentType A75). La tabla estaba DESPLAZADA a partir de B11:
+# B11 es hidro fluyente, B12 embalse y B13 marina; B15 es otras renovables (no solar térmica).
 PSR = {
-    "B01": "Biomasa", "B02": "Lignito", "B03": "Carbón", "B04": "Gas natural",
-    "B05": "Carbón", "B06": "Fuel", "B09": "Geotérmica", "B10": "Hidro bombeo",
-    "B11": "Hidro embalse", "B12": "Hidro fluyente", "B13": "Biogás", "B14": "Nuclear",
-    "B15": "Solar térmica", "B16": "Solar fotovoltaica", "B17": "Residuos",
-    "B18": "Eólica marina", "B19": "Eólica terrestre", "B20": "Otras",
+    "B01": "Biomasa", "B02": "Lignito", "B03": "Gas de carbón", "B04": "Gas natural",
+    "B05": "Carbón", "B06": "Fuel", "B07": "Pizarra bituminosa", "B08": "Turba",
+    "B09": "Geotérmica", "B10": "Hidro bombeo", "B11": "Hidro fluyente",
+    "B12": "Hidro embalse", "B13": "Marina", "B14": "Nuclear", "B15": "Otras renovables",
+    "B16": "Solar fotovoltaica", "B17": "Residuos", "B18": "Otras", "B19": "Eólica terrestre",
+    "B20": "Eólica marina", "B25": "Almacenamiento",
 }
 
 
@@ -291,7 +294,20 @@ def mix(fecha=None):
     filas = puntos(root)
     # OJO: A75 da MW MEDIOS de cada cuarto, no energia. Sumar MW y llamarlo MWh multiplica por 4
     # la cifra (daba 1.468 GWh para un dia de ~700). La energia de un cuarto es MW x 0,25 h.
-    ultimo, acumulado, cuartos = {}, {}, {}
+    # Cada punto necesita su FECHA: «ultimo» por orden de aparicion daba las 13:30 cuando el
+    # fichero se descargo a esa hora, y el visor lo pintaba como «generando ahora».
+    def _ts(pt):
+        if not pt.get("inicio") or not pt.get("posicion"):
+            return None
+        try:
+            t0 = datetime.datetime.fromisoformat(pt["inicio"].replace("Z", "+00:00"))
+        except ValueError:
+            return None
+        m = re.match(r"PT(\d+)M", pt.get("resolucion") or "PT15M")
+        paso = int(m.group(1)) if m else 15
+        return t0 + datetime.timedelta(minutes=paso * (pt["posicion"] - 1))
+
+    ultimo, ultimo_t, acumulado, cuartos = {}, {}, {}, {}
     for f in filas:
         t = f.get("tipo")
         if not t or f.get("valor") is None:
@@ -299,7 +315,32 @@ def mix(fecha=None):
         v = float(f["valor"])
         acumulado[t] = acumulado.get(t, 0.0) + v * 0.25
         cuartos[t] = cuartos.get(t, 0) + 1
-        ultimo[t] = v
+        ts = _ts(f)
+        if ts is None or t not in ultimo_t or ultimo_t[t] is None or ts >= ultimo_t[t]:
+            ultimo[t] = v
+            ultimo_t[t] = ts
+
+    # la hora del último cuarto REAL, en hora de Madrid, y cuántos minutos tiene encima
+    hora_ultimo = None
+    try:
+        ts_max = max([x for x in ultimo_t.values() if x], default=None)
+        if ts_max:
+            try:
+                import zoneinfo
+                ts_max = ts_max.astimezone(zoneinfo.ZoneInfo("Europe/Madrid"))
+            except Exception:
+                pass
+            hora_ultimo = ts_max
+    except ValueError:
+        hora_ultimo = None
+    edad_min = None
+    if hora_ultimo:
+        try:
+            ahora = datetime.datetime.now(hora_ultimo.tzinfo) if hora_ultimo.tzinfo \
+                    else datetime.datetime.now()
+            edad_min = int((ahora - hora_ultimo).total_seconds() // 60)
+        except Exception:
+            edad_min = None
     total_dia = sum(acumulado.values()) or 1.0
 
     # capacidad instalada por tecnologia, para el factor de carga y la estimacion por planta
@@ -317,7 +358,20 @@ def mix(fecha=None):
             except (TypeError, ValueError):
                 continue
 
-    techs = [{"codigo": t, "nombre": PSR.get(t, t),
+    # un código desconocido no se publica como "B25": se agrupa por el nombre visible y los
+    # sumandos de la misma tecnología (B03 y B05 son las dos «carbón») se suman en una fila
+    def _nombre(cod):
+        return PSR.get(cod, "Otras")
+    nu, ne, nc = {}, {}, {}
+    for c, v in ultimo.items():
+        nu[_nombre(c)] = nu.get(_nombre(c), 0.0) + v
+    for c, v in acumulado.items():
+        ne[_nombre(c)] = ne.get(_nombre(c), 0.0) + v
+    for c, v in cuartos.items():
+        nc[_nombre(c)] = nc.get(_nombre(c), 0) + v
+    acumulado, ultimo, cuartos = ne, nu, nc
+
+    techs = [{"codigo": t, "nombre": t,
               "mwh": round(acumulado[t], 1),
               "pct": round(100 * acumulado[t] / total_dia, 2),
               "ultimo_mw": round(ultimo[t], 1),
@@ -351,6 +405,8 @@ def mix(fecha=None):
         "fecha": hoy.isoformat(),
         "resolucion": "PT15M",
         "puntos": len(filas),
+        "hora_ultimo": hora_ultimo.strftime("%H:%M") if hora_ultimo else None,
+        "edad_min": edad_min,
         "series": len(acumulado),
         "total_mwh": round(total_dia, 1),
         "tecnologias": techs,

@@ -482,6 +482,20 @@
   #panel-dato .pd-lic.pend { background:rgba(251,191,36,.16); color:#fbbf24; }
   #panel-dato .pd-lic.cad { background:rgba(248,113,113,.16); color:#f87171; }
   #panel-dato .pd-lic.no { background:rgba(248,113,113,.2); color:#f87171; }
+
+  /* Los paneles de informacion van a la DERECHA y anchos: el contenido cabe sin rueda interna.
+     Antes eran tarjetas estrechas y centradas, y habia que bajar dentro para ver el detalle. */
+  #velo2, #velo3 { align-items:flex-start !important; justify-content:flex-end !important;
+    padding:72px 22px 22px 22px !important; }
+  #sis, #proyecto, #fuentes { width:min(1180px, 95vw) !important;
+    max-height:calc(100vh - 100px) !important; overflow-y:auto !important; }
+  #sis { column-count:2; column-gap:30px; }
+  #sis > .sis-cab, #sis > .sis-sec, #sis > .barra, #sis > .mix-fila, #sis > .nota-pie,
+  #sis > .vivo-fila, #sis > .cabecera, #sis > .prev, #sis > .prev-fila { break-inside:avoid; }
+  @media (max-width:1100px) {
+    #sis { column-count:1; }
+    #sis, #proyecto, #fuentes { width:96vw !important; }
+  }
 </style>
 </head>
 <body>
@@ -1089,7 +1103,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19q";
+const VER_DATOS = "2026-11-19r";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1204,9 +1218,9 @@ function pintarKPIs() {
     const cat = window.CATALOGO;
     if (cat && cat.resumen) {
       const pend = cat.resumen.licencia_pendiente || 0;
-      const cad = cat.resumen.caducados || 0;
+      const cad = cat.resumen.caducados || 0;   // caducado = dato viejo segun su TTL; no es licencia
       const clase = (pend || cad) ? "alerta" : "bien";
-      h += chipKPI("⚖", pend + " / " + cad, "licencias pendientes / datos caducados", clase);
+      h += chipKPI("⚖", pend, "capas sin licencia evaluada", clase);
     }
     if (aemet && aemet.features) {
       const n = aemet.features.length;
@@ -1381,6 +1395,17 @@ function nombreCampo(k) {
   return ETIQUETA[k] || k.replace(/_/g, " ").replace(/\w/g, m => m.toUpperCase());
 }
 
+/* Códigos de estado del registro: al usuario le dicen algo, al leerlos crudos no.
+   Se traducen aquí y no en el capturador, para que valga en todas las capas. */
+const VALORES = {
+  en_operacion: "En operación", en_construccion: "En construcción",
+  desmantelamiento: "En desmantelamiento", autorizada: "Autorizada", autorizado: "Autorizado",
+  vigente: "Vigente", historico: "Histórico", historica: "Histórica", produccion: "En producción",
+  clausurada: "Clausurada", clausurado: "Clausurado", paralizada: "Paralizada",
+  fuera_de_servicio: "Fuera de servicio", desaladora: "Desaladora", embalse: "Embalse",
+  "en servicio": "En servicio", "fuera de servicio": "Fuera de servicio",
+};
+
 function valorLegible(v) {
   // los arrays de datos (titulares de una nuclear, por ejemplo) se leen en una línea
   if (Array.isArray(v)) {
@@ -1391,6 +1416,10 @@ function valorLegible(v) {
   if (v === null || v === undefined || v === "") return null;
   // objetos y arrays no son datos legibles: "[object Object]" no le dice nada a nadie
   if (typeof v === "object") return null;
+  if (typeof v === "string") {
+    const t = VALORES[v.trim().toLowerCase()];
+    if (t) return t;
+  }
   if (typeof v === "boolean") return v ? "sí" : "no";
   if (typeof v === "number") return v.toLocaleString("es-ES", { maximumFractionDigits: 2 });
   const t = String(v).trim();
@@ -1861,8 +1890,13 @@ function cargar(c) {
               const v = f.properties[c.colorCampo];
               if (v) col = (c.colores ? (c.colores[v] || c.color) : v);
             }
-            return { color: col, weight: c.peso || 1.2, opacity: c.opacidad || .8,
-                     fillColor: col, fillOpacity: (c.tipo === "poligono" ? (c.opacidad || .3) : .12) };
+            // En polígonos el TRAZO va en un tono oscuro fijo: dos comunidades con el mismo
+            // dato comparten relleno y sin borde propio se leían como una sola mancha.
+            const esPoli = c.tipo === "poligono";
+            return { color: esPoli ? "rgba(4,7,12,.92)" : col,
+                     weight: esPoli ? Math.max(1.2, c.peso || 1.2) : (c.peso || 1.2),
+                     opacity: c.opacidad || .8,
+                     fillColor: col, fillOpacity: esPoli ? (c.opacidad || .3) : .12 };
           },
           onEachFeature: (f, layer) => {
             elementos[c.id].push(layer);
@@ -2155,7 +2189,7 @@ function pintarSis() {
     fetch("datos/esios_prevision.json").then(r => r.json()).catch(() => null),
     fetch("datos/ree_vivo.json").then(r => r.json()).catch(() => null),
     fetch("datos/omie_precio.json").then(r => r.json()).catch(() => null),
-    fetch("datos/entsoe_mix.json").then(r => r.json()).catch(() => null)
+    fetch("datos/entsoe_mix.json?v=" + VER_DATOS).then(r => r.json()).catch(() => null)
   ]).then(([d, p, v, omie, mix]) => {
     let h = "";
 
@@ -2164,13 +2198,34 @@ function pintarSis() {
       const COLMIX = { eolica: "#22d3ee", solar_fv: "#fbbf24", solar_ter: "#f59e0b",
                        hidro: "#3b82f6", ciclo: "#a855f7", nuclear: "#ef4444" };
       const est = v.estado || {};
-      const gen = Object.entries(v.series).filter(([k, x]) => x.grupo === "generacion");
-      const tot = gen.reduce((a, [, x]) => a + (x.valor || 0), 0);
+      // El mix en vivo se cuenta de UNA fuente y con TODAS las tecnologías. ESIOS solo abre 5
+      // series (sin nuclear ni cogeneración) y el total salía cojo: 26 GW de una demanda de 35.
+      // ENTSO-E A75 trae MW medios de cada cuarto por tecnología, nuclear incluida; ESIOS se queda
+      // para demanda, emisiones, intercambios y bombeo, que sí da cada 5 minutos.
+      const CLAVE_TEC = {
+        "eólica terrestre": "eolica", "eólica marina": "eolica", "solar fotovoltaica": "solar_fv",
+        "solar térmica": "solar_ter", "hidro embalse": "hidro", "hidro fluyente": "hidro",
+        "hidro bombeo": "bombeo", "nuclear": "nuclear", "gas natural": "ciclo",
+        "carbón": "carbon", "biomasa": "biomasa", "residuos": "residuos", "otras": "otras",
+      };
+      let gen = Object.entries(v.series).filter(([k, x]) => x.grupo === "generacion");
+      let tot = gen.reduce((a, [, x]) => a + (x.valor || 0), 0);
+      let fuenteMix = "ESIOS · 5 min";
+      const tec = (mix && mix.tecnologias) ? mix.tecnologias.filter(t => (t.ultimo_mw || 0) > 0) : [];
+      if (tec.length) {
+        gen = tec.map(t => [CLAVE_TEC[String(t.nombre).toLowerCase()] || "otras",
+                            { etiqueta: t.nombre, valor: t.ultimo_mw }]);
+        tot = tec.reduce((a, t) => a + t.ultimo_mw, 0);
+        // con la hora del último cuarto REAL: el fichero puede tener 40 min o 5 h
+        const edad = mix.edad_min;
+        fuenteMix = "ENTSO-E" + (mix.hora_ultimo ? " · " + mix.hora_ultimo : " · 15 min") +
+                    (edad != null && edad > 75 ? " · hace " + Math.round(edad / 60) + " h" : "");
+      }
       h += '<div class="sis-cab"><span class="tot">' + nf(Math.round(est.demanda || 0)) + '</span>' +
            '<span class="uni">MW de demanda ahora</span><span class="dia">' +
            (v.series.demanda ? v.series.demanda.hora : "") + '</span></div>';
       if (gen.length && tot > 0) {
-        h += '<div class="cabecera"><span class="n">Generando ahora</span><span class="track"></span>' +
+        h += '<div class="cabecera"><span class="n">Generando ahora · ' + fuenteMix + '</span><span class="track"></span>' +
              '<span class="v">MW</span><span class="p">%</span></div>';
         gen.sort((a, b) => b[1].valor - a[1].valor).forEach(([k, x]) => {
           const pct = 100 * x.valor / tot;
@@ -2180,6 +2235,11 @@ function pintarSis() {
                '<span class="v">' + nf(Math.round(x.valor)) + '</span>' +
                '<span class="p">' + pct.toFixed(1) + '%</span></div>';
         });
+      }
+      if (tot > 0) {
+        h += '<div class="nota-pie">' + nf(Math.round(tot)) + ' MW generados por las tecnologías ' +
+             'de arriba · demanda ' + nf(Math.round(est.demanda || 0)) + ' MW. La diferencia son ' +
+             'pérdidas, autoconsumo y saldo exterior.</div>';
       }
       // una linea: emisiones, intercambios netos, bombeo
       const co2 = est.co2 != null ? est.co2.toFixed(3) + " tCO₂/MW" : "—";
@@ -2213,7 +2273,8 @@ function pintarSis() {
                '<span class="mix-p">' + pct.toFixed(1) + '%</span></div>';
         });
         h += '</div>';
-        h += '<div class="nota-pie">' + mix.puntos + ' puntos de 15 min · ' +
+        h += '<div class="nota-pie">' + mix.puntos + ' puntos de 15 min' +
+             (mix.hora_ultimo ? ' · hasta las ' + mix.hora_ultimo : '') + ' · ' +
              (mix.total_mwh / 1000).toFixed(0) + ' GWh acumulados. ' +
              'No existe generación por planta en abierto: esto es por tecnología.</div>';
       }

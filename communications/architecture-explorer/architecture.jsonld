@@ -1,0 +1,1580 @@
+{
+  "@context": {
+    "c4": "https://caviri.github.io/c4-model-agentic-plugin/ontology/c4#",
+    "c4v": "https://caviri.github.io/c4-model-agentic-plugin/ontology/c4-view#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "schema": "https://schema.org/",
+    "sh": "http://www.w3.org/ns/shacl#",
+    "name": "rdfs:label",
+    "description": "dcterms:description",
+    "identifier": "dcterms:identifier",
+    "title": "dcterms:title",
+    "isPartOf": {
+      "@id": "dcterms:isPartOf",
+      "@type": "@id"
+    },
+    "hasPart": {
+      "@id": "dcterms:hasPart",
+      "@type": "@id"
+    },
+    "seeAlso": {
+      "@id": "rdfs:seeAlso",
+      "@type": "@id"
+    },
+    "repository": {
+      "@id": "dcterms:source",
+      "@type": "@id"
+    },
+    "conformsTo": {
+      "@id": "dcterms:conformsTo",
+      "@type": "@id"
+    },
+    "position": "schema:position",
+    "summary": "c4:summary",
+    "tag": "c4:tag",
+    "note": "c4:note",
+    "technology": "c4:technology",
+    "level": "c4:level",
+    "path": "c4:path",
+    "line": "c4:line",
+    "link": "c4:link",
+    "branch": "c4:branch",
+    "initial": "c4:initial",
+    "final": "c4:final",
+    "inVariant": {
+      "@id": "c4:inVariant",
+      "@type": "@id"
+    },
+    "variantDimension": "c4:variantDimension",
+    "uses": {
+      "@id": "c4:uses",
+      "@type": "@id"
+    },
+    "transitionsTo": {
+      "@id": "c4:transitionsTo",
+      "@type": "@id"
+    },
+    "source": {
+      "@id": "c4:source",
+      "@type": "@id"
+    },
+    "target": {
+      "@id": "c4:target",
+      "@type": "@id"
+    },
+    "summaryLabel": "c4:summaryLabel",
+    "inScenario": {
+      "@id": "c4:inScenario",
+      "@type": "@id"
+    },
+    "hasStep": {
+      "@id": "c4:hasStep",
+      "@type": "@id"
+    },
+    "isReply": "c4:isReply",
+    "primaryActor": {
+      "@id": "c4:primaryActor",
+      "@type": "@id"
+    },
+    "goal": "c4:goal",
+    "trigger": "c4:trigger",
+    "precondition": "c4:precondition",
+    "outcome": "c4:outcome",
+    "order": "c4v:order",
+    "style": "c4v:style",
+    "dashed": "c4v:dashed",
+    "column": "c4v:column",
+    "row": "c4v:row",
+    "noteList": {
+      "@id": "c4v:noteList",
+      "@container": "@list"
+    },
+    "technologyList": {
+      "@id": "c4v:technologyList",
+      "@container": "@list"
+    },
+    "variantList": {
+      "@id": "c4v:variantList",
+      "@type": "@id",
+      "@container": "@list"
+    },
+    "preconditionList": {
+      "@id": "c4v:preconditionList",
+      "@container": "@list"
+    },
+    "shortName": "c4v:shortName",
+    "tone": "c4v:tone",
+    "subtitle": "c4v:subtitle",
+    "toolbarTitle": "c4v:toolbarTitle",
+    "placeholder": "c4v:placeholder",
+    "startLevel": "c4v:startLevel",
+    "openElements": {
+      "@id": "c4v:openElements",
+      "@type": "@id",
+      "@container": "@list"
+    },
+    "edgeStyle": "c4v:edgeStyle",
+    "theme": "c4v:theme",
+    "defaultPins": {
+      "@id": "c4v:defaultPins",
+      "@type": "@id",
+      "@container": "@list"
+    },
+    "levelNames": {
+      "@id": "c4v:levelNames",
+      "@container": "@list"
+    },
+    "legendEntry": {
+      "@id": "c4v:legendEntry",
+      "@type": "@id"
+    },
+    "legendKey": "c4v:legendKey",
+    "sourceHost": "c4v:sourceHost",
+    "fileTemplate": "c4v:fileTemplate",
+    "dirTemplate": "c4v:dirTemplate",
+    "lineTemplate": "c4v:lineTemplate",
+    "linkLabel": "c4v:linkLabel",
+    "base": "c4v:base",
+    "vocabulary": "c4v:vocabulary",
+    "declare": {
+      "@id": "sh:declare",
+      "@type": "@id"
+    },
+    "prefix": "sh:prefix",
+    "namespace": "sh:namespace"
+  },
+  "@graph": [
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "@type": "c4:Model",
+      "title": "OpenInfraES architecture",
+      "name": "OpenInfraES",
+      "description": "Base de datos de infraestructura española y el mapa que la indexa. Sin backend: scripts que descargan de los organismos, un almacén de datos con su recibo de procedencia, un visor estático y dos puertas que impiden publicar un dato que no cuadre. Empieza por «Conectores» y sigue el flujo «Refresco de datos vivos».",
+      "identifier": "openinfraes",
+      "conformsTo": [
+        "https://caviri.github.io/c4-model-agentic-plugin/ontology/c4",
+        "https://caviri.github.io/c4-model-agentic-plugin/ontology/c4-view"
+      ],
+      "repository": "https://github.com/Ntizar/OpenInfraES",
+      "branch": "main",
+      "subtitle": "Ntizar/OpenInfraES",
+      "toolbarTitle": "Arquitectura de OpenInfraES",
+      "startLevel": 2,
+      "defaultPins": [
+        "https://github.com/Ntizar/OpenInfraES#lector",
+        "https://github.com/Ntizar/OpenInfraES#openinfraes",
+        "https://github.com/Ntizar/OpenInfraES#visor",
+        "https://github.com/Ntizar/OpenInfraES#almacen",
+        "https://github.com/Ntizar/OpenInfraES#gates",
+        "https://github.com/Ntizar/OpenInfraES#energia"
+      ],
+      "levelNames": [
+        "Contexto",
+        "Contenedores",
+        "Componentes",
+        "Código"
+      ],
+      "hasPart": [
+        "https://github.com/Ntizar/OpenInfraES#lector",
+        "https://github.com/Ntizar/OpenInfraES#openinfraes",
+        "https://github.com/Ntizar/OpenInfraES#osm",
+        "https://github.com/Ntizar/OpenInfraES#ign",
+        "https://github.com/Ntizar/OpenInfraES#miteco",
+        "https://github.com/Ntizar/OpenInfraES#energia",
+        "https://github.com/Ntizar/OpenInfraES#transporte",
+        "https://github.com/Ntizar/OpenInfraES#riesgo",
+        "https://github.com/Ntizar/OpenInfraES#github"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#lector",
+      "@type": [
+        "c4:Element",
+        "c4:Person"
+      ],
+      "name": "Lector del mapa",
+      "identifier": "lector",
+      "description": "Quien abre el visor para mirar la red eléctrica, el agua o el transporte. Enciende capas, busca elementos y abre fichas.",
+      "summary": "consulta la infraestructura",
+      "tag": "PERSON · CIUDADANO",
+      "level": 1,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "order": 1,
+      "style": "highlight",
+      "uses": "https://github.com/Ntizar/OpenInfraES#openinfraes"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#openinfraes",
+      "@type": [
+        "c4:Element",
+        "c4:SoftwareSystem"
+      ],
+      "name": "OpenInfraES",
+      "identifier": "openinfraes",
+      "description": "El producto completo: pipeline de datos + almacén + visor publicado en GitHub Pages. No tiene servidor propio ni base de datos relacional.",
+      "summary": "infraestructura de España en datos",
+      "tag": "SOFTWARE SYSTEM · WEB ESTÁTICA",
+      "level": 1,
+      "technology": [
+        "Python",
+        "JavaScript",
+        "GitHub Pages"
+      ],
+      "technologyList": [
+        "Python",
+        "JavaScript",
+        "GitHub Pages"
+      ],
+      "path": "README.md",
+      "line": 1,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "order": 2,
+      "hasPart": [
+        "https://github.com/Ntizar/OpenInfraES#visor",
+        "https://github.com/Ntizar/OpenInfraES#conectores",
+        "https://github.com/Ntizar/OpenInfraES#almacen",
+        "https://github.com/Ntizar/OpenInfraES#gates"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#osm",
+      "@type": [
+        "c4:Element",
+        "c4:SoftwareSystem",
+        "c4:ExternalSystem"
+      ],
+      "name": "OpenStreetMap",
+      "identifier": "osm",
+      "description": "Fuente comunitaria (ODbL): red de 220/400 kV, conducciones de agua y parte del transporte. Obliga a compartir igual el derivado.",
+      "summary": "red, agua, transporte",
+      "tag": "EXTERNAL · OVERPASS",
+      "level": 1,
+      "seeAlso": "https://overpass-api.de",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "order": 3
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#ign",
+      "@type": [
+        "c4:Element",
+        "c4:SoftwareSystem",
+        "c4:ExternalSystem"
+      ],
+      "name": "IGN · WMTS",
+      "identifier": "ign",
+      "description": "Cartografía de fondo del mapa, servida por WMTS público del IGN. Se consume en tiempo de lectura, no se descarga al repo.",
+      "summary": "teselas base sin clave",
+      "tag": "EXTERNAL · CARTOGRAFÍA",
+      "level": 1,
+      "seeAlso": "https://www.ign.es",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "order": 4
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#miteco",
+      "@type": [
+        "c4:Element",
+        "c4:SoftwareSystem",
+        "c4:ExternalSystem"
+      ],
+      "name": "MITECO",
+      "identifier": "miteco",
+      "description": "Embalses y parte hidrológica, registro de plantas de generación, residuos radiactivos y demarcaciones hidrográficas.",
+      "summary": "embalses y plantas",
+      "tag": "EXTERNAL · AGUA",
+      "level": 1,
+      "seeAlso": "https://www.miteco.gob.es",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "order": 5
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#energia",
+      "@type": [
+        "c4:Element",
+        "c4:SoftwareSystem",
+        "c4:ExternalSystem"
+      ],
+      "name": "REE · ESIOS · OMIE",
+      "identifier": "energia",
+      "description": "Sistema eléctrico en vivo: demanda, mix de generación, precio, previsión e intercambios. ENTSO-E cubre lo que ESIOS no publica.",
+      "summary": "demanda, mix, precio",
+      "tag": "EXTERNAL · ELÉCTRICO",
+      "level": 1,
+      "seeAlso": "https://www.ree.es",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "order": 6
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#transporte",
+      "@type": [
+        "c4:Element",
+        "c4:SoftwareSystem",
+        "c4:ExternalSystem"
+      ],
+      "name": "MITMA · NAP · Renfe",
+      "identifier": "transporte",
+      "description": "Carreteras y puertos (MITMA, visor Hermes), catálogo y líneas (NAP), vehículos de Cercanías (GTFS-RT) y tráfico de la DGT.",
+      "summary": "trenes, puertos, DGT",
+      "tag": "EXTERNAL · TRANSPORTE",
+      "level": 1,
+      "seeAlso": "https://nap.transportes.gob.es",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "order": 7
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#riesgo",
+      "@type": [
+        "c4:Element",
+        "c4:SoftwareSystem",
+        "c4:ExternalSystem"
+      ],
+      "name": "CSN · EMSC · AEMET",
+      "identifier": "riesgo",
+      "description": "Sismicidad de la última semana (CSN/EMSC) y avisos meteorológicos de AEMET vía Meteoalarm.",
+      "summary": "sismos y avisos",
+      "tag": "EXTERNAL · RIESGO",
+      "level": 1,
+      "seeAlso": "https://www.igme.es",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "order": 8
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#github",
+      "@type": [
+        "c4:Element",
+        "c4:SoftwareSystem",
+        "c4:ExternalSystem"
+      ],
+      "name": "GitHub · Pages",
+      "identifier": "github",
+      "description": "Aloja el repositorio, sirve el sitio estático desde la raíz y ejecuta los workflows que refrescan los datos.",
+      "summary": "publica y ejecuta el CI",
+      "tag": "EXTERNAL · PLATAFORMA",
+      "level": 1,
+      "seeAlso": "https://ntizar.github.io/OpenInfraES/",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "order": 9,
+      "uses": "https://github.com/Ntizar/OpenInfraES#visor"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#visor",
+      "@type": [
+        "c4:Element",
+        "c4:Container"
+      ],
+      "name": "Visor del mapa",
+      "identifier": "visor",
+      "description": "Página única de 2.588 líneas. Declara las 53 capas en un array y las carga bajo demanda con fetch; nada se descarga hasta que se enciende.",
+      "summary": "index.html y 53 capas",
+      "tag": "CONTAINER · LEAFLET",
+      "level": 2,
+      "technology": [
+        "HTML",
+        "JavaScript",
+        "Leaflet"
+      ],
+      "technologyList": [
+        "HTML",
+        "JavaScript",
+        "Leaflet"
+      ],
+      "path": "index.html",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#openinfraes",
+      "order": 10,
+      "style": "highlight",
+      "hasPart": [
+        "https://github.com/Ntizar/OpenInfraES#cfg-capas",
+        "https://github.com/Ntizar/OpenInfraES#motor-capas",
+        "https://github.com/Ntizar/OpenInfraES#render",
+        "https://github.com/Ntizar/OpenInfraES#ficha",
+        "https://github.com/Ntizar/OpenInfraES#leyenda",
+        "https://github.com/Ntizar/OpenInfraES#procedencia-ui",
+        "https://github.com/Ntizar/OpenInfraES#api-visual",
+        "https://github.com/Ntizar/OpenInfraES#ciclo-capa"
+      ],
+      "uses": "https://github.com/Ntizar/OpenInfraES#ign"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#conectores",
+      "@type": [
+        "c4:Element",
+        "c4:Container"
+      ],
+      "name": "Conectores",
+      "identifier": "conectores",
+      "description": "Jobs batch que se ejecutan en local o en Actions: descargan del organismo, normalizan, simplifican si pesa y escriben el dato con su recibo.",
+      "summary": "39 scripts, uno por fuente",
+      "tag": "CONTAINER · PYTHON",
+      "level": 2,
+      "technology": [
+        "Python 3.12",
+        "requests"
+      ],
+      "technologyList": [
+        "Python 3.12",
+        "requests"
+      ],
+      "path": "scripts/",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#openinfraes",
+      "order": 11,
+      "hasPart": [
+        "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+        "https://github.com/Ntizar/OpenInfraES#normaliza",
+        "https://github.com/Ntizar/OpenInfraES#simplificar",
+        "https://github.com/Ntizar/OpenInfraES#agregados",
+        "https://github.com/Ntizar/OpenInfraES#procedencia",
+        "https://github.com/Ntizar/OpenInfraES#snapshot"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "@type": [
+        "c4:Element",
+        "c4:Container",
+        "c4:DataStore"
+      ],
+      "name": "Datos",
+      "identifier": "almacen",
+      "description": "El activo del proyecto: GeoJSON por capa, agregados CSV, fuentes.json y catalogo.json. Cada fichero lleva su recibo de procedencia y fecha.",
+      "summary": "73 geojson + 30 recibos",
+      "tag": "DATA STORE · GEOJSON",
+      "level": 2,
+      "technology": [
+        "GeoJSON",
+        "CSV",
+        "JSON"
+      ],
+      "technologyList": [
+        "GeoJSON",
+        "CSV",
+        "JSON"
+      ],
+      "path": "datos/",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#openinfraes",
+      "order": 12,
+      "style": "highlight"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#gates",
+      "@type": [
+        "c4:Element",
+        "c4:Container"
+      ],
+      "name": "Arnés de datos",
+      "identifier": "gates",
+      "description": "Las dos puertas del proyecto: cuadres de datos y cifras de la documentación. Si una no pasa, el dato no sale.",
+      "summary": "valida antes de publicar",
+      "tag": "CONTAINER · CI",
+      "level": 2,
+      "technology": [
+        "Python",
+        "GitHub Actions"
+      ],
+      "technologyList": [
+        "Python",
+        "GitHub Actions"
+      ],
+      "path": "scripts/validar.py",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#openinfraes",
+      "order": 13,
+      "style": "highlight",
+      "hasPart": [
+        "https://github.com/Ntizar/OpenInfraES#validador",
+        "https://github.com/Ntizar/OpenInfraES#cifras",
+        "https://github.com/Ntizar/OpenInfraES#workflows"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#cfg-capas",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "CAPAS (declaración)",
+      "identifier": "cfg-capas",
+      "description": "Array que define cada capa: grupo, fichero, estilo, zoomMin, filtro y campos de la ficha. Añadir una capa es añadir una entrada aquí.",
+      "summary": "una entrada por capa",
+      "tag": "CONFIG · 53 CAPAS",
+      "level": 3,
+      "path": "index.html",
+      "line": 925,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
+      "order": 14,
+      "uses": "https://github.com/Ntizar/OpenInfraES#motor-capas"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "Motor de capas",
+      "identifier": "motor-capas",
+      "description": "Un solo camino para encender una capa: checkbox, vistas temáticas, enlace permanente y API llaman a ponerCapa(). cargar() hace un fetch por sesión.",
+      "summary": "ponerCapa: un camino",
+      "tag": "COMPONENT · JS",
+      "level": 3,
+      "path": "index.html",
+      "line": 1922,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
+      "order": 15,
+      "style": "highlight",
+      "hasPart": [
+        "https://github.com/Ntizar/OpenInfraES#fn-ponercapa",
+        "https://github.com/Ntizar/OpenInfraES#fn-cargar"
+      ],
+      "uses": [
+        "https://github.com/Ntizar/OpenInfraES#render",
+        "https://github.com/Ntizar/OpenInfraES#leyenda",
+        "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
+        "https://github.com/Ntizar/OpenInfraES#almacen"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#render",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "Render del mapa",
+      "identifier": "render",
+      "description": "Dibuja puntos (sólo los de la vista) y geometrías con L.geoJSON, con trazo oscuro en polígonos y atenuación por debajo de zoomMin.",
+      "summary": "puntos y polígonos",
+      "tag": "COMPONENT · LEAFLET",
+      "level": 3,
+      "path": "index.html",
+      "line": 1736,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
+      "order": 16,
+      "uses": "https://github.com/Ntizar/OpenInfraES#ficha"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#ficha",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "Ficha del elemento",
+      "identifier": "ficha",
+      "description": "Panel de un elemento: métricas destacadas, atributos humanizados, procedencia con licencia y fecha, y qué hay a menos de 30 km.",
+      "summary": "métricas y procedencia",
+      "tag": "COMPONENT · JS",
+      "level": 3,
+      "path": "index.html",
+      "line": 1638,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
+      "order": 17,
+      "hasPart": "https://github.com/Ntizar/OpenInfraES#fn-abrirficha",
+      "uses": "https://github.com/Ntizar/OpenInfraES#procedencia-ui"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#leyenda",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "Leyenda",
+      "identifier": "leyenda",
+      "description": "Recalcula la leyenda al cambiar capas; para capas con escala pinta la rampa con sus extremos en vez de una lista.",
+      "summary": "rampas y colores",
+      "tag": "COMPONENT · JS",
+      "level": 3,
+      "path": "index.html",
+      "line": 1314,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
+      "order": 18
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#procedencia-ui",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "Panel de fuentes",
+      "identifier": "procedencia-ui",
+      "description": "Lee fuentes.json y catalogo.json al arrancar y los pinta como tabla de procedencia dentro del visor.",
+      "summary": "procedencia por capa",
+      "tag": "COMPONENT · JS",
+      "level": 3,
+      "path": "index.html",
+      "line": 2080,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
+      "order": 19,
+      "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#api-visual",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "API de consola",
+      "identifier": "api-visual",
+      "description": "window.OpenInfraES: abrir(capa, i, zoom), estados(), fuentes() y bench() para medir el arrastre. Lo usa el arnés y las capturas.",
+      "summary": "OpenInfraES.*",
+      "tag": "COMPONENT · JS",
+      "level": 3,
+      "path": "index.html",
+      "line": 2457,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
+      "order": 20,
+      "uses": [
+        "https://github.com/Ntizar/OpenInfraES#motor-capas",
+        "https://github.com/Ntizar/OpenInfraES#ficha"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "Ciclo de una capa",
+      "identifier": "ciclo-capa",
+      "description": "Estados por los que pasa una capa en el visor. Un fallo de red deja __cargada en false para poder reintentar al volver a encenderla.",
+      "summary": "apagada a cargada",
+      "tag": "CLASS · ESTADOS",
+      "level": 3,
+      "path": "index.html",
+      "line": 1912,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
+      "order": 21,
+      "hasPart": [
+        "https://github.com/Ntizar/OpenInfraES#st-apagada",
+        "https://github.com/Ntizar/OpenInfraES#st-cargando",
+        "https://github.com/Ntizar/OpenInfraES#st-cargada",
+        "https://github.com/Ntizar/OpenInfraES#st-fallo"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#st-apagada",
+      "@type": [
+        "c4:Element",
+        "c4:State"
+      ],
+      "name": "apagada",
+      "identifier": "st-apagada",
+      "description": "La capa está declarada en CAPAS pero no en el mapa.",
+      "level": 4,
+      "initial": true,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
+      "order": 22,
+      "transitionsTo": "https://github.com/Ntizar/OpenInfraES#st-cargando"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#st-cargando",
+      "@type": [
+        "c4:Element",
+        "c4:State"
+      ],
+      "name": "cargando",
+      "identifier": "st-cargando",
+      "description": "fetch del GeoJSON en curso (una sola vez por sesión).",
+      "level": 4,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
+      "order": 23,
+      "transitionsTo": [
+        "https://github.com/Ntizar/OpenInfraES#st-cargada",
+        "https://github.com/Ntizar/OpenInfraES#st-fallo"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#st-cargada",
+      "@type": [
+        "c4:Element",
+        "c4:State"
+      ],
+      "name": "cargada",
+      "identifier": "st-cargada",
+      "description": "Features en datos[id], pintados en el mapa e indexados para el buscador.",
+      "level": 4,
+      "final": true,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
+      "order": 24,
+      "transitionsTo": "https://github.com/Ntizar/OpenInfraES#st-apagada"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#st-fallo",
+      "@type": [
+        "c4:Element",
+        "c4:State"
+      ],
+      "name": "fallo",
+      "identifier": "st-fallo",
+      "description": "El fetch falló: el contador queda en «—» y la capa se puede reintentar.",
+      "level": 4,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
+      "order": 25,
+      "transitionsTo": "https://github.com/Ntizar/OpenInfraES#st-cargando"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "Conectores por fuente",
+      "identifier": "conectores-fuente",
+      "description": "Un script por organismo (descargar, hermes, nap, gtfsrt, dgt_rt, entsoe, omie, ree_vivo, sismos, irewater…). Escribe su recibo de descarga.",
+      "summary": "descarga por organismo",
+      "tag": "COMPONENT · PYTHON",
+      "level": 3,
+      "path": "scripts/descargar.py",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
+      "order": 26,
+      "uses": [
+        "https://github.com/Ntizar/OpenInfraES#osm",
+        "https://github.com/Ntizar/OpenInfraES#miteco",
+        "https://github.com/Ntizar/OpenInfraES#energia",
+        "https://github.com/Ntizar/OpenInfraES#transporte",
+        "https://github.com/Ntizar/OpenInfraES#riesgo",
+        "https://github.com/Ntizar/OpenInfraES#normaliza",
+        "https://github.com/Ntizar/OpenInfraES#simplificar"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#normaliza",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "normaliza.py",
+      "identifier": "normaliza",
+      "description": "Provincia y comunidad autónoma siempre por código oficial, nunca por nombre: el nombre cambia y el cruce por texto pierde datos en silencio.",
+      "summary": "provincias por código",
+      "tag": "NORMALIZACIÓN",
+      "level": 3,
+      "path": "scripts/normaliza.py",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
+      "order": 27,
+      "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#simplificar",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "simplificar.py",
+      "identifier": "simplificar",
+      "description": "Simplifica geometrías para el visor y deja un recibo con vértices antes y después (94.000 vértices cuestan un frame por arrastre).",
+      "summary": "Douglas-Peucker",
+      "tag": "GEOMETRÍA",
+      "level": 3,
+      "path": "scripts/simplificar.py",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
+      "order": 28,
+      "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#agregados",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "agregar.py",
+      "identifier": "agregados",
+      "description": "Convierte los GeoJSON de red y plantas en CSV por tensión, operador, tecnología y comunidad autónoma.",
+      "summary": "CSV reutilizables",
+      "tag": "AGREGADOS",
+      "level": 3,
+      "path": "scripts/agregar.py",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
+      "order": 29,
+      "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#procedencia",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "Procedencia",
+      "identifier": "procedencia",
+      "description": "fuentes_visor.py, catalogo.py y cadenas.py: generan fuentes.json y catalogo.json desde los recibos reales, separando fecha de dato, publicación y descarga.",
+      "summary": "fuentes y catálogo",
+      "tag": "CONTRATO",
+      "level": 3,
+      "path": "scripts/fuentes_visor.py",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
+      "order": 30,
+      "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#snapshot",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "snapshot.py",
+      "identifier": "snapshot",
+      "description": "Archiva una foto diaria de los datos vivos para poder responder «¿cómo ha evolucionado esto?».",
+      "summary": "foto diaria del dato",
+      "tag": "SERIE",
+      "level": 3,
+      "path": "scripts/snapshot.py",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
+      "order": 31,
+      "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#validador",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "validar.py",
+      "identifier": "validador",
+      "description": "Comprueba GeoJSON mínimos, cuadres de los agregados y conteos declarados. Termina en RESULTADO: VERDE o ROJO.",
+      "summary": "recibos y conteos",
+      "tag": "GATE",
+      "level": 3,
+      "path": "scripts/validar.py",
+      "line": 35,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#gates",
+      "order": 32,
+      "hasPart": "https://github.com/Ntizar/OpenInfraES#fn-validar",
+      "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#cifras",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "cifras.py",
+      "identifier": "cifras",
+      "description": "Reescribe la tabla de capas del README entre marcas y con --check falla si la prosa se ha desfasado del dato.",
+      "summary": "tabla del README",
+      "tag": "GATE",
+      "level": 3,
+      "path": "scripts/cifras.py",
+      "line": 168,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#gates",
+      "order": 33,
+      "hasPart": "https://github.com/Ntizar/OpenInfraES#fn-cifras",
+      "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#workflows",
+      "@type": [
+        "c4:Element",
+        "c4:Component"
+      ],
+      "name": "GitHub Actions",
+      "identifier": "workflows",
+      "description": "refresco.yml relanza las capas vivas cada 30 minutos y commitea; validar.yml valida en cada push a main.",
+      "summary": "refresco cada 30 min",
+      "tag": "ORQUESTADOR",
+      "level": 3,
+      "path": ".github/workflows/refresco.yml",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#gates",
+      "order": 34,
+      "uses": [
+        "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+        "https://github.com/Ntizar/OpenInfraES#validador",
+        "https://github.com/Ntizar/OpenInfraES#cifras",
+        "https://github.com/Ntizar/OpenInfraES#github"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#fn-ponercapa",
+      "@type": [
+        "c4:Element",
+        "c4:CodeElement"
+      ],
+      "name": "ponerCapa()",
+      "identifier": "fn-ponercapa",
+      "description": "Sincroniza checkbox, mapa, leyenda y contador; en lote lo hace una vez al final.",
+      "tag": "FUNCIÓN · JS",
+      "level": 4,
+      "path": "index.html",
+      "line": 1922,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "order": 35
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#fn-cargar",
+      "@type": [
+        "c4:Element",
+        "c4:CodeElement"
+      ],
+      "name": "cargar()",
+      "identifier": "fn-cargar",
+      "description": "fetch del GeoJSON con versión, guarda features en datos[id] y llama a pintarPuntos.",
+      "tag": "FUNCIÓN · JS",
+      "level": 4,
+      "path": "index.html",
+      "line": 1804,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "order": 36
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#fn-abrirficha",
+      "@type": [
+        "c4:Element",
+        "c4:CodeElement"
+      ],
+      "name": "abrirFicha()",
+      "identifier": "fn-abrirficha",
+      "description": "Construye la ficha del elemento y busca vecinos en capas ya cargadas.",
+      "tag": "FUNCIÓN · JS",
+      "level": 4,
+      "path": "index.html",
+      "line": 1638,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#ficha",
+      "order": 37
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#fn-validar",
+      "@type": [
+        "c4:Element",
+        "c4:CodeElement"
+      ],
+      "name": "main() · validar",
+      "identifier": "fn-validar",
+      "description": "Cuadres de agregados y conteos declarados; rc=1 si algo no cuadra.",
+      "tag": "FUNCIÓN · PY",
+      "level": 4,
+      "path": "scripts/validar.py",
+      "line": 35,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#validador",
+      "order": 38
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#fn-cifras",
+      "@type": [
+        "c4:Element",
+        "c4:CodeElement"
+      ],
+      "name": "main() · cifras",
+      "identifier": "fn-cifras",
+      "description": "Con --check compara la tabla publicada con lo medido y falla si difieren.",
+      "tag": "FUNCIÓN · PY",
+      "level": 4,
+      "path": "scripts/cifras.py",
+      "line": 168,
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#cifras",
+      "order": 39
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:1",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#lector",
+      "target": "https://github.com/Ntizar/OpenInfraES#openinfraes",
+      "name": "abre el mapa",
+      "order": 1,
+      "style": "accent"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:2",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "target": "https://github.com/Ntizar/OpenInfraES#osm",
+      "name": "Overpass",
+      "summaryLabel": "descarga del organismo",
+      "order": 2,
+      "dashed": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:3",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "target": "https://github.com/Ntizar/OpenInfraES#miteco",
+      "name": "agua y plantas",
+      "summaryLabel": "descarga del organismo",
+      "order": 3,
+      "dashed": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:4",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "target": "https://github.com/Ntizar/OpenInfraES#energia",
+      "name": "demanda y mix",
+      "summaryLabel": "descarga del organismo",
+      "order": 4,
+      "dashed": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:5",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "target": "https://github.com/Ntizar/OpenInfraES#transporte",
+      "name": "NAP y GTFS-RT",
+      "summaryLabel": "descarga del organismo",
+      "order": 5,
+      "dashed": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:6",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "target": "https://github.com/Ntizar/OpenInfraES#riesgo",
+      "name": "sismos y avisos",
+      "summaryLabel": "descarga del organismo",
+      "order": 6,
+      "dashed": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:7",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#visor",
+      "target": "https://github.com/Ntizar/OpenInfraES#ign",
+      "name": "pide teselas",
+      "order": 7
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:8",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#cfg-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "name": "declara 53 capas",
+      "order": 8
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:9",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#render",
+      "name": "pinta",
+      "order": 9
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:10",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#render",
+      "target": "https://github.com/Ntizar/OpenInfraES#ficha",
+      "name": "clic en símbolo",
+      "order": 10
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:11",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#leyenda",
+      "name": "avisa cambio",
+      "order": 11
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:12",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#ficha",
+      "target": "https://github.com/Ntizar/OpenInfraES#procedencia-ui",
+      "name": "pide fuente",
+      "order": 12
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:13",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#api-visual",
+      "target": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "name": "enciende capa",
+      "order": 13
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:14",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#api-visual",
+      "target": "https://github.com/Ntizar/OpenInfraES#ficha",
+      "name": "abre por índice",
+      "order": 14
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:15",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
+      "name": "cambia estado",
+      "order": 15
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:16",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "fetch GeoJSON",
+      "summaryLabel": "datos estáticos",
+      "order": 16
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:17",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#procedencia-ui",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "lee fuentes.json",
+      "summaryLabel": "datos estáticos",
+      "order": 17
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:18",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "target": "https://github.com/Ntizar/OpenInfraES#normaliza",
+      "name": "normaliza",
+      "order": 18
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:19",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "target": "https://github.com/Ntizar/OpenInfraES#simplificar",
+      "name": "simplifica",
+      "order": 19
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:20",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#normaliza",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "escribe GeoJSON",
+      "summaryLabel": "ficheros en datos/",
+      "order": 20
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:21",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#simplificar",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "escribe simplificado",
+      "summaryLabel": "ficheros en datos/",
+      "order": 21
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:22",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#procedencia",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "escribe fuentes.json",
+      "summaryLabel": "ficheros en datos/",
+      "order": 22
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:23",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#agregados",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "escribe CSV",
+      "summaryLabel": "ficheros en datos/",
+      "order": 23
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:24",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#snapshot",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "archiva la foto",
+      "summaryLabel": "ficheros en datos/",
+      "order": 24
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:25",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#workflows",
+      "target": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "name": "lanza refresco",
+      "order": 25,
+      "dashed": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:26",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#workflows",
+      "target": "https://github.com/Ntizar/OpenInfraES#validador",
+      "name": "valida antes",
+      "order": 26
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:27",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#workflows",
+      "target": "https://github.com/Ntizar/OpenInfraES#cifras",
+      "name": "comprueba cifras",
+      "order": 27
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:28",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#validador",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "lee recibos",
+      "summaryLabel": "puertas del dato",
+      "order": 28
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:29",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#cifras",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "mide la tabla",
+      "summaryLabel": "puertas del dato",
+      "order": 29
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:30",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#workflows",
+      "target": "https://github.com/Ntizar/OpenInfraES#github",
+      "name": "commit y push",
+      "order": 30
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:31",
+      "@type": "c4:Relationship",
+      "source": "https://github.com/Ntizar/OpenInfraES#github",
+      "target": "https://github.com/Ntizar/OpenInfraES#visor",
+      "name": "sirve la web",
+      "order": 31
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:32",
+      "@type": [
+        "c4:Relationship",
+        "c4:Transition"
+      ],
+      "source": "https://github.com/Ntizar/OpenInfraES#st-apagada",
+      "target": "https://github.com/Ntizar/OpenInfraES#st-cargando",
+      "name": "ponerCapa on",
+      "order": 32
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:33",
+      "@type": [
+        "c4:Relationship",
+        "c4:Transition"
+      ],
+      "source": "https://github.com/Ntizar/OpenInfraES#st-cargando",
+      "target": "https://github.com/Ntizar/OpenInfraES#st-cargada",
+      "name": "fetch ok",
+      "order": 33
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:34",
+      "@type": [
+        "c4:Relationship",
+        "c4:Transition"
+      ],
+      "source": "https://github.com/Ntizar/OpenInfraES#st-cargando",
+      "target": "https://github.com/Ntizar/OpenInfraES#st-fallo",
+      "name": "fetch falla",
+      "order": 34
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:35",
+      "@type": [
+        "c4:Relationship",
+        "c4:Transition"
+      ],
+      "source": "https://github.com/Ntizar/OpenInfraES#st-fallo",
+      "target": "https://github.com/Ntizar/OpenInfraES#st-cargando",
+      "name": "reintento",
+      "order": 35
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#rel:36",
+      "@type": [
+        "c4:Relationship",
+        "c4:Transition"
+      ],
+      "source": "https://github.com/Ntizar/OpenInfraES#st-cargada",
+      "target": "https://github.com/Ntizar/OpenInfraES#st-apagada",
+      "name": "ponerCapa off",
+      "order": 36
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#scenario:encender-capa",
+      "@type": "c4:Scenario",
+      "name": "Encender una capa",
+      "identifier": "encender-capa",
+      "description": "El camino único que comparten checkbox, vistas temáticas, enlace permanente y API.",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "primaryActor": "https://github.com/Ntizar/OpenInfraES#lector",
+      "goal": "Ver en el mapa una de las 53 capas sin descargar las demás.",
+      "trigger": "Clic en el checkbox de la capa, una vista temática o la API de consola.",
+      "precondition": "La capa está declarada en CAPAS y su fichero existe en datos/.",
+      "outcome": "Capa pintada, leyenda y contador actualizados; el fichero se ha pedido una sola vez.",
+      "order": 1,
+      "hasStep": [
+        "https://github.com/Ntizar/OpenInfraES#step:encender-capa:1",
+        "https://github.com/Ntizar/OpenInfraES#step:encender-capa:2",
+        "https://github.com/Ntizar/OpenInfraES#step:encender-capa:3",
+        "https://github.com/Ntizar/OpenInfraES#step:encender-capa:4",
+        "https://github.com/Ntizar/OpenInfraES#step:encender-capa:5",
+        "https://github.com/Ntizar/OpenInfraES#step:encender-capa:6",
+        "https://github.com/Ntizar/OpenInfraES#step:encender-capa:7"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:encender-capa:1",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:encender-capa",
+      "position": 1,
+      "source": "https://github.com/Ntizar/OpenInfraES#lector",
+      "target": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "name": "ponerCapa(id, true)"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:encender-capa:2",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:encender-capa",
+      "position": 2,
+      "source": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
+      "name": "a cargando"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:encender-capa:3",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:encender-capa",
+      "position": 3,
+      "source": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "GET fichero?v=VER"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:encender-capa:4",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:encender-capa",
+      "position": 4,
+      "source": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "target": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "name": "features",
+      "isReply": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:encender-capa:5",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:encender-capa",
+      "position": 5,
+      "source": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#render",
+      "name": "pintaPuntos / L.geoJSON"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:encender-capa:6",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:encender-capa",
+      "position": 6,
+      "source": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#leyenda",
+      "name": "actualizarLeyenda()"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:encender-capa:7",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:encender-capa",
+      "position": 7,
+      "source": "https://github.com/Ntizar/OpenInfraES#motor-capas",
+      "target": "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
+      "name": "a cargada"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#scenario:abrir-ficha",
+      "@type": "c4:Scenario",
+      "name": "Abrir la ficha de un elemento",
+      "identifier": "abrir-ficha",
+      "description": "Del símbolo en el mapa a la procedencia y a los vecinos a menos de 30 km.",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "primaryActor": "https://github.com/Ntizar/OpenInfraES#lector",
+      "goal": "Saber qué es ese punto, de dónde sale el dato y qué infraestructura tiene al lado.",
+      "trigger": "Clic en un símbolo del mapa.",
+      "precondition": "La capa del elemento está encendida y cargada.",
+      "outcome": "Ficha con métricas, atributos, procedencia con licencia y fecha, y vecinos pinchables.",
+      "order": 2,
+      "hasStep": [
+        "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:1",
+        "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:2",
+        "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:3",
+        "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:4",
+        "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:5",
+        "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:6",
+        "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:7"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:1",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:abrir-ficha",
+      "position": 1,
+      "source": "https://github.com/Ntizar/OpenInfraES#lector",
+      "target": "https://github.com/Ntizar/OpenInfraES#render",
+      "name": "clic en el símbolo"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:2",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:abrir-ficha",
+      "position": 2,
+      "source": "https://github.com/Ntizar/OpenInfraES#render",
+      "target": "https://github.com/Ntizar/OpenInfraES#ficha",
+      "name": "abrirFicha(properties)"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:3",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:abrir-ficha",
+      "position": 3,
+      "source": "https://github.com/Ntizar/OpenInfraES#ficha",
+      "target": "https://github.com/Ntizar/OpenInfraES#procedencia-ui",
+      "name": "¿de qué capa sale?"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:4",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:abrir-ficha",
+      "position": 4,
+      "source": "https://github.com/Ntizar/OpenInfraES#procedencia-ui",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "lee fuentes.json"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:5",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:abrir-ficha",
+      "position": 5,
+      "source": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "target": "https://github.com/Ntizar/OpenInfraES#procedencia-ui",
+      "name": "organismo, licencia, fecha",
+      "isReply": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:6",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:abrir-ficha",
+      "position": 6,
+      "source": "https://github.com/Ntizar/OpenInfraES#ficha",
+      "target": "https://github.com/Ntizar/OpenInfraES#render",
+      "name": "busca a 30 km"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:abrir-ficha:7",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:abrir-ficha",
+      "position": 7,
+      "source": "https://github.com/Ntizar/OpenInfraES#render",
+      "target": "https://github.com/Ntizar/OpenInfraES#ficha",
+      "name": "vecinos pinchables",
+      "isReply": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "@type": "c4:Scenario",
+      "name": "Refresco de datos vivos",
+      "identifier": "refresco-vivo",
+      "description": "El flujo que mantiene frescas las capas de demanda, precio, avisos y sismos.",
+      "isPartOf": "https://github.com/Ntizar/OpenInfraES#model:openinfraes",
+      "goal": "Que el visor enseñe el dato de hace menos de 30 minutos, con su recibo al día.",
+      "trigger": "Cron de GitHub Actions cada 30 minutos.",
+      "precondition": "Las claves que necesiten las fuentes están como secret; si falta una, ese paso se salta.",
+      "outcome": "datos/ regenerado y commiteado por el bot; la fecha del recibo dice de cuándo es.",
+      "order": 3,
+      "hasStep": [
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:1",
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:2",
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:3",
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:4",
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:5",
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:6",
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:7",
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:8",
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:9",
+        "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:10"
+      ]
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:1",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 1,
+      "source": "https://github.com/Ntizar/OpenInfraES#workflows",
+      "target": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "name": "cron */30 * * * *"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:2",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 2,
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "target": "https://github.com/Ntizar/OpenInfraES#energia",
+      "name": "ree_vivo · omie · entsoe"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:3",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 3,
+      "source": "https://github.com/Ntizar/OpenInfraES#energia",
+      "target": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "name": "JSON",
+      "isReply": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:4",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 4,
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "target": "https://github.com/Ntizar/OpenInfraES#normaliza",
+      "name": "normaliza campos"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:5",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 5,
+      "source": "https://github.com/Ntizar/OpenInfraES#normaliza",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "escribe + recibo"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:6",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 6,
+      "source": "https://github.com/Ntizar/OpenInfraES#workflows",
+      "target": "https://github.com/Ntizar/OpenInfraES#validador",
+      "name": "python validar.py"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:7",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 7,
+      "source": "https://github.com/Ntizar/OpenInfraES#validador",
+      "target": "https://github.com/Ntizar/OpenInfraES#almacen",
+      "name": "lee recibos y conteos"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:8",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 8,
+      "source": "https://github.com/Ntizar/OpenInfraES#validador",
+      "target": "https://github.com/Ntizar/OpenInfraES#workflows",
+      "name": "VERDE",
+      "isReply": true
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:9",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 9,
+      "source": "https://github.com/Ntizar/OpenInfraES#workflows",
+      "target": "https://github.com/Ntizar/OpenInfraES#github",
+      "name": "commit datos/"
+    },
+    {
+      "@id": "https://github.com/Ntizar/OpenInfraES#step:refresco-vivo:10",
+      "@type": "c4:Step",
+      "inScenario": "https://github.com/Ntizar/OpenInfraES#scenario:refresco-vivo",
+      "position": 10,
+      "source": "https://github.com/Ntizar/OpenInfraES#github",
+      "target": "https://github.com/Ntizar/OpenInfraES#visor",
+      "name": "sirve la web nueva"
+    }
+  ]
+}
