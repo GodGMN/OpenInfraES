@@ -18,6 +18,7 @@ Endpoints usados (dominio España = 10YES-REE------0):
     A69  previsión de demanda
 """
 import argparse
+import datetime
 import json
 import os
 import re
@@ -261,6 +262,113 @@ def unidades(fecha):
         print("   ", r)
 
 
+
+# Codigos PSR de ENTSO-E (documentType A75)
+PSR = {
+    "B01": "Biomasa", "B02": "Lignito", "B03": "Carbón", "B04": "Gas natural",
+    "B05": "Carbón", "B06": "Fuel", "B09": "Geotérmica", "B10": "Hidro bombeo",
+    "B11": "Hidro embalse", "B12": "Hidro fluyente", "B13": "Biogás", "B14": "Nuclear",
+    "B15": "Solar térmica", "B16": "Solar fotovoltaica", "B17": "Residuos",
+    "B18": "Eólica marina", "B19": "Eólica terrestre", "B20": "Otras",
+}
+
+
+def mix(fecha=None):
+    """A75 · generación real por tecnología cada 15 minutos.
+
+    Es el dato mas fino que publica REE en abierto. A73 (por unidad/planta) NO existe para
+    Espana: el endpoint responde «No matching data found» con cualquier processType.
+    """
+    if fecha is None:
+        hoy = datetime.date.today()
+    else:
+        hoy = datetime.date.fromisoformat(fecha)
+    ini = hoy.strftime("%Y%m%d") + "0000"
+    fin = hoy.strftime("%Y%m%d") + "2300"
+    root = ET.fromstring(pedir({"documentType": "A75", "processType": "A16",
+                                "in_Domain": ES, "out_Domain": ES,
+                                "periodStart": ini, "periodEnd": fin}))
+    filas = puntos(root)
+    # OJO: A75 da MW MEDIOS de cada cuarto, no energia. Sumar MW y llamarlo MWh multiplica por 4
+    # la cifra (daba 1.468 GWh para un dia de ~700). La energia de un cuarto es MW x 0,25 h.
+    ultimo, acumulado, cuartos = {}, {}, {}
+    for f in filas:
+        t = f.get("tipo")
+        if not t or f.get("valor") is None:
+            continue
+        v = float(f["valor"])
+        acumulado[t] = acumulado.get(t, 0.0) + v * 0.25
+        cuartos[t] = cuartos.get(t, 0) + 1
+        ultimo[t] = v
+    total_dia = sum(acumulado.values()) or 1.0
+
+    # capacidad instalada por tecnologia, para el factor de carga y la estimacion por planta
+    capacidad = {}
+    ruta_p = os.path.join(DEST, "plantas.geojson")
+    if os.path.exists(ruta_p):
+        for f in json.load(open(ruta_p, encoding="utf-8"))["features"]:
+            pr = f.get("properties") or {}
+            tec = (pr.get("technology_normalized") or "").lower()
+            n = pr.get("installed_capacity_mw")
+            if not tec or n is None:
+                continue
+            try:
+                capacidad[tec] = capacidad.get(tec, 0.0) + float(n)
+            except (TypeError, ValueError):
+                continue
+
+    techs = [{"codigo": t, "nombre": PSR.get(t, t),
+              "mwh": round(acumulado[t], 1),
+              "pct": round(100 * acumulado[t] / total_dia, 2),
+              "ultimo_mw": round(ultimo[t], 1),
+              "cuartos": cuartos[t],
+              "horas": round(cuartos[t] * 0.25, 2),
+              # factor de carga: energia producida / (potencia instalada x horas transcurridas)
+              "factor_carga": None}
+             for t in sorted(acumulado, key=lambda x: -acumulado[x])]
+
+    # emparejar tecnologia ENTSO-E con la de plantas.geojson y calcular factor de carga
+    # nombres reales de technology_normalized en plantas.geojson
+    EQUIV = {"eólica terrestre": "wind", "eólica marina": "wind", "eolica terrestre": "wind",
+             "solar fotovoltaica": "solar_pv", "solar térmica": "solar_thermal",
+             "hidro embalse": "hydro", "hidro fluyente": "hydro", "hidro bombeo": "pumped_hydro",
+             "nuclear": "nuclear", "gas natural": "ccgt", "carbón": "coal",
+             "biomasa": None, "residuos": None, "otras": "other"}
+    for t in techs:
+        clave = EQUIV.get(t["nombre"].lower())
+        cap = capacidad.get(clave) if clave else None
+        if cap and t["horas"]:
+            mw_medio = t["mwh"] / t["horas"]
+            t["capacidad_mw"] = round(cap, 1)
+            t["factor_carga"] = round(100 * mw_medio / cap, 1)
+            t["mw_medio"] = round(mw_medio, 1)
+
+    salida = {
+        "fuente": "ENTSO-E Transparency · A75",
+        "url": "https://web-api.tp.entsoe.eu/api",
+        "documento": "A75 · Actual generation per production type",
+        "dominio": ES,
+        "fecha": hoy.isoformat(),
+        "resolucion": "PT15M",
+        "puntos": len(filas),
+        "series": len(acumulado),
+        "total_mwh": round(total_dia, 1),
+        "tecnologias": techs,
+        "descargado": datetime.datetime.now().isoformat(timespec="seconds"),
+        "unidad": "MWh (MW del cuarto x 0,25 h)",
+        "capacidad_tecnologia_mw": {k: round(v, 1) for k, v in capacidad.items()},
+        "nota": ("No existe generacion por planta en abierto: ENTSO-E A73 responde «No matching "
+                 "data found» para Espana. Lo mas fino que hay es esto, por tecnologia. Si el dia "
+                 "esta en curso, faltan cuartos: mirar `cuartos` por tecnologia."),
+    }
+    json.dump(salida, open(os.path.join(DEST, "entsoe_mix.json"), "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
+    print("  A75 %s · %d puntos · %.1f GWh" % (hoy, len(filas), total_dia / 1000))
+    for t in techs[:8]:
+        print("   %-22s %8.1f GWh  %5.1f%%" % (t["nombre"], t["mwh"] / 1000, t["pct"]))
+    return salida
+
+
 def main():
     ap = argparse.ArgumentParser(description="ENTSO-E Transparency")
     ap.add_argument("--probar", action="store_true")
@@ -268,6 +376,8 @@ def main():
     ap.add_argument("--unidades", metavar="YYYY-MM-DD")
     ap.add_argument("--precio", metavar="YYYY-MM-DD", help="A44, contraste con OMIE")
     ap.add_argument("--prevision", metavar="YYYY-MM-DD", help="A71 y A69")
+    ap.add_argument("--mix", nargs="?", const="hoy", metavar="YYYY-MM-DD",
+                    help="A75: generacion por tecnologia cada 15 min")
     a = ap.parse_args()
     if a.probar:
         probar()
@@ -279,6 +389,8 @@ def main():
         precio(a.precio)
     elif a.prevision:
         prevision(a.prevision)
+    elif a.mix:
+        mix(None if a.mix == "hoy" else a.mix)
     else:
         ap.print_help()
 

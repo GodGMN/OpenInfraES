@@ -336,6 +336,19 @@
     font:inherit; font-size:9.6px; text-transform:uppercase; letter-spacing:.06em; padding:2px 7px;
     border-radius:3px; cursor:pointer; }
   #vista-aviso button:hover { color:var(--cian); border-color:var(--borde-fuerte); }
+
+  #velo2 .mix-tabla { margin:4px 0 6px; }
+  #velo2 .mix-fila { display:flex; align-items:center; gap:6px; margin-bottom:2px; font-size:10.4px; }
+  #velo2 .mix-n { flex:0 0 118px; color:var(--suave); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #velo2 .mix-b { flex:1; height:5px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden; }
+  #velo2 .mix-b span { display:block; height:100%; background:var(--cian); border-radius:3px; }
+  #velo2 .mix-v { flex:0 0 56px; text-align:right; color:var(--tinta); font-variant-numeric:tabular-nums; }
+  #velo2 .mix-p { flex:0 0 36px; text-align:right; color:var(--suave); font-variant-numeric:tabular-nums; }
+
+  .est-prod { margin-top:8px; padding:6px 8px; border-left:2px solid var(--cian);
+    background:rgba(56,189,248,.07); border-radius:0 3px 3px 0; font-size:10.6px; }
+  .est-prod b { color:var(--cian); font-size:12px; }
+  .est-prod i { display:block; color:var(--suave); font-style:normal; font-size:9.6px; margin-top:1px; }
 </style>
 </head>
 <body>
@@ -586,6 +599,7 @@ function ficha(p, c) {
     '<div class="err">consultando…</div></div>';
   if (enlaces.length) h += '<div class="links">' + enlaces.map(([t, u]) =>
     '<a href="' + u + '" target="_blank" rel="noopener">' + t + "</a>").join("") + "</div>";
+  if (bloqueEstimacion) h += bloqueEstimacion(p);
   return h + "</div>";
 }
 
@@ -822,6 +836,11 @@ const CAPAS = [
   { id:"interelec", grupo:"Red eléctrica", label:"Interconexiones", tipo:"punto", on:false,
     color:"#e879f9", fichero:"datos/oficial/electricidad-interconexiones.geojson", radio:7 },
 
+  { id:"plantas", grupo:"Generación", label:"Todas las plantas (con potencia)", tipo:"punto", on:false,
+    color:"#94a3b8", fichero:"datos/plantas.geojson", zoomMin:6, radio:4.5,
+    siempreIndividual:false, popupTitulo:"name", colorCampo:"color_tec",
+    campos:["name","technology_normalized","installed_capacity_mw","owner","province",
+            "municipality","autonomous_region","status"] },
   { id:"hidro", grupo:"Generación", label:"Hidráulicas", tipo:"punto", on:true, color:"#22d3ee",
     fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw", radioMin:2.6, radioMax:9, opacidad:.62,
     filtro:f => ["hydro","pumped_hydro"].includes(f.properties.technology_normalized) },
@@ -965,7 +984,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19e";
+const VER_DATOS = "2026-11-19f";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -998,6 +1017,35 @@ ponerBase("radar");
 
 /* ---------------- motor ---------------- */
 const POPUP = L.popup({ maxWidth: 348, minWidth: 302, autoPanPadding: [26, 26] });
+
+/* Produccion estimada por planta: NO es un dato medido, es potencia x factor de carga de su
+   tecnologia, con el factor del dia calculado desde ENTSO-E A75. Se declara como estimacion. */
+const TEC_NOMBRE = { wind:"Eólica terrestre", solar_pv:"Solar fotovoltaica", solar_thermal:"Solar térmica",
+  hydro:"Hidro embalse", pumped_hydro:"Hidro bombeo", ccgt:"Gas natural", nuclear:"Nuclear",
+  coal:"Carbón" };
+
+function produccionEstimada(p) {
+  const mix = window.__mixEntsoe;
+  if (!mix || !mix.tecnologias) return null;
+  const mw = Number(p.installed_capacity_mw || p.installed_capacity_mw_electra || 0);
+  if (!mw) return null;
+  const tec = String(p.technology_normalized || "").toLowerCase();
+  const nombre = TEC_NOMBRE[tec];
+  if (!nombre) return null;
+  const t = mix.tecnologias.find(x => x.nombre === nombre && x.factor_carga);
+  if (!t) return null;
+  const mwh = mw * (t.factor_carga / 100) * 24;
+  return { mw, mwh, factor: t.factor_carga, tec: nombre };
+}
+
+function bloqueEstimacion(p) {
+  const e = produccionEstimada(p);
+  if (!e) return "";
+  return '<div class="est-prod"><b>' + nf(Math.round(e.mwh)) + ' MWh/día</b> estimados' +
+    '<i>' + e.mw.toFixed(1) + ' MW × factor ' + e.factor.toFixed(1) + '% de ' + e.tec +
+    ' · no es medida</i></div>';
+}
+
 function abrirFicha(p, c, latlng) {
   POPUP.setLatLng(latlng).setContent(c.modoTren ? fichaTren(p, c) : ficha(p, c)).openOn(mapa);
   if (c.apiCaudal) consultarCaudal(p);
@@ -1478,8 +1526,9 @@ function pintarSis() {
     fetch("datos/ree_estado.json").then(r => r.json()).catch(() => null),
     fetch("datos/esios_prevision.json").then(r => r.json()).catch(() => null),
     fetch("datos/ree_vivo.json").then(r => r.json()).catch(() => null),
-    fetch("datos/omie_precio.json").then(r => r.json()).catch(() => null)
-  ]).then(([d, p, v, omie]) => {
+    fetch("datos/omie_precio.json").then(r => r.json()).catch(() => null),
+    fetch("datos/entsoe_mix.json").then(r => r.json()).catch(() => null)
+  ]).then(([d, p, v, omie, mix]) => {
     let h = "";
 
     /* --- EN VIVO: indicadores abiertos de ESIOS, cada 5 min --- */
@@ -1523,6 +1572,22 @@ function pintarSis() {
       if (v.series.demanda && v.series.demanda.heredado) {
         h += '<div class="nota-pie">Sin actualizar: el WAF de ESIOS bloqueó la descarga. ' +
              'Último dato bueno de las ' + (v.series.demanda.hora || "") + '.</div>';
+      }
+      if (mix && mix.tecnologias) {
+        window.__mixEntsoe = mix;   // lo usa la ficha de planta para estimar
+        h += '<div class="sis-sec">Generación por tecnología · ENTSO-E cada 15 min</div>';
+        h += '<div class="mix-tabla">';
+        mix.tecnologias.slice(0, 8).forEach(t => {
+          const pct = t.pct || 0;
+          h += '<div class="mix-fila"><span class="mix-n">' + t.nombre + '</span>' +
+               '<span class="mix-b"><span style="width:' + Math.max(2, pct) + '%"></span></span>' +
+               '<span class="mix-v">' + (t.mwh / 1000).toFixed(1) + ' GWh</span>' +
+               '<span class="mix-p">' + pct.toFixed(1) + '%</span></div>';
+        });
+        h += '</div>';
+        h += '<div class="nota-pie">' + mix.puntos + ' puntos de 15 min · ' +
+             (mix.total_mwh / 1000).toFixed(0) + ' GWh acumulados. ' +
+             'No existe generación por planta en abierto: esto es por tecnología.</div>';
       }
       if (omie && omie.horas) {
         h += '<div class="sis-sec">Precio del mercado diario · ' + omie.fecha + '</div>';
