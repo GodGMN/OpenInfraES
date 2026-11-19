@@ -1,0 +1,208 @@
+# -*- coding: utf-8 -*-
+"""Normaliza el catálogo de fuentes al contrato machine-readable de la auditoría (§08 de la
+auditoría v2 de OpenInfraES).
+
+Problemas que resuelve, todos señalados en la auditoría:
+
+  P3  La licencia era un texto suelto («CC-BY-4.0», «ODbL 1.0»). Ahora es un objeto con
+      `estado` (si / no / pendiente), que es lo que permite decidir si una capa puede entrar
+      en un MCP público. REE, OMIE y Renfe GTFS-RT quedan en **pendiente**: su reutilización
+      no está evaluada, y «consultar en vivo» no sustituye a esa evaluación.
+  P5  `fuente` mezclaba organismo y producto, y había variantes del mismo organismo
+      («I-ReWater HUB (Interreg)» / «… + INE»). Ahora hay `organismo` canónico y `producto`.
+  P2  No se distinguía cuándo se midió el dato de cuándo se descargó. Ahora `fecha_dato` y
+      `fecha_descarga` son campos separados, y `ttl_segundos` dice cuándo el dato ya no vale.
+
+    python scripts/catalogo.py
+
+Escribe `datos/catalogo.json` (el contrato) sin tocar `fuentes.json` (lo que lee el visor).
+"""
+import datetime
+import json
+import os
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATOS = os.path.join(RAIZ, "datos")
+
+# --- organismos canónicos (P5): las variantes se pliegan en un solo nombre ---
+ORGANISMO = {
+    "MITECO": "MITECO", "IGN": "IGN", "REE": "REE", "CSN": "CSN", "ENRESA": "ENRESA",
+    "CORES": "CORES", "Enagás": "Enagás", "NAP · MITMA": "MITMA", "MITMA": "MITMA",
+    "DGT": "DGT", "AEMET": "AEMET", "EMSC-CSEM": "EMSC-CSEM",
+    "OpenStreetMap (red)": "OpenStreetMap", "OpenStreetMap": "OpenStreetMap",
+    "I-ReWater HUB (Interreg)": "I-ReWater HUB", "I-ReWater HUB (Interreg) + INE": "I-ReWater HUB",
+    "INE · Eurostat GISCO": "INE / Eurostat", "INE · Cifras Oficiales del Padrón": "INE",
+    "Visor Hermes — MITMA": "MITMA", "Renfe": "Renfe", "OMIE": "OMIE",
+    "Ministerio de Transportes (ArcGIS REST)": "MITMA",
+}
+
+# --- licencia en tres estados (P3) ---
+#   si        reutilización permitida con atribución
+#   pendiente condiciones no evaluadas: NO entra en un MCP público
+#   no        prohibida
+LICENCIA = {
+    "MITECO": ("si", "Reutilización Ley 37/2007 con atribución",
+               "https://www.miteco.gob.es/es/aviso-legal"),
+    "IGN": ("si", "CC BY 4.0 · © scne.es", "https://www.ign.es/espmap/notas_leyenda.htm"),
+    "CSN": ("si", "CC BY 4.0", "https://www.csn.es"),
+    "ENRESA": ("si", "Reutilización Ley 37/2007", "https://www.enresa.es"),
+    "CORES": ("si", "Reutilización Ley 37/2007", "https://www.cores.es"),
+    "Enagás": ("si", "Reutilización Ley 37/2007", "https://www.enagas.es"),
+    "MITMA": ("si", "Ley 37/2007 · NAP", "https://nap.transportes.gob.es"),
+    "DGT": ("si", "Reutilización Ley 37/2007", "https://www.dgt.es"),
+    "AEMET": ("si", "Reutilización Ley 37/2007", "https://www.aemet.es/es/aviso_legal"),
+    "EMSC-CSEM": ("si", "CC BY 4.0", "https://www.emsc-csem.org"),
+    "OpenStreetMap": ("si", "ODbL 1.0 · comparte igual en bases derivadas",
+                      "https://opendatacommons.org/licenses/odbl/1-0/"),
+    "I-ReWater HUB": ("si", "CC BY 4.0", "https://i-rewater-hub.com"),
+    "INE": ("si", "Datos abiertos INE con cita", "https://www.ine.es/aviso_legal"),
+    "INE / Eurostat": ("si", "INE con cita · Eurostat CC BY 4.0",
+                       "https://ec.europa.eu/eurostat/web/main/legal-notice"),
+    # PENDIENTES: la auditoría cita el texto y no encuentra cláusula que permita redistribuir
+    "REE": ("pendiente", "Aviso legal REE §5: uso informativo no comercial; el resto exige "
+                         "autorización escrita. Condiciones de apidatos no localizadas",
+            "https://www.ree.es/es/aviso-legal"),
+    "OMIE": ("pendiente", "Sin cláusula de reutilización identificada para los datos publicados",
+             "https://www.omie.es/es/aviso-legal"),
+    "Renfe": ("pendiente", "GTFS-RT sin condiciones localizadas (los conjuntos de data.renfe.com "
+                           "de estaciones sí son CC BY 4.0)",
+              "https://data.renfe.com"),
+}
+
+# --- frescura (P2): el TTL lo define la fuente, no la comodidad del servidor ---
+TTL = {
+    "embalses": (604800, "semanal", "foto"),
+    "omie_precio": (3600, "cada subasta (≈13:00)", "vivo"),
+    "ree_vivo": (300, "5 minutos", "vivo"),
+    "entsoe_mix": (900, "15 minutos", "vivo"),
+    "esios_prevision": (21600, "6 horas", "vivo"),
+    "aemet_avisos": (3600, "cada hora", "vivo"),
+    "aemet-zonas": (3600, "cada hora", "vivo"),
+    "sismos": (1800, "30 minutos", "vivo"),
+    "dgt-camaras": (600, "10 minutos", "foto"),
+    "dgt-incidencias": (300, "5 minutos", "vivo"),
+    "gtfsrt": (120, "2 minutos", "vivo"),
+    "carburantes": (86400, "diario", "vivo"),
+    "plantas": (2592000, "mensual", "foto"),
+    "ine-provincias": (31536000, "anual (padrón)", "foto"),
+    "ine-ccaa": (31536000, "anual (padrón)", "foto"),
+    "ine-densidad": (31536000, "anual (padrón)", "foto"),
+    "ine-paro": (7776000, "trimestral (EPA)", "foto"),
+}
+TTL_DEFECTO = (2592000, "mensual o inferior", "foto")
+
+
+def hoy_iso():
+    return datetime.date.today().isoformat()
+
+
+def normaliza_organismo(bruto):
+    if not bruto:
+        return "sin declarar"
+    if bruto in ORGANISMO:
+        return ORGANISMO[bruto]
+    # variantes con sufijo: «REE · Registro administrativo…», «INE (padrón)»
+    for clave in ORGANISMO:
+        if bruto.startswith(clave) or clave in bruto:
+            return ORGANISMO[clave]
+    if bruto.startswith("INE"):
+        return "INE"
+    if "REE" in bruto:
+        return "REE"
+    return bruto
+
+
+def main():
+    ruta = os.path.join(DATOS, "fuentes.json")
+    if not os.path.exists(ruta):
+        raise SystemExit("falta datos/fuentes.json: ejecuta antes fuentes_visor.py")
+    crudo = json.load(open(ruta, encoding="utf-8"))
+    capas = crudo.get("capas", {})
+
+    catalogo = {}
+    avisos = {"pendiente": [], "sin_organismo": [], "caducado": []}
+    hoy = datetime.date.today()
+
+    for cid, f in sorted(capas.items()):
+        organismo = normaliza_organismo(f.get("fuente"))
+        estado_lic, nombre_lic, url_lic = LICENCIA.get(
+            organismo, ("pendiente", "sin evaluar", ""))
+        ttl, frecuencia, modo = TTL.get(cid, TTL_DEFECTO)
+
+        # fecha del dato y fecha de descarga son cosas distintas (P2)
+        fecha_dato = f.get("actualizado") or f.get("descargado")
+        fecha_desc = f.get("descargado")
+
+        # ¿está caducado? se declara, no se oculta
+        # La caducidad se mide sobre la FECHA DEL DATO, no sobre cuando se descargo: un fichero
+        # bajado hoy puede contener un dato de hace tres dias, y eso es lo que ve el lector.
+        caducado = False
+        edad_dias = None
+        if fecha_dato:
+            try:
+                d = datetime.date.fromisoformat(str(fecha_dato)[:10])
+                edad_dias = (hoy - d).days
+                caducado = edad_dias * 86400 > ttl
+            except ValueError:
+                pass
+
+        catalogo[cid] = {
+            "id": cid,
+            "titulo": f.get("titulo") or cid,
+            "organismo": organismo,
+            "producto": f.get("metodo") or "",
+            "licencia": {
+                "estado": estado_lic,
+                "nombre": nombre_lic,
+                "url_terminos": url_lic,
+            },
+            "endpoint": f.get("url") or "",
+            "modo": modo,
+            "frecuencia_fuente": frecuencia,
+            "ttl_segundos": ttl,
+            "ultima_verificacion": hoy_iso(),
+            "crs": "EPSG:4326",
+            "features": f.get("features"),
+            "fecha_dato": fecha_dato,
+            "fecha_descarga": fecha_desc,
+            "edad_dias": edad_dias,
+            "caducado": caducado,
+        }
+
+        if estado_lic == "pendiente":
+            avisos["pendiente"].append(cid)
+        if organismo == "sin declarar":
+            avisos["sin_organismo"].append(cid)
+        if caducado:
+            avisos["caducado"].append(cid)
+
+    salida = {
+        "generado": datetime.datetime.now().isoformat(timespec="seconds"),
+        "esquema": 1,
+        "nota": ("Contrato machine-readable del catálogo. La licencia va en tres estados: "
+                 "«pendiente» NO se expone en un MCP público hasta evaluarla."),
+        "total": len(catalogo),
+        "resumen": {
+            "licencia_si": sum(1 for c in catalogo.values() if c["licencia"]["estado"] == "si"),
+            "licencia_pendiente": len(avisos["pendiente"]),
+            "caducados": len(avisos["caducado"]),
+        },
+        "avisos": avisos,
+        "capas": catalogo,
+    }
+    json.dump(salida, open(os.path.join(DATOS, "catalogo.json"), "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
+
+    print("  catálogo: %d capas" % len(catalogo))
+    print("   licencia evaluada: %d · pendiente: %d · caducadas: %d" % (
+        salida["resumen"]["licencia_si"], len(avisos["pendiente"]), len(avisos["caducado"])))
+    if avisos["pendiente"]:
+        print("   PENDIENTE DE LICENCIA: %s" % ", ".join(avisos["pendiente"]))
+    if avisos["caducado"]:
+        print("   CADUCADAS (superan su TTL): %s" % ", ".join(avisos["caducado"][:12]))
+    if avisos["sin_organismo"]:
+        print("   SIN ORGANISMO: %s" % ", ".join(avisos["sin_organismo"][:6]))
+
+
+if __name__ == "__main__":
+    main()

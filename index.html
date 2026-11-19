@@ -452,6 +452,12 @@
     background:transparent !important; font-family:var(--mono); font-size:9.6px; }
   body:has(#info-der.on) .leaflet-control-scale { margin-left:346px !important; }
   @media (max-width:1100px) { .leaflet-control-scale { margin-left:8px !important; } }
+
+  #panel-dato .pd-lic { font-size:10.4px; padding:1px 7px; border-radius:9px; }
+  #panel-dato .pd-lic.ok { background:rgba(74,222,128,.14); color:#4ade80; }
+  #panel-dato .pd-lic.pend { background:rgba(251,191,36,.16); color:#fbbf24; }
+  #panel-dato .pd-lic.cad { background:rgba(248,113,113,.16); color:#f87171; }
+  #panel-dato .pd-lic.no { background:rgba(248,113,113,.2); color:#f87171; }
 </style>
 </head>
 <body>
@@ -1105,7 +1111,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19k";
+const VER_DATOS = "2026-11-19m";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1215,6 +1221,13 @@ function pintarKPIs() {
       const n = sismos.features.length;
       const max = Math.max(...sismos.features.map(f => Number(f.properties.magnitud) || 0));
       h += chipKPI("〜", n, "sismos 7 días · máx M" + max.toFixed(1));
+    }
+    const cat = window.CATALOGO;
+    if (cat && cat.resumen) {
+      const pend = cat.resumen.licencia_pendiente || 0;
+      const cad = cat.resumen.caducados || 0;
+      const clase = (pend || cad) ? "alerta" : "bien";
+      h += chipKPI("⚖", pend + " / " + cad, "licencias pendientes / datos caducados", clase);
     }
     if (aemet && aemet.features) {
       const n = aemet.features.length;
@@ -1420,6 +1433,19 @@ function abrirPanelDato(p, c, latlng) {
     if (f.licencia) pie += `<span class="pd-fuente">${String(f.licencia).slice(0, 46)}</span>`;
     if (f.actualizado || f.descargado)
       pie += `<span class="pd-fuente">dato: ${f.actualizado || f.descargado}</span>`;
+  }
+  // contrato del catalogo: licencia en tres estados y caducidad declarada, nunca escondida
+  const cat = (window.CATALOGO && window.CATALOGO.capas) ? window.CATALOGO.capas[c.id] : null;
+  if (cat) {
+    const est = cat.licencia && cat.licencia.estado;
+    if (est === "pendiente")
+      pie += `<span class="pd-lic pend">licencia pendiente de evaluar</span>`;
+    else if (est === "no")
+      pie += `<span class="pd-lic no">no redistribuible</span>`;
+    else
+      pie += `<span class="pd-lic ok">reutilizable · ${(cat.licencia.nombre || "").slice(0, 34)}</span>`;
+    if (cat.caducado)
+      pie += `<span class="pd-lic cad">dato de hace ${cat.edad_dias} días (TTL ${Math.round(cat.ttl_segundos / 3600)} h)</span>`;
   }
   if (latlng) {
     const la = (latlng.lat !== undefined ? latlng.lat : latlng[0]).toFixed(5);
@@ -1891,6 +1917,9 @@ cajaQ.addEventListener("input", () => {
 /* ---------------- panel de fuentes ---------------- */
 let FUENTES = null;
 fetch("datos/fuentes.json?v=" + VER_DATOS).then(r => r.json()).then(d => { FUENTES = d; }).catch(() => {});
+window.CATALOGO = null;
+fetch("datos/catalogo.json?v=" + VER_DATOS).then(r => r.json())
+  .then(d => { window.CATALOGO = d; }).catch(() => {});
 
 function pintarFuentes() {
   const tabla = $("#fuentes-tabla");
@@ -2191,6 +2220,7 @@ function pintarAvisoVista(p) {
     document.querySelectorAll("[data-preset]").forEach(x => x.classList.remove("on"));
     pintarAvisoVista("todos");
 pintarKPIs();
+setTimeout(pintarKPIs, 2500);   // segundo pase, ya con el catalogo
 setInterval(pintarKPIs, 5 * 60 * 1000);
 fetch("datos/ine_recibo.json?v=" + VER_DATOS).then(r => r.json())
   .then(d => { window.__cortes = d.cortes || {}; }).catch(() => {});
@@ -2198,6 +2228,7 @@ fetch("datos/ine_recibo.json?v=" + VER_DATOS).then(r => r.json())
 }
 pintarAvisoVista("todos");
 pintarKPIs();
+setTimeout(pintarKPIs, 2500);   // segundo pase, ya con el catalogo
 setInterval(pintarKPIs, 5 * 60 * 1000);
 fetch("datos/ine_recibo.json?v=" + VER_DATOS).then(r => r.json())
   .then(d => { window.__cortes = d.cortes || {}; }).catch(() => {});

@@ -187,6 +187,22 @@ def main():
         if not os.path.exists(os.path.join(RAIZ, f)):
             error("falta %s" % f)
 
+    # 6. catalogo y cifras de la prosa (auditoria P1 y P5)
+    cat = os.path.join(DATOS, "catalogo.json")
+    if not os.path.exists(cat):
+        error("falta datos/catalogo.json (ejecuta scripts/catalogo.py)")
+    else:
+        c = json.load(open(cat, encoding="utf-8"))
+        pend = c.get("avisos", {}).get("pendiente", [])
+        print("  Catalogo ............. %d capas · %d licencia pendiente" % (
+            c.get("total", 0), len(pend)))
+        # las pendientes son un aviso, no un error: la auditoria pide declararlas, no esconderlas
+    import subprocess
+    r = subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), "cifras.py"),
+                        "--check"], capture_output=True, text=True)
+    if r.returncode != 0:
+        error("las cifras de la prosa no cuadran (ejecuta scripts/cifras.py)")
+
     print("=" * 58)
     print(" OPENINFRAES · VALIDADOR")
     print("=" * 58)
