@@ -75,19 +75,19 @@ funciona siempre.
 
 ## Capas del visor
 
-**50 capas en 8 grupos temáticos**, con carga bajo demanda: nada se descarga hasta que lo enciendes.
+**29 capas en 8 grupos temáticos**, con carga bajo demanda: nada se descarga hasta que lo enciendes.
 
 | Grupo | Capas | Objetos |
 |---|---:|---:|
 | **Red eléctrica** | 4 | 664 |
 | **Generación** | 7 | 2.733 |
 | **Gas** | 6 | 165 |
-| **Agua** | 13 | 18.286 |
-| **Transporte** | 11 | 17.445 |
+| **Agua** | 5 | 519 |
+| **Transporte** | 3 | 13.658 |
 | **DGT · Tráfico** | 4 | 16.490 |
-| **Tiempo real** | 3 | 11.836 |
+| **Tiempo real** | 2 | 403 |
 | **Riesgo** | 2 | 150 |
-| **Total** | **50** | **67.769** |
+| **Total** | **29** | **18.292** |
 
 Cifras contadas del propio `datos/fuentes.json`, no estimadas. **No suman lo que se ve en pantalla**:
 una capa que no está encendida no ha descargado sus datos, y `fuentes.json` guarda el total del fichero.
@@ -123,7 +123,8 @@ Las capas que no tienen GeoJSON servido por su organismo se guardan ya vectoriza
 | Red de hidrógeno (10) | **MITECO** | CC BY 4.0 |
 | Paradas Metro Madrid / Cercanías / AVE (3.223) | **NAP · MITMA** | Ley 37/2007 |
 | **Líneas de Metro (30) y Cercanías (135 trazados)** | **NAP · MITMA** (shapes.txt) | Ley 37/2007 |
-| Precio del mercado diario, 24 h | **OMIE** | condiciones del editor |
+| Precio del mercado diario, 96 cuartos | **OMIE** | condiciones del editor |
+| **Población por provincia y comunidad** | **INE** · padrón | datos abiertos INE |
 | Cámaras de tráfico (1.977) · puntos de recarga (12.144) · **incidencias en vivo (1.350)** | **DGT** | reutilización con atribución |
 | Vehículos en vivo (403) | **Renfe** (GTFS-RT) | condiciones del editor |
 | Avisos meteorológicos (177 vigentes) · **70 zonas en aviso con polígono** | **AEMET** | © AEMET, citar como autora |
@@ -277,8 +278,8 @@ detalla además la licencia de cada conjunto de datos.
 
 | | |
 |---|---|
-| Capas en el visor | **50** |
-| Capas documentadas en `fuentes.json` | **69** |
+| Capas en el visor | **29** |
+| Capas documentadas en `fuentes.json` | **68** |
 | Organismos citados | **11** — MITECO, IGN, REE, MITMA, Enagás, CORES, CSN, ENRESA, Renfe, DGT, AEMET |
 | Fuentes sin clave | MITECO, IGN, MITMA, Enagás, CORES, CSN, ENRESA, Renfe, DGT, AEMET, OMIE, ESIOS (19 indicadores) |
 | Fuentes con clave | NAP de transportes (`ApiKey`), ENTSO-E (token) |

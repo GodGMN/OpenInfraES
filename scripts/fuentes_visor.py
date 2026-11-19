@@ -134,8 +134,8 @@ def main():
                    "hib_regadio": "Perímetros de regadío",
                    "hib_regadio_particion": "Particiones de regadío (25 h)",
                    "hib_demarcacion": "Demarcaciones hidrográficas (I-ReWater)",
-                   "hib_nuts2": "Agua aprovechable por comunidad (NUTS2)",
-                   "hib_nuts3": "Agua aprovechable por provincia (NUTS3)"}
+                   "hib_nuts2": "Población por comunidad + agua aprovechable (NUTS2)",
+                   "hib_nuts3": "Población por provincia + agua aprovechable (NUTS3)"}
     for fich in sorted(os.listdir(DATOS)):
         if not (fich.startswith("irewater_") and fich.endswith("_recibo.json")):
             continue
@@ -146,13 +146,18 @@ def main():
         fuentes[cid] = {
             "capa": cid,
             "titulo": TITULOS_IRW.get(r["capa"], r["capa"]),
-            "fuente": "I-ReWater HUB (Interreg)", "editor": "I-ReWater HUB (Interreg)",
+            "fuente": ("I-ReWater HUB (Interreg) + INE"
+                       if r["capa"].startswith("hib_nuts")
+                       else "I-ReWater HUB (Interreg)"),
+            "editor": "I-ReWater HUB (Interreg) + INE" if r["capa"].startswith("hib_nuts") else "I-ReWater HUB (Interreg)",
             "licencia": "CC BY 4.0",
             "actualizado": r.get("descargado", "")[:10],
             "descargado": HOY,
             "features": r.get("features"),
             "url": "https://i-rewater-hub.com",
-            "metodo": "vector tiles MVT z%d, deduplicado por id" % r.get("zoom", 8),
+            "metodo": ("vector tiles MVT z%d + padrón del INE (tabla 2852/2853)"
+                       % r.get("zoom", 8) if r["capa"].startswith("hib_nuts")
+                       else "vector tiles MVT z%d, deduplicado por id" % r.get("zoom", 8)),
         }
 
     osm_agua = leer("osm_agua_recibo.json", {})

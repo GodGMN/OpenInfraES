@@ -1,0 +1,12 @@
+{
+ "fuente": "INE · Cifras Oficiales de Población (padrón)",
+ "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=2852",
+ "api": "servicios.ine.es/wstempus/js/ES/DATOS_TABLA/2852",
+ "tablas": {
+  "provincias": 2852,
+  "comunidades": 2853
+ },
+ "total_nacional": 47385107,
+ "provincias_con_dato": 59,
+ "nota": "Cruce por nombre normalizado; el INE no da código de municipio en esta tabla."
+}

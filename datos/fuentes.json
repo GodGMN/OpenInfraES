@@ -278,18 +278,6 @@
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/7__COMBUSTIBLES_ALTERNATIVOS/457 — query ArcGIS REST, paginado de 500 en 500"
   },
-  "irewater-demarcacion": {
-   "capa": "irewater-demarcacion",
-   "titulo": "Demarcaciones hidrográficas (I-ReWater)",
-   "fuente": "I-ReWater HUB (Interreg)",
-   "editor": "I-ReWater HUB (Interreg)",
-   "licencia": "CC BY 4.0",
-   "actualizado": "2026-11-19",
-   "descargado": "2026-11-19",
-   "features": 26,
-   "url": "https://i-rewater-hub.com",
-   "metodo": "vector tiles MVT z7, deduplicado por id"
-  },
   "irewater-edar": {
    "capa": "irewater-edar",
    "titulo": "EDAR · agua regenerable",
@@ -304,27 +292,27 @@
   },
   "irewater-nuts2": {
    "capa": "irewater-nuts2",
-   "titulo": "Agua aprovechable por comunidad (NUTS2)",
-   "fuente": "I-ReWater HUB (Interreg)",
-   "editor": "I-ReWater HUB (Interreg)",
+   "titulo": "Población por comunidad + agua aprovechable (NUTS2)",
+   "fuente": "I-ReWater HUB (Interreg) + INE",
+   "editor": "I-ReWater HUB (Interreg) + INE",
    "licencia": "CC BY 4.0",
    "actualizado": "2026-11-19",
    "descargado": "2026-11-19",
    "features": 16,
    "url": "https://i-rewater-hub.com",
-   "metodo": "vector tiles MVT z6, deduplicado por id"
+   "metodo": "vector tiles MVT z6 + padrón del INE (tabla 2852/2853)"
   },
   "irewater-nuts3": {
    "capa": "irewater-nuts3",
-   "titulo": "Agua aprovechable por provincia (NUTS3)",
-   "fuente": "I-ReWater HUB (Interreg)",
-   "editor": "I-ReWater HUB (Interreg)",
+   "titulo": "Población por provincia + agua aprovechable (NUTS3)",
+   "fuente": "I-ReWater HUB (Interreg) + INE",
+   "editor": "I-ReWater HUB (Interreg) + INE",
    "licencia": "CC BY 4.0",
    "actualizado": "2026-11-19",
    "descargado": "2026-11-19",
    "features": 48,
    "url": "https://i-rewater-hub.com",
-   "metodo": "vector tiles MVT z6, deduplicado por id"
+   "metodo": "vector tiles MVT z6 + padrón del INE (tabla 2852/2853)"
   },
   "edar": {
    "capa": "edar",
@@ -977,5 +965,5 @@
    "kb": 18
   }
  },
- "total_capas": 69
+ "total_capas": 68
 }

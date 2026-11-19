@@ -660,7 +660,7 @@ const RESUMEN_CAT = {
   tecnologia: "tecnologías", categoria: "categorías", demarcacion: "demarcaciones",
   operador: "operadores", zona: "zonas", pais: "países",
   indice_impacto_hidrologico: "impacto hidrológico", uso: "usos", estado: "estado",
-  tramo: "tramo de agua aprovechable"
+  tramo: "tramo de agua aprovechable", tramo_poblacion: "tramo de población"
 };
 const RESUMEN_NUM = {
   potencia_max_kw: ["kW", 1], conectores: ["conectores", 0], magnitud: ["magnitud", 1],
@@ -669,6 +669,7 @@ const RESUMEN_NUM = {
   volumen_reutilizable_m3: ["m³/año reutilizables", 0],
   superficie_pot_regable_ha: ["hectáreas regables", 0],
   volumen_aprovechable_m3: ["m³ aprovechables", 0],
+  poblacion: ["habitantes", 0],
   superficie_potencialmente_regable_ha: ["hectáreas potencialmente regables", 0]
 };
 
@@ -857,81 +858,17 @@ const CAPAS = [
 
   { id:"embalses", grupo:"Agua", label:"Embalses", tipo:"punto", on:true, color:"#60a5fa",
     fichero:"datos/simplificado/agua-embalsada.geojson", radio:2.4, opacidad:.45 },
-  { id:"demarcaciones", grupo:"Agua", label:"Demarcaciones hidrográficas", tipo:"poligono", on:false,
-    color:"#0ea5e9", fichero:"datos/demarcaciones.geojson", opacidad:.10, peso:1.2, zoomMin:0,
+  { id:"demarcaciones", grupo:"Agua", colorCampo:"color", label:"Demarcaciones hidrográficas", tipo:"poligono", on:false,
+    color:"#0ea5e9", fichero:"datos/demarcaciones.geojson", opacidad:.28, peso:1.3, zoomMin:0,
     popupTitulo:"nom_demar", etiqueta:"nom_demar" },
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
     fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
-  { id:"irewater-nuts2", grupo:"Agua", label:"Agua aprovechable por comunidad", tipo:"poligono", on:false,
+  { id:"irewater-nuts2", grupo:"Agua", label:"Población por comunidad (INE)", tipo:"poligono", on:false,
     color:"#31a354", fichero:"datos/irewater_hib_nuts2.geojson", zoomMin:5, opacidad:.45,
     peso:1, popupTitulo:"nombre", colorCampo:"color" },
-  { id:"irewater-nuts3", grupo:"Agua", label:"Agua aprovechable por provincia", tipo:"poligono", on:false,
+  { id:"irewater-nuts3", grupo:"Agua", label:"Población por provincia (INE)", tipo:"poligono", on:false,
     color:"#31a354", fichero:"datos/irewater_hib_nuts3.geojson", zoomMin:6, opacidad:.45,
     peso:1, popupTitulo:"nombre", colorCampo:"color" },
-  { id:"irewater-demarcacion", grupo:"Agua", label:"Demarcaciones transfronterizas", tipo:"poligono", on:false,
-    color:"#00897B", fichero:"datos/irewater_hib_demarcacion.geojson", zoomMin:5, opacidad:.22,
-    peso:1.4, popupTitulo:"nombre", colorCampo:"color" },
-  { id:"irewater-edar", grupo:"Agua", label:"EDAR · agua regenerable", tipo:"punto", on:false,
-    color:"#00897B", fichero:"datos/irewater_hib_edar.geojson", zoomMin:6,
-    popupTitulo:"municipio", radio:2.6,
-    campos:["codigo","municipio","pais","poblacion_servida","qentrada_he","capacidad",
-            "volumen_reutilizable_m3","superficie_pot_regable_ha","demanda_potencial_riego",
-            "indice_impacto_hidrologico"] },
-  { id:"edar", grupo:"Agua", label:"EDAR (depuradoras)", tipo:"punto", on:false, color:"#a3e635",
-    fichero:"datos/edar.geojson", radio:3, opacidad:.45 },
-  { id:"etap", grupo:"Agua", label:"ETAP (potabilizadoras)", tipo:"punto", on:false, color:"#22d3ee",
-    fichero:"datos/etap.geojson", radio:3.2, opacidad:.5 },
-  { id:"trasvases", grupo:"Agua", label:"Trasvases", tipo:"linea", on:false, color:"#f472b6",
-    fichero:"datos/simplificado/trasvases-union.geojson", peso:3.4, opacidad:.98,
-    filtro:f => /trasvase|postrasvase/i.test(f.properties.name || "") },
-  { id:"canales", grupo:"Agua", label:"Canales y acequias", tipo:"linea", on:false, color:"#38bdf8",
-    fichero:"datos/simplificado/agua-conducciones.geojson", peso:1.1, opacidad:.5, zoomMin:9,
-    filtro:f => !/trasvase|postrasvase/i.test(f.properties.name || "") },
-  { id:"rios", grupo:"Agua", label:"Ríos (caudal en vivo)", tipo:"linea", on:false, color:"#7dd3fc",
-    fichero:"datos/simplificado/rios.geojson", peso:1.6, opacidad:.8, apiCaudal:true },
-  { id:"h2", grupo:"Agua", label:"Producción de H₂", tipo:"punto", on:false, color:"#5eead4",
-    fichero:"datos/oficial/hidrogeno-produccion.geojson", radio:6 },
-
-  { id:"carreteras", grupo:"Transporte", label:"Carreteras del Estado", tipo:"linea", on:false, color:"#64748b",
-    fichero:"datos/hermes/carreteras.geojson", peso:1.1, opacidad:.6, zoomMin:7.5 },
-  { id:"puertos", grupo:"Transporte", label:"Puertos interés general", tipo:"punto", on:false, color:"#38bdf8",
-    fichero:"datos/hermes/puertos-interes-general.geojson", radio:7 },
-  { id:"terminales-puerto", grupo:"Transporte", label:"Terminales portuarias", tipo:"poligono", on:false,
-    color:"#3b82f6", fichero:"datos/hermes/terminales-portuarias.geojson", peso:1, zoomMin:9 },
-  { id:"terminales-aero", grupo:"Transporte", label:"Terminales aeropuerto", tipo:"poligono", on:false,
-    color:"#a78bfa", fichero:"datos/hermes/terminales-aeropuerto.geojson", peso:1, zoomMin:9 },
-  { id:"intermodales", grupo:"Transporte", label:"Terminales mercancías", tipo:"punto", on:false,
-    color:"#f59e0b", fichero:"datos/hermes/terminales-mercancias.geojson", radio:5 },
-  { id:"dgt-camaras", grupo:"DGT · Tráfico", label:"Cámaras de tráfico (DGT)", tipo:"punto", on:false,
-    color:"#fb7185", fichero:"datos/dgt_camaras.geojson", radio:4, zoomMin:7, zoomDetalle:11,
-    // sin `siempreIndividual`: 1.977 camaras sueltas a zoom nacional son una masa en la
-    // que no se puede pinchar ninguna. Agrupadas, la burbuja abre una lista pinchable.
-    popupTitulo:"carretera" },
-  { id:"dgt-paneles", grupo:"DGT · Tráfico", label:"Paneles de mensaje variable", tipo:"punto", on:false,
-    color:"#22d3ee", fichero:"datos/dgt_paneles.geojson", radio:4.4, zoomMin:6, zoomDetalle:11,
-    popupTitulo:"carretera" },
-  { id:"dgt-incidencias", grupo:"DGT · Tráfico", label:"Incidencias en tiempo real", tipo:"punto", on:false,
-    color:"#f97316", fichero:"datos/dgt_incidencias.geojson", radio:5, zoomMin:6, zoomDetalle:11,
-    popupTitulo:"carretera" },
-  { id:"dgt-electrolineras", grupo:"DGT · Tráfico", label:"Puntos de recarga eléctrica", tipo:"punto", on:false,
-    color:"#34d399", fichero:"datos/dgt_electrolineras.geojson", radio:4.2, zoomMin:7, zoomDetalle:11,
-    radioPorMagnitud:true,
-    // escala por cuartiles reales: p25 = 22 kW, p75 = 50 kW, y los rapidos (>150) son 1.095
-    // de 12.144. Con min 22 / max 350 casi todos caian en el mismo tamano.
-    escala:{ campo:"potencia_max_kw", min:7, max:150, unidad:"kW" },
-    popupTitulo:"tipo_sitio" },
-  { id:"carburantes", grupo:"Tiempo real", label:"Carburantes (gasóleo A)", tipo:"punto", on:false,
-    color:"#22c55e", fichero:"datos/carburantes.geojson", radio:3.6, zoomMin:7,
-    escala:{ campo:"gasoleo_a", min:1.40, max:2.20, unidad:"€/l" } },
-  { id:"nap-lineas-metro", grupo:"Transporte", label:"Líneas de Metro Madrid", tipo:"linea", on:false,
-    color:"#38bdf8", fichero:"datos/nap_lineas_metro-madrid.geojson", peso:2.6, opacidad:.92,
-    zoomMin:9, popupTitulo:"linea", colorCampo:"color" },
-  { id:"nap-lineas-cercanias", grupo:"Transporte", label:"Líneas de Cercanías", tipo:"linea", on:false,
-    color:"#c084fc", fichero:"datos/nap_lineas_cercanias-renfe.geojson", peso:2.6, opacidad:.92,
-    zoomMin:7, popupTitulo:"linea", colorCampo:"color" },
-  { id:"nap-metro", grupo:"Transporte", label:"Metro de Madrid (NAP)", tipo:"punto", on:false,
-    color:"#38bdf8", fichero:"datos/nap_paradas_metro-madrid.geojson", radio:3.4,
-    zoomMin:9, popupTitulo:"nombre" },
   { id:"nap-cercanias", grupo:"Transporte", label:"Cercanías Renfe (NAP)", tipo:"punto", on:false,
     color:"#c084fc", fichero:"datos/nap_paradas_cercanias-renfe.geojson", radio:3.4,
     zoomMin:8, popupTitulo:"nombre" },
@@ -955,18 +892,13 @@ const CAPAS = [
     color:"#4ade80", fichero:"datos/hermes/estaciones-gas.geojson", radio:5,
     filtro:f => ["Gas_natural_licuado","Gas_natural_comprimido","Hidrogeno"]
                  .some(k => f.properties[k] === "SI") },
-  /* --- ráster oficial. Solo el PNOA publica teselas en EPSG:3857, que es el CRS del mapa.
-     La hidrografía del IDEe y el Catastro solo sirven WMS en 4326/25830: mezclar CRS en
-     Leaflet pide el bbox en un sistema y coloca el tile en otro, y salen parches de otra zona. --- */
-  { id:"pnoa", grupo:"Cartografía base", label:"Ortofoto PNOA (IGN)", tipo:"xyz", on:false,
-    color:"#65a30d", plantilla:"https://www.ign.es/wmts/pnoa-ma?layer=OI.OrthoimageCoverage" +
-      "&style=default&tilematrixset=EPSG:3857&Service=WMTS&Request=GetTile&Version=1.0.0" +
-      "&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
-    opacidad:1, atribucion:"IGN · PNOA" }
 ];
 
 /* zoom a partir del cual se dibuja cada punto por separado */
 const ZOOM_DETALLE = 8;
+// Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
+// sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
+const VER_DATOS = "2026-11-19b";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1179,7 +1111,7 @@ function cargar(c) {
   }
   const rot = document.getElementById("n-" + c.id);
   if (rot) rot.innerHTML = '<i class="spin"></i>';
-  fetch(c.fichero)
+  fetch(c.fichero + (c.fichero.includes("?") ? "&" : "?") + "v=" + VER_DATOS)
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(gj => {
       const feats = c.filtro ? gj.features.filter(c.filtro) : gj.features;
