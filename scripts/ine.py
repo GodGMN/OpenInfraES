@@ -162,6 +162,92 @@ def aplica(fichero, pobl, etiqueta):
     return puestos
 
 
+
+def paro_ccaa():
+    """Tasa de paro (EPA) por comunidad, tabla 14506. Se queda la serie 'Total' de cada una.
+
+    El nombre del registro no tiene formato fijo: unas veces es
+    <<Tasa de paro... Ambos sexos. Andalucia. Total>> y otras <<Andalucia. Ambos sexos. De 25 a 54>>.
+    Asi que se busca el nombre de la comunidad en cualquier posicion y se exige que aparezca
+    <<Total>> como grupo de edad.
+    """
+    from normaliza import CCAA, EXTRA_CCAA
+    idx = {normaliza(nom): cod for cod, (nom, _) in CCAA.items()}
+    salida = {}
+    for reg in descarga(14506):
+        nom = reg.get("Nombre") or ""
+        if "Total" not in nom:
+            continue
+        valor = (reg.get("Data") or [{}])[0].get("Valor")
+        if valor is None:
+            continue
+        partes = [t.strip().rstrip(".") for t in nom.split(".")]
+        for trozo in partes:
+            cod = idx.get(normaliza(trozo)) or EXTRA_CCAA.get(normaliza(trozo))
+            if cod:
+                salida[cod] = round(float(valor), 2)
+                break
+    return salida
+
+
+def densidad(fichero, etiqueta):
+    """habitantes por km2, con la superficie del propio poligono."""
+    ruta = os.path.join(DATOS, fichero)
+    if not os.path.exists(ruta):
+        return
+    d = json.load(open(ruta, encoding="utf-8"))
+    n = 0
+    for f in d["features"]:
+        p = f["properties"]
+        hab, sup = p.get("poblacion"), p.get("superficie_km2")
+        if hab and sup:
+            p["densidad"] = round(hab / sup, 1)
+            n += 1
+    # coropleta por densidad
+    vals = sorted(f["properties"]["densidad"] for f in d["features"] if f["properties"].get("densidad"))
+    if vals:
+        cortes = [vals[int(len(vals) * q)] for q in (0.25, 0.5, 0.75)]
+        tramos = ["#dbeafe", "#93c5fd", "#3b82f6", "#1e40af"]
+        nombres = ["muy baja", "baja", "alta", "muy alta"]
+        for f in d["features"]:
+            v = f["properties"].get("densidad")
+            if not v:
+                continue
+            i = sum(1 for c in cortes if v >= c)
+            f["properties"]["color_densidad"] = tramos[i]
+            f["properties"]["tramo_densidad"] = nombres[i]
+    json.dump(d, open(ruta, "w", encoding="utf-8"), ensure_ascii=False)
+    print("  %-14s %2d con densidad" % (etiqueta, n))
+
+
+def aplica_paro(fichero, paro, etiqueta):
+    ruta = os.path.join(DATOS, fichero)
+    if not os.path.exists(ruta):
+        return
+    d = json.load(open(ruta, encoding="utf-8"))
+    n = 0
+    for f in d["features"]:
+        v = paro.get(f["properties"].get("cod_ine"))
+        if v is not None:
+            f["properties"]["paro_pct"] = v
+            n += 1
+    # coropleta de paro: rojo cuanto mas alto
+    vals = sorted(f["properties"]["paro_pct"] for f in d["features"] if f["properties"].get("paro_pct"))
+    if vals:
+        cortes = [vals[int(len(vals) * q)] for q in (0.25, 0.5, 0.75)]
+        tramos = ["#fef2f2", "#fca5a5", "#ef4444", "#991b1b"]
+        nombres = ["bajo", "medio-bajo", "medio-alto", "alto"]
+        for f in d["features"]:
+            v = f["properties"].get("paro_pct")
+            if v is None:
+                continue
+            i = sum(1 for c in cortes if v >= c)
+            f["properties"]["color_paro"] = tramos[i]
+            f["properties"]["tramo_paro"] = nombres[i]
+    json.dump(d, open(ruta, "w", encoding="utf-8"), ensure_ascii=False)
+    print("  %-14s %2d con tasa de paro" % (etiqueta, n))
+
+
 def main():
     print("  INE · Cifras oficiales del padrón")
     prov_nom = poblacion(2852)
@@ -178,6 +264,14 @@ def main():
 
     aplica_codigo("nuts3_es.geojson", prov, "provincias")
     aplica_codigo("nuts2_es.geojson", com, "comunidades")
+    densidad("nuts3_es.geojson", "provincias")
+    densidad("nuts2_es.geojson", "comunidades")
+    try:
+        paro = paro_ccaa()
+        print("  EPA: %d comunidades con tasa de paro" % len(paro))
+        aplica_paro("nuts2_es.geojson", paro, "comunidades")
+    except Exception as e:
+        print("  EPA no disponible:", str(e)[:60])
 
     recibo = {
         "fuente": "INE · Cifras Oficiales de Población (padrón)",

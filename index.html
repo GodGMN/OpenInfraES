@@ -351,11 +351,12 @@
   .est-prod i { display:block; color:var(--suave); font-style:normal; font-size:9.6px; margin-top:1px; }
 
   /* left:354 = hud (330) + 16 + 8 · right:320 cuando el panel derecho esta abierto (290+14+16) */
-  #panel-dato { position:fixed; left:354px; right:16px; bottom:44px; max-height:250px; overflow-y:auto;
+  #panel-dato { position:fixed; left:354px; right:auto; width:min(760px, calc(100vw - 380px));
+    bottom:44px; max-height:250px; overflow-y:auto;
     background:rgba(12,18,30,.95); border:1px solid var(--borde-fuerte); border-radius:8px;
     backdrop-filter:blur(14px); box-shadow:0 -8px 32px rgba(0,0,0,.55); padding:13px 16px 14px;
     z-index:900; font-size:13px; color:var(--tinta); transition:right .18s ease; }
-  body:has(#info-der.on) #panel-dato { right:320px; }
+  body:has(#info-der.on) #panel-dato { width:min(760px, calc(100vw - 700px)); }
   @media (max-width:1100px) { #panel-dato { left:16px; right:16px; } body:has(#info-der.on) #panel-dato { right:16px; } }
   #panel-dato-x { position:absolute; top:8px; right:10px; background:transparent; border:0;
     color:var(--suave); font-size:16px; cursor:pointer; padding:2px 6px; }
@@ -378,17 +379,18 @@
   #panel-dato .pd-pie a:hover { text-decoration:underline; }
   #panel-dato .pd-fuente { color:var(--suave); }
 
-  #leyenda { position:fixed; right:16px; top:76px; width:214px; max-height:38vh; overflow-y:auto;
-    background:rgba(12,18,30,.94); border:1px solid var(--borde); border-radius:6px;
+  #leyenda { position:fixed; right:16px; top:76px; width:220px; max-height:38vh; overflow-y:auto;
+    background:rgba(8,12,20,.97); border:1px solid rgba(255,255,255,.22); border-radius:6px;
     padding:9px 11px; z-index:880; font-size:11.4px; color:var(--tinta);
     backdrop-filter:blur(10px); box-shadow:0 6px 22px rgba(0,0,0,.45); }
   body:has(#info-der.on) #leyenda { right:322px; }
-  #leyenda h5 { margin:0 0 7px; font-size:10.4px; text-transform:uppercase; letter-spacing:.08em;
+  #leyenda h5 { margin:0 0 8px; font-size:10.6px; text-transform:uppercase; letter-spacing:.08em;
     color:var(--suave); font-weight:600; }
   #leyenda .ly { display:flex; align-items:center; gap:7px; margin-bottom:3px; }
-  #leyenda .ly i { width:11px; height:11px; border-radius:2px; flex:0 0 auto;
-    border:1px solid rgba(255,255,255,.25); }
-  #leyenda .ly span { flex:1; color:var(--tinta); }
+  #leyenda .ly i { width:13px; height:13px; border-radius:2px; flex:0 0 auto;
+    border:1px solid rgba(255,255,255,.45); box-shadow:0 0 0 1px rgba(0,0,0,.4); }
+  #leyenda .ly { margin-bottom:4px; }
+  #leyenda .ly span { flex:1; color:var(--tinta); font-size:11.8px; }
   #leyenda .ly b { color:var(--suave); font-weight:500; font-variant-numeric:tabular-nums; }
 
   /* barra de KPIs: los numeros que resumen el pais ahora mismo, siempre a la vista */
@@ -742,7 +744,7 @@ const RESUMEN_CAT = {
   operador: "operadores", zona: "zonas", pais: "países",
   indice_impacto_hidrologico: "impacto hidrológico", uso: "usos", estado: "estado",
   nuts: "código NUTS", tramo_poblacion: "tramo de población", cod_demar: "código de demarcación",
-  tramo: "tramo de agua aprovechable", tramo_poblacion: "tramo de población"
+  tramo: "tramo de agua aprovechable"
 };
 const RESUMEN_NUM = {
   potencia_max_kw: ["kW", 1], conectores: ["conectores", 0], magnitud: ["magnitud", 1],
@@ -751,7 +753,7 @@ const RESUMEN_NUM = {
   volumen_reutilizable_m3: ["m³/año reutilizables", 0],
   superficie_pot_regable_ha: ["hectáreas regables", 0],
   volumen_aprovechable_m3: ["m³ aprovechables", 0],
-  poblacion: ["habitantes", 0],
+  poblacion: ["habitantes", 0], densidad: ["hab/km²", 1], paro_pct: ["% de paro", 1],
   superficie_potencialmente_regable_ha: ["hectáreas potencialmente regables", 0]
 };
 
@@ -951,11 +953,17 @@ const CAPAS = [
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
     fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
   { id:"ine-ccaa", grupo:"Demografía", label:"Población por comunidad (INE)", tipo:"poligono", on:false,
-    color:"#31a354", fichero:"datos/nuts2_es.geojson", zoomMin:5, opacidad:.45,
-    peso:1, popupTitulo:"nombre", colorCampo:"color" },
+    color:"#31a354", fichero:"datos/nuts2_es.geojson", zoomMin:5, opacidad:.62,
+    peso:1.1, popupTitulo:"nombre", colorCampo:"color" },
+  { id:"ine-densidad", grupo:"Demografía", label:"Densidad de población", tipo:"poligono", on:false,
+    color:"#3b82f6", fichero:"datos/nuts3_es.geojson", zoomMin:6, opacidad:.62,
+    peso:1.1, popupTitulo:"nombre", colorCampo:"color_densidad" },
+  { id:"ine-paro", grupo:"Demografía", label:"Tasa de paro (EPA)", tipo:"poligono", on:false,
+    color:"#ef4444", fichero:"datos/nuts2_es.geojson", zoomMin:5, opacidad:.62,
+    peso:1.1, popupTitulo:"nombre", colorCampo:"color_paro" },
   { id:"ine-provincias", grupo:"Demografía", label:"Población por provincia (INE)", tipo:"poligono", on:false,
-    color:"#31a354", fichero:"datos/nuts3_es.geojson", zoomMin:6, opacidad:.45,
-    peso:1, popupTitulo:"nombre", colorCampo:"color" },
+    color:"#31a354", fichero:"datos/nuts3_es.geojson", zoomMin:6, opacidad:.62,
+    peso:1.1, popupTitulo:"nombre", colorCampo:"color" },
   { id:"irewater-edar", grupo:"Agua", label:"EDAR · agua regenerable", tipo:"punto", on:false,
     color:"#00897B", fichero:"datos/irewater_hib_edar.geojson", zoomMin:6,
     popupTitulo:"municipio", radio:2.6,
@@ -1050,7 +1058,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19g";
+const VER_DATOS = "2026-11-19h";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1177,13 +1185,17 @@ function pintarLeyenda(c) {
   const feats = datos[c.id];
   if (!feats || !feats.length) { el.hidden = true; return; }
 
+  // el campo de tramo se deriva del campo de color: color_paro -> tramo_paro, color -> tramo_poblacion
+  const campoColor = c.colorCampo;
+  const campoTramo = campoColor === "color" ? "tramo_poblacion"
+                   : "tramo_" + campoColor.replace(/^color_/, "");
   const cuenta = {};
   feats.forEach(f => {
     const p = f.properties || {};
-    const v = p[c.colorCampo];
+    const v = p[campoColor];
     if (v === undefined || v === null || v === "") return;
     const col = c.colores ? (c.colores[v] || c.color) : String(v);
-    const etiqueta = p.tramo_poblacion || p.nivel || p.tramo || String(v);
+    const etiqueta = p[campoTramo] || p.nivel || p.tramo || String(v);
     const k = col + "|" + etiqueta;
     cuenta[k] = (cuenta[k] || 0) + 1;
   });
@@ -1252,7 +1264,9 @@ const ETIQUETA = {
   magnitud:"Magnitud", profundidad_km:"Profundidad (km)", lugar:"Lugar", hora:"Hora", region:"Región",
   mensaje:"Mensaje del panel", carretera:"Carretera", km:"Kilómetro", nivel:"Nivel",
   potencia_max_kw:"Potencia máx. (kW)", conectores:"Conectores", direccion:"Dirección",
-  titular:"Titular", tipo:"Tipo", categoria:"Categoría", uso:"Uso", estado_registro:"Estado"
+  titular:"Titular", tipo:"Tipo", categoria:"Categoría", uso:"Uso", estado_registro:"Estado",
+  densidad:"Densidad (hab/km²)", paro_pct:"Tasa de paro", superficie_km2:"Superficie (km²)",
+  poblacion:"Población", nuts:"Código NUTS", tecnologia_ree:"Tecnología (REE)"
 };
 
 function nombreCampo(k) {
@@ -1280,10 +1294,15 @@ function abrirPanelDato(p, c, latlng) {
   // atributos: los declarados por la capa primero, luego el resto
   const preferidos = (c.campos || []).concat(Object.keys(ETIQUETA));
   const claves = [];
-  for (const k of preferidos) if (k in p && !CAMPOS_OCULTOS.has(k) && !claves.includes(k)) claves.push(k);
+  for (const k of preferidos) {
+    if (!(k in p) || CAMPOS_OCULTOS.has(k) || claves.includes(k)) continue;
+    if (k.indexOf("color") === 0 || k.indexOf("tramo_") === 0) continue;
+    claves.push(k);
+  }
   for (const k of Object.keys(p)) {
     if (claves.length >= 26) break;
     if (CAMPOS_OCULTOS.has(k) || claves.includes(k)) continue;
+    if (k.indexOf("color") === 0 || k.indexOf("tramo_") === 0) continue;
     if (k.endsWith("__f") || k.endsWith("__v")) continue;
     claves.push(k);
   }
@@ -1555,8 +1574,8 @@ function cargar(c) {
       });
 
       datos[c.id] = feats;      // siempre: el panel derecho analiza el GeoJSON al abrirse
-      if (c.tipo === "punto") { pintarPuntos(c); }
       if (c.colorCampo) pintarLeyenda(c);
+      if (c.tipo === "punto") { pintarPuntos(c); }
       else {
         // lineas y poligonos: halo debajo si se pide (solo 400/220 kV)
         if (c.halo) {
