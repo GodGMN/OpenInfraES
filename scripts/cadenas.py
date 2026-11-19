@@ -52,6 +52,7 @@ CADENAS = {
     "estaciones-gas": ("MITECO — registro de carburantes", "Visor Hermes (ArcGIS REST)",
                        "Los flags GNL/GNC/H2 son del registro; el visor filtra a 165 de 11.485."),
     # --- agua (OSM)
+    "irewater-edar": "I-ReWater HUB (Interreg)",
     "edar": ("Ayuntamientos / confederaciones (declarado en OSM)", "OpenInfraES ← OSM",
              "No es el inventario oficial del MITECO: es lo que está mapeado en OSM."),
     "etap": ("Confederaciones / ayuntamientos (declarado en OSM)", "OpenInfraES ← OSM", ""),

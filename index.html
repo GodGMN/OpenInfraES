@@ -328,6 +328,14 @@
   #info-der .db { flex:1; height:5px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden; }
   #info-der .db span { display:block; height:100%; background:var(--cian); border-radius:3px; }
   #info-der .dv { flex:0 0 34px; text-align:right; color:var(--tinta); font-variant-numeric:tabular-nums; }
+
+  #vista-aviso { display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:7px 15px 0; font-size:10.5px; color:var(--suave); letter-spacing:.04em; }
+  #vista-aviso b { color:var(--cian); font-weight:600; }
+  #vista-aviso button { border:1px solid var(--borde); background:transparent; color:var(--suave);
+    font:inherit; font-size:9.6px; text-transform:uppercase; letter-spacing:.06em; padding:2px 7px;
+    border-radius:3px; cursor:pointer; }
+  #vista-aviso button:hover { color:var(--cian); border-color:var(--borde-fuerte); }
 </style>
 </head>
 <body>
@@ -349,6 +357,7 @@
   </div>
   <div id="buscar"><input id="q" type="search" placeholder="Buscar instalación…" autocomplete="off"></div>
   <div id="resultados"></div>
+  <div id="vista-aviso"></div>
   <div id="presets">
     <button data-preset="todos" title="Encender todo / apagar todo">Todo</button>
     <button data-preset="Red eléctrica">Eléctrico</button>
@@ -646,11 +655,15 @@ const RESUMEN_CAT = {
   nivel_txt: "nivel de aviso", provincia: "provincias", subtipo: "subtipos",
   carretera: "carreteras", mensaje: "mensajes en panel", fenomenos: "fenómenos",
   tecnologia: "tecnologías", categoria: "categorías", demarcacion: "demarcaciones",
-  operador: "operadores", zona: "zonas"
+  operador: "operadores", zona: "zonas", pais: "países",
+  indice_impacto_hidrologico: "impacto hidrológico", uso: "usos", estado: "estado"
 };
 const RESUMEN_NUM = {
   potencia_max_kw: ["kW", 1], conectores: ["conectores", 0], magnitud: ["magnitud", 1],
-  km: ["km", 1], salidas_dia: ["salidas/día", 0], voltage: ["V", 0]
+  km: ["km", 1], salidas_dia: ["salidas/día", 0], voltage: ["V", 0],
+  qentrada_he: ["habitantes equivalentes", 0], capacidad: ["capacidad", 0],
+  volumen_reutilizable_m3: ["m³/año reutilizables", 0],
+  superficie_pot_regable_ha: ["hectáreas regables", 0]
 };
 
 function analizarCapa(id) {
@@ -843,6 +856,15 @@ const CAPAS = [
     popupTitulo:"nom_demar", etiqueta:"nom_demar" },
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
     fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
+  { id:"irewater-demarcacion", grupo:"Agua", label:"Demarcaciones transfronterizas", tipo:"poligono", on:false,
+    color:"#00897B", fichero:"datos/irewater_hib_demarcacion.geojson", zoomMin:5, opacidad:.25,
+    peso:1.2, popupTitulo:"nombre" },
+  { id:"irewater-edar", grupo:"Agua", label:"EDAR · agua regenerable", tipo:"punto", on:false,
+    color:"#00897B", fichero:"datos/irewater_hib_edar.geojson", zoomMin:6,
+    popupTitulo:"municipio", radio:2.6,
+    campos:["codigo","municipio","pais","poblacion_servida","qentrada_he","capacidad",
+            "volumen_reutilizable_m3","superficie_pot_regable_ha","demanda_potencial_riego",
+            "indice_impacto_hidrologico"] },
   { id:"edar", grupo:"Agua", label:"EDAR (depuradoras)", tipo:"punto", on:false, color:"#a3e635",
     fichero:"datos/edar.geojson", radio:3, opacidad:.45 },
   { id:"etap", grupo:"Agua", label:"ETAP (potabilizadoras)", tipo:"punto", on:false, color:"#22d3ee",
@@ -937,6 +959,7 @@ const panel = $("#capas");
 Object.entries(grupos).forEach(([nombre, lista]) => {
   const d = document.createElement("div");
   d.className = "grupo";
+  d.dataset.grupo = nombre;
   d.innerHTML = '<div class="grupo-t">' + nombre + "</div>" + lista.map(c =>
     `<label class="fila" data-fila="${c.id}"><input type="checkbox" data-capa="${c.id}" ${c.on ? "checked" : ""}>` +
     `<span class="muestra ${c.tipo === "poligono" ? "pol" : ""}" style="background:${c.color};` +
@@ -1562,14 +1585,41 @@ function aplicarUrl() {
 }
 
 /* ---------------- presets ---------------- */
+function pintarAvisoVista(p) {
+  const aviso = document.getElementById("vista-aviso");
+  if (!aviso) return;
+  const SOLO = {};
+  const n = (p === "todos")
+    ? CAPAS.length
+    : CAPAS.filter(c => SOLO[p] ? SOLO[p].has(c.id) : c.grupo === p).length;
+  const txt = (p === "todos")
+    ? CAPAS.length + " capas en " + Object.keys(grupos).length + " grupos"
+    : n + " capas · vista <b>" + p + "</b>";
+  aviso.innerHTML = "<span>" + txt + "</span>" +
+    (p === "todos" ? "" : '<button id="ver-todo">Ver todas</button>');
+  const b = document.getElementById("ver-todo");
+  if (b) b.onclick = () => {
+    document.querySelectorAll("#capas .grupo").forEach(g => g.style.display = "");
+    document.querySelectorAll("[data-preset]").forEach(x => x.classList.remove("on"));
+    pintarAvisoVista("todos");
+  };
+}
+pintarAvisoVista("todos");
+
 document.querySelectorAll("[data-preset]").forEach(btn => {
   btn.addEventListener("click", () => {
     const p = btn.dataset.preset;
     // "Todo" es un interruptor segun el estado del propio boton, no segun los checkboxes
     const yaActivo = btn.classList.contains("on");
     document.querySelectorAll("[data-preset]").forEach(b => b.classList.toggle("on", b === btn && !(p === "todos" && yaActivo)));
+    const SOLO_PRESET = {};   // sin restricciones: la vista enciende el grupo entero
+    // La vista tambien FILTRA el panel: con 46 capas, encender sin ocultar deja el mismo muro.
+    document.querySelectorAll("#capas .grupo").forEach(g => {
+      const ver = (p === "todos") || g.dataset.grupo === p;
+      g.style.display = ver ? "" : "none";
+    });
+    pintarAvisoVista(p);
     CAPAS.forEach(c => {
-      const SOLO_PRESET = { "Agua": new Set(["embalses", "desaladoras", "trasvases"]) };
       // "Todo" es un interruptor: si ya estan todas, las apaga
       let on;
       if (p === "todos") {

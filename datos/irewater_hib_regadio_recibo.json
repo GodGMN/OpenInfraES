@@ -1,0 +1,15 @@
+{
+ "fuente": "I-ReWater HUB (proyecto Interreg)",
+ "url_catalogo": "https://api.i-rewater-hub.com/api/v1/webgis/public",
+ "capa": "hib_regadio",
+ "zoom": 8,
+ "features": 0,
+ "tiles_leidos": 0,
+ "tiles_vacios": 128,
+ "tiles_error": 0,
+ "tamano_kb": 0.0,
+ "descargado": "2026-11-19T08:59:06",
+ "paises": [],
+ "impacto": [],
+ "nota": "Vector tiles MVT decodificados y deduplicados por id. Solo puntos: los poligonos no se reproyectan (exigiria el borde del tile)."
+}

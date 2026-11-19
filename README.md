@@ -75,25 +75,27 @@ funciona siempre.
 
 ## Capas del visor
 
-**46 capas en 8 grupos temáticos**, con carga bajo demanda: nada se descarga hasta que lo enciendes.
+**48 capas en 8 grupos temáticos**, con carga bajo demanda: nada se descarga hasta que lo enciendes.
 
 | Grupo | Capas | Objetos |
 |---|---:|---:|
 | **Red eléctrica** | 4 | 664 |
 | **Generación** | 7 | 2.733 |
 | **Gas** | 6 | 165 |
-| **Agua** | 9 | 16.110 |
+| **Agua** | 11 | 19.640 |
 | **Transporte** | 11 | 17.445 |
 | **DGT · Tráfico** | 4 | 16.490 |
 | **Tiempo real** | 3 | 11.836 |
 | **Riesgo** | 2 | 150 |
-| **Total** | **46** | **65.593** |
+| **Total** | **48** | **69.123** |
 
 Cifras contadas del propio `datos/fuentes.json`, no estimadas. **No suman lo que se ve en pantalla**:
 una capa que no está encendida no ha descargado sus datos, y `fuentes.json` guarda el total del fichero.
 
-Los grupos se encienden de un golpe con los presets de arriba: **Todo · Eléctrico · Gas · Agua ·
-Transporte · DGT · En vivo · Riesgo**.
+Los grupos se encienden de un golpe con las **vistas temáticas** de arriba: **Todo · Eléctrico · Gas ·
+Agua · Transporte · DGT · En vivo · Riesgo**. Al elegir una vista se encienden sus capas **y el panel
+se filtra**: solo ves el grupo que toca, con un botón «Ver todas» para volver. Con 48 capas en 8
+grupos, encender sin ocultar dejaba el mismo muro de siempre.
 
 ### Lo que cada capa te dice al pinchar
 
@@ -275,8 +277,8 @@ detalla además la licencia de cada conjunto de datos.
 
 | | |
 |---|---|
-| Capas en el visor | **46** |
-| Capas documentadas en `fuentes.json` | **65** |
+| Capas en el visor | **48** |
+| Capas documentadas en `fuentes.json` | **67** |
 | Organismos citados | **11** — MITECO, IGN, REE, MITMA, Enagás, CORES, CSN, ENRESA, Renfe, DGT, AEMET |
 | Fuentes sin clave | MITECO, IGN, MITMA, Enagás, CORES, CSN, ENRESA, Renfe, DGT, AEMET, OMIE, ESIOS (19 indicadores) |
 | Fuentes con clave | NAP de transportes (`ApiKey`), ENTSO-E (token) |

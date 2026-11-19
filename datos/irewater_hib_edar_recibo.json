@@ -1,0 +1,49 @@
+{
+ "fuente": "I-ReWater HUB (proyecto Interreg)",
+ "url_catalogo": "https://api.i-rewater-hub.com/api/v1/webgis/public",
+ "capa": "hib_edar",
+ "zoom": 8,
+ "features": 3501,
+ "tiles_leidos": 95,
+ "tiles_vacios": 33,
+ "tiles_error": 0,
+ "tamano_kb": 1857.4,
+ "descargado": "2026-11-19T08:56:17",
+ "paises": [
+  [
+   "ES",
+   2086
+  ],
+  [
+   "FR",
+   921
+  ],
+  [
+   "PT",
+   484
+  ],
+  [
+   "AD",
+   4
+  ]
+ ],
+ "impacto": [
+  [
+   "Bajo Impacto",
+   1943
+  ],
+  [
+   "Alto Impacto",
+   769
+  ],
+  [
+   "Impacto Moderado",
+   569
+  ],
+  [
+   "Impacto Nulo",
+   220
+  ]
+ ],
+ "nota": "Vector tiles MVT decodificados y deduplicados por id. Solo puntos: los poligonos no se reproyectan (exigiria el borde del tile)."
+}

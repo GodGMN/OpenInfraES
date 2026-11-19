@@ -30,6 +30,8 @@ OFICIAL = {
     "agua-embalsada": ("MITECO", "https://www.miteco.gob.es", "Boletín Hidrológico, parte semanal"),
     "desaladoras": ("MITECO", "https://www.miteco.gob.es", "Instalaciones de desalación"),
     "hidrogeno-red": ("MITECO", "https://www.miteco.gob.es", "Red de hidrógeno (PCI)"),
+    "irewater-edar": ("I-ReWater HUB (Interreg)", "https://i-rewater-hub.com",
+                      "vector tiles MVT del catálogo abierto, deduplicado"),
 }
 
 HERMES = {
@@ -124,6 +126,31 @@ def main():
             "features": c.get("features"),
             "url": HERMES["url"],
             "metodo": "%s/%d — %s" % (c.get("servicio"), c.get("layer", 0), HERMES["metodo"]),
+        }
+
+    # I-ReWater: un recibo por capa descargada
+    TITULOS_IRW = {"hib_edar": "EDAR · agua regenerable",
+                   "hib_uda": "Unidades de Demanda Agrícola",
+                   "hib_regadio": "Perímetros de regadío",
+                   "hib_regadio_particion": "Particiones de regadío (25 h)",
+                   "hib_demarcacion": "Demarcaciones hidrográficas (I-ReWater)"}
+    for fich in sorted(os.listdir(DATOS)):
+        if not (fich.startswith("irewater_") and fich.endswith("_recibo.json")):
+            continue
+        r = leer(fich, {})
+        if not r.get("capa") or not r.get("features"):
+            continue
+        cid = "irewater-" + r["capa"].replace("hib_", "").replace("_", "-")
+        fuentes[cid] = {
+            "capa": cid,
+            "titulo": TITULOS_IRW.get(r["capa"], r["capa"]),
+            "fuente": "I-ReWater HUB (Interreg)", "editor": "I-ReWater HUB (Interreg)",
+            "licencia": "CC BY 4.0",
+            "actualizado": r.get("descargado", "")[:10],
+            "descargado": HOY,
+            "features": r.get("features"),
+            "url": "https://i-rewater-hub.com",
+            "metodo": "vector tiles MVT z%d, deduplicado por id" % r.get("zoom", 8),
         }
 
     osm_agua = leer("osm_agua_recibo.json", {})
