@@ -350,31 +350,46 @@
   .est-prod b { color:var(--cian); font-size:12px; }
   .est-prod i { display:block; color:var(--suave); font-style:normal; font-size:9.6px; margin-top:1px; }
 
-  #panel-dato { position:fixed; left:314px; right:16px; bottom:44px; max-height:190px; overflow-y:auto;
-    background:rgba(12,18,30,.94); border:1px solid var(--borde-fuerte); border-radius:8px;
-    backdrop-filter:blur(12px); box-shadow:0 -6px 28px rgba(0,0,0,.5); padding:11px 14px 12px;
-    z-index:900; font-size:11px; color:var(--tinta); }
-  @media (max-width:900px) { #panel-dato { left:10px; } }
-  #panel-dato-x { position:absolute; top:6px; right:8px; background:transparent; border:0;
-    color:var(--suave); font-size:13px; cursor:pointer; padding:2px 5px; }
+  /* left:354 = hud (330) + 16 + 8 · right:320 cuando el panel derecho esta abierto (290+14+16) */
+  #panel-dato { position:fixed; left:354px; right:16px; bottom:44px; max-height:250px; overflow-y:auto;
+    background:rgba(12,18,30,.95); border:1px solid var(--borde-fuerte); border-radius:8px;
+    backdrop-filter:blur(14px); box-shadow:0 -8px 32px rgba(0,0,0,.55); padding:13px 16px 14px;
+    z-index:900; font-size:13px; color:var(--tinta); transition:right .18s ease; }
+  body:has(#info-der.on) #panel-dato { right:320px; }
+  @media (max-width:1100px) { #panel-dato { left:16px; right:16px; } body:has(#info-der.on) #panel-dato { right:16px; } }
+  #panel-dato-x { position:absolute; top:8px; right:10px; background:transparent; border:0;
+    color:var(--suave); font-size:16px; cursor:pointer; padding:2px 6px; }
   #panel-dato-x:hover { color:var(--tinta); }
-  #panel-dato h3 { margin:0 0 3px; font-size:13.5px; font-weight:600; color:var(--tinta);
-    padding-right:22px; line-height:1.25; }
-  #panel-dato .pd-cap { font-size:9.6px; text-transform:uppercase; letter-spacing:.07em;
-    color:var(--suave); margin-bottom:7px; }
+  #panel-dato h3 { margin:0 0 4px; font-size:17px; font-weight:600; color:var(--tinta);
+    padding-right:26px; line-height:1.22; }
+  #panel-dato .pd-cap { font-size:11px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--suave); margin-bottom:10px; }
   #panel-dato .pd-cap b { color:var(--cian); font-weight:600; }
-  #panel-dato .pd-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
-    gap:2px 18px; margin-bottom:7px; }
-  #panel-dato .pd-k { display:flex; justify-content:space-between; gap:10px; font-size:10.6px;
-    border-bottom:1px dotted rgba(255,255,255,.06); padding:2px 0; }
+  #panel-dato .pd-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    gap:2px 22px; margin-bottom:10px; }
+  #panel-dato .pd-k { display:flex; justify-content:space-between; gap:12px; font-size:12.4px;
+    border-bottom:1px dotted rgba(255,255,255,.07); padding:3px 0; }
   #panel-dato .pd-k span:first-child { color:var(--suave); }
   #panel-dato .pd-k span:last-child { color:var(--tinta); text-align:right;
     font-variant-numeric:tabular-nums; }
-  #panel-dato .pd-pie { display:flex; flex-wrap:wrap; gap:12px; align-items:center;
-    padding-top:7px; border-top:1px solid var(--borde); font-size:10.2px; }
+  #panel-dato .pd-pie { display:flex; flex-wrap:wrap; gap:14px; align-items:center;
+    padding-top:9px; border-top:1px solid var(--borde); font-size:11.6px; }
   #panel-dato .pd-pie a { color:var(--cian); text-decoration:none; }
   #panel-dato .pd-pie a:hover { text-decoration:underline; }
   #panel-dato .pd-fuente { color:var(--suave); }
+
+  #leyenda { position:fixed; right:16px; top:132px; width:214px; max-height:38vh; overflow-y:auto;
+    background:rgba(12,18,30,.94); border:1px solid var(--borde); border-radius:6px;
+    padding:9px 11px; z-index:880; font-size:11.4px; color:var(--tinta);
+    backdrop-filter:blur(10px); box-shadow:0 6px 22px rgba(0,0,0,.45); }
+  body:has(#info-der.on) #leyenda { right:322px; }
+  #leyenda h5 { margin:0 0 7px; font-size:10.4px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--suave); font-weight:600; }
+  #leyenda .ly { display:flex; align-items:center; gap:7px; margin-bottom:3px; }
+  #leyenda .ly i { width:11px; height:11px; border-radius:2px; flex:0 0 auto;
+    border:1px solid rgba(255,255,255,.25); }
+  #leyenda .ly span { flex:1; color:var(--tinta); }
+  #leyenda .ly b { color:var(--suave); font-weight:500; font-variant-numeric:tabular-nums; }
 </style>
 </head>
 <body>
@@ -413,6 +428,7 @@
   <div id="pie"><select id="base"></select></div>
 </div>
 
+<div id="leyenda" hidden></div>
 <div id="panel-dato" hidden>
     <button id="panel-dato-x" title="Cerrar">✕</button>
     <div id="panel-dato-cuerpo"></div>
@@ -1077,6 +1093,79 @@ function bloqueEstimacion(p) {
 }
 
 
+
+
+/* ---------------- leyenda ----------------
+   Cuando una capa pinta por un campo (tramos de poblacion, nivel de aviso, tecnologia), la leyenda
+   se construye CONTANDO los valores del propio dato: no hay una tabla escrita a mano que se quede
+   desfasada cuando cambian los datos. */
+function pintarLeyenda(c) {
+  const el = document.getElementById("leyenda");
+  if (!el) return;
+  if (!c || !c.colorCampo) { el.hidden = true; return; }
+  const feats = datos[c.id];
+  if (!feats || !feats.length) { el.hidden = true; return; }
+
+  const cuenta = {};
+  feats.forEach(f => {
+    const p = f.properties || {};
+    const v = p[c.colorCampo];
+    if (v === undefined || v === null || v === "") return;
+    const col = c.colores ? (c.colores[v] || c.color) : String(v);
+    const etiqueta = p.tramo_poblacion || p.nivel || p.tramo || String(v);
+    const k = col + "|" + etiqueta;
+    cuenta[k] = (cuenta[k] || 0) + 1;
+  });
+  const pares = Object.keys(cuenta).map(k => ({ col: k.split("|")[0], lab: k.split("|")[1], n: cuenta[k] }));
+  if (pares.length < 2 || pares.length > 14) { el.hidden = true; return; }
+
+  el.innerHTML = "<h5>" + (c.label || c.id) + "</h5>" +
+    pares.map(x => `<div class="ly"><i style="background:${x.col}"></i>` +
+      `<span>${x.lab}</span><b>${nf(x.n)}</b></div>`).join("");
+  el.hidden = false;
+}
+
+/* ---------------- descargas ---------------- */
+function descargar(nombre, texto, tipo) {
+  const b = new Blob([texto], { type: (tipo || "text/plain") + ";charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(b);
+  a.download = nombre;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+}
+
+function descargarCapa(c) {
+  const feats = datos[c.id];
+  if (!feats || !feats.length) return;
+  const NL = String.fromCharCode(10);
+  const COMILLA = String.fromCharCode(34);
+  const claves = [];
+  feats.forEach(f => Object.keys(f.properties || {}).forEach(k => {
+    if (claves.indexOf(k) === -1) claves.push(k);
+  }));
+  const esc = v => {
+    const t = (v === null || v === undefined) ? "" : String(v);
+    if (t.indexOf(COMILLA) !== -1 || t.indexOf(";") !== -1 || t.indexOf(NL) !== -1) {
+      return COMILLA + t.split(COMILLA).join(COMILLA + COMILLA) + COMILLA;
+    }
+    return t;
+  };
+  const lineas = [["lon", "lat"].concat(claves).join(";")];
+  feats.forEach(f => {
+    let lon = "", lat = "";
+    const g = f.geometry || {};
+    if (g.type === "Point") { lon = g.coordinates[0]; lat = g.coordinates[1]; }
+    else if (g.type === "LineString") { lon = g.coordinates[0][0]; lat = g.coordinates[0][1]; }
+    else if (g.type === "MultiPolygon") {
+      try { lon = g.coordinates[0][0][0][0]; lat = g.coordinates[0][0][0][1]; } catch (e) {}
+    }
+    lineas.push([lon, lat].concat(claves.map(k => esc((f.properties || {})[k]))).join(";"));
+  });
+  descargar(c.id + ".csv", String.fromCharCode(65279) + lineas.join(NL), "text/csv");
+}
+
 /* ---------------- panel de dato (abajo) ----------------
    Al pinchar un elemento no basta con un popup: el dato necesita su contexto. Este panel muestra
    los atributos, de qué capa sale, quién produce el dato y el enlace a la fuente oficial. */
@@ -1122,7 +1211,7 @@ function abrirPanelDato(p, c, latlng) {
   const claves = [];
   for (const k of preferidos) if (k in p && !CAMPOS_OCULTOS.has(k) && !claves.includes(k)) claves.push(k);
   for (const k of Object.keys(p)) {
-    if (claves.length >= 14) break;
+    if (claves.length >= 26) break;
     if (CAMPOS_OCULTOS.has(k) || claves.includes(k)) continue;
     if (k.endsWith("__f") || k.endsWith("__v")) continue;
     claves.push(k);
@@ -1153,11 +1242,28 @@ function abrirPanelDato(p, c, latlng) {
     pie += `<a href="https://www.google.com/maps?q=${la},${lo}" target="_blank" rel="noopener">Ver en mapa ↗</a>`;
   }
 
+  const btnJson = `<a href="#" id="pd-json">Descargar este dato (JSON) ↓</a>`;
+  const btnCsv = `<a href="#" id="pd-csv">Descargar la capa (CSV) ↓</a>`;
+
   cuerpo.innerHTML =
     `<h3>${titulo}</h3>` +
     `<div class="pd-cap"><b>${c.grupo}</b> · ${c.label}</div>` +
     (filas ? `<div class="pd-grid">${filas}</div>` : "") +
-    (pie ? `<div class="pd-pie">${pie}</div>` : "");
+    `<div class="pd-pie">${btnJson}${btnCsv}${pie}</div>`;
+
+  const bj = document.getElementById("pd-json");
+  if (bj) bj.onclick = ev => {
+    ev.preventDefault();
+    descargar(`${(c.id || "dato")}.json`,
+      JSON.stringify({ capa: c.id, grupo: c.grupo, etiqueta: c.label,
+        coordenadas: latlng ? [latlng.lng, latlng.lat] : null, propiedades: p }, null, 2),
+      "application/json");
+  };
+  const bc = document.getElementById("pd-csv");
+  if (bc) bc.onclick = ev => {
+    ev.preventDefault();
+    descargarCapa(c);
+  };
 
   panel.hidden = false;
   const x = document.getElementById("panel-dato-x");
@@ -1167,7 +1273,7 @@ function abrirPanelDato(p, c, latlng) {
 
 function abrirFicha(p, c, latlng) {
   abrirPanelDato(p, c, latlng);
-  POPUP.setLatLng(latlng).setContent(c.modoTren ? fichaTren(p, c) : ficha(p, c)).openOn(mapa);
+  // sin popup: el panel de abajo ya muestra el dato y los dos a la vez eran redundantes
   if (c.apiCaudal) consultarCaudal(p);
 }
 
@@ -1379,6 +1485,7 @@ function cargar(c) {
 
       datos[c.id] = feats;      // siempre: el panel derecho analiza el GeoJSON al abrirse
       if (c.tipo === "punto") { pintarPuntos(c); }
+      if (c.colorCampo) pintarLeyenda(c);
       else {
         // lineas y poligonos: halo debajo si se pide (solo 400/220 kV)
         if (c.halo) {
@@ -1422,8 +1529,14 @@ document.querySelectorAll("[data-capa]").forEach(chk => {
       const c = CAPAS.find(x => x.id === id);
       cargar(c);
       if (mapa.getZoom() >= (c.zoomMin || 0)) capas[id].addTo(mapa);
+      if (c.colorCampo) setTimeout(() => pintarLeyenda(c), 350);
     }
-    else mapa.removeLayer(capas[id]);
+    else {
+      mapa.removeLayer(capas[id]);
+      const ley = document.getElementById("leyenda");
+      if (ley && !ley.hidden && ley.textContent.indexOf((CAPAS.find(x => x.id === id) || {}).label || " ") !== -1)
+        ley.hidden = true;
+    }
     estado();
   });
 });
