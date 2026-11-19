@@ -474,6 +474,9 @@ const nf = n => (typeof n === "number" ? n.toLocaleString("es-ES", { maximumFrac
 
 const IGN = (c, f) => "https://www.ign.es/wmts/ign-base?request=GetTile&service=WMTS&version=1.0.0&layer=" +
   c + "&style=default&tilematrixset=GoogleMapsCompatible&tilematrix={z}&tilerow={y}&tilecol={x}&format=" + f;
+const BASES_PNOA = "https://www.ign.es/wmts/pnoa-ma?layer=OI.OrthoimageCoverage&style=default" +
+  "&tilematrixset=EPSG:3857&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg" +
+  "&TileMatrix={z}&TileCol={x}&TileRow={y}";
 const BASES = {
   radar:          ["IGN radar (líneas)", IGN("IGNBaseTodo-nofondo", "image/png")],
   "IGNBase-gris": ["IGN gris",      IGN("IGNBase-gris", "image/png")],
@@ -951,7 +954,15 @@ const CAPAS = [
   { id:"estaciones-gas", grupo:"Transporte", label:"Estaciones GNL/GNC/H₂", tipo:"punto", on:false,
     color:"#4ade80", fichero:"datos/hermes/estaciones-gas.geojson", radio:5,
     filtro:f => ["Gas_natural_licuado","Gas_natural_comprimido","Hidrogeno"]
-                 .some(k => f.properties[k] === "SI") }
+                 .some(k => f.properties[k] === "SI") },
+  /* --- ráster oficial. Solo el PNOA publica teselas en EPSG:3857, que es el CRS del mapa.
+     La hidrografía del IDEe y el Catastro solo sirven WMS en 4326/25830: mezclar CRS en
+     Leaflet pide el bbox en un sistema y coloca el tile en otro, y salen parches de otra zona. --- */
+  { id:"pnoa", grupo:"Cartografía base", label:"Ortofoto PNOA (IGN)", tipo:"xyz", on:false,
+    color:"#65a30d", plantilla:"https://www.ign.es/wmts/pnoa-ma?layer=OI.OrthoimageCoverage" +
+      "&style=default&tilematrixset=EPSG:3857&Service=WMTS&Request=GetTile&Version=1.0.0" +
+      "&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
+    opacidad:1, atribucion:"IGN · PNOA" }
 ];
 
 /* zoom a partir del cual se dibuja cada punto por separado */
@@ -1126,6 +1137,46 @@ function pintarPuntos(c) {
 function cargar(c) {
   if (c.__cargada) return;
   c.__cargada = true;
+  // Capas ráster (teselas ya dibujadas): no hay GeoJSON que descargar.
+  if (c.tipo === "xyz") {
+    if (!mapa.getPane("rasterPane")) {
+      const pn = mapa.createPane("rasterPane");
+      pn.style.zIndex = 250;          // encima del mapa base, debajo de los datos vectoriales
+      pn.style.pointerEvents = "none";
+    }
+    const capa = L.tileLayer(c.plantilla, {
+      pane: "rasterPane",             // fuera del tile-pane: no hereda el filtro del tema
+      maxZoom: 19, opacity: c.opacidad != null ? c.opacidad : 1,
+      attribution: c.atribucion || "", zIndex: c.zIndex != null ? c.zIndex : 350
+    });
+    capas[c.id].addLayer(capa);
+    const el = document.getElementById("n-" + c.id);
+    if (el) el.textContent = "teselas";
+    conteo[c.id] = 0;
+    return;
+  }
+  if (c.tipo === "wms") {
+    const capa = L.tileLayer.wms(c.url, {
+      layers: c.wmsCapa,
+      format: c.formato || "image/png",
+      transparent: true,
+      version: c.version || "1.1.1",
+      // 1.1.1 usa SRS, 1.3.0 usa CRS; Leaflet elige segun la version
+      styles: "",
+      opacity: c.opacidad != null ? c.opacidad : 1,
+      attribution: c.atribucion || "",
+      // Estos servicios NO soportan EPSG:3857 (el que usa el mapa): hay que pedirles el bbox
+      // en 4326 o devuelven una excepcion XML disfrazada de imagen. CRS:84 == 4326.
+      crs: L.CRS.EPSG4326,
+      uppercase: true,
+      zIndex: c.zIndex != null ? c.zIndex : 350
+    });
+    capas[c.id].addLayer(capa);
+    const el = document.getElementById("n-" + c.id);
+    if (el) el.textContent = "WMS";
+    conteo[c.id] = 0;
+    return;
+  }
   const rot = document.getElementById("n-" + c.id);
   if (rot) rot.innerHTML = '<i class="spin"></i>';
   fetch(c.fichero)
