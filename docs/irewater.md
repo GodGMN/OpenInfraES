@@ -76,6 +76,44 @@ Campos de una EDAR:
 geolocalizar lleva a errores de cientos de kilómetros («Sevilla la Nueva» está en Madrid).
 
 
+
+## El error de reproyección (corregido)
+
+Las primeras EDAR salieron **desplazadas**. Comparadas contra las 3.034 EDAR de OSM, la distancia
+mediana al punto más cercano era de **10.594 m**: no era ruido, era un desplazamiento sistemático.
+
+**Causa**: `mapbox_vector_tile` devuelve el eje Y **hacia arriba** (0 abajo, `extent` arriba), no
+hacia abajo como el MVT crudo. Faltaba invertirlo:
+
+```python
+py = extent - py    # la línea que faltaba
+```
+
+| | Antes | Después |
+|---|---|---|
+| Mediana al OSM más cercano | 10.594 m | **81 m** |
+| A menos de 100 m | 0 de 600 | **327 de 600** |
+| Besòs (Barcelona) | 41,605 → 19 km al norte | **41,412** ✅ |
+
+Las que quedan a más de 500 m (233) son plantas que OSM no tiene o con otro nombre.
+
+## Solo España, y por qué
+
+La capa se filtra a `pais = ES` con `--pais ES`:
+
+> 2.086 de 3.501 · filtrado a ES
+
+Francia (921), Portugal (484) y Andorra (4) quedan fuera: el visor es de infraestructura
+española y esas plantas descolocaban la vista.
+
+## Demarcaciones: colores y trozos
+
+Los polígonos llegan **partidos por el borde de cada tile** y con `id` distinto por trozo: 29
+objetos para 26 demarcaciones (`Adour-Garonne`, `CANTABRICO ORIENTAL` y `EBRO` venían en dos).
+Se unen por nombre en un **MultiPolygon** y se les asigna un **color estable de una paleta de 18**,
+en orden alfabético. Sin color propio, todas las demarcaciones se ven igual y no hay forma de
+separarlas en el mapa.
+
 ## Lo que el catálogo anuncia y lo que sirve
 
 De las 7 capas vectoriales del catálogo, **solo 2 publican tiles**:

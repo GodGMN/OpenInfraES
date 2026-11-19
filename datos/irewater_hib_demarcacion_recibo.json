@@ -3,16 +3,17 @@
  "url_catalogo": "https://api.i-rewater-hub.com/api/v1/webgis/public",
  "capa": "hib_demarcacion",
  "zoom": 7,
- "features": 29,
+ "features": 26,
  "tiles_leidos": 34,
  "tiles_vacios": 9,
  "tiles_error": 0,
- "tamano_kb": 2095.6,
- "descargado": "2026-11-19T09:04:16",
+ "tamano_kb": 2094.5,
+ "descargado": "2026-11-19T10:09:04",
+ "pais_filtrado": "TODOS",
  "paises": [
   [
    "España",
-   17
+   16
   ],
   [
    "Portugal",
@@ -20,10 +21,6 @@
   ],
   [
    "Francia",
-   2
-  ],
-  [
-   "Andorra",
    2
   ]
  ],

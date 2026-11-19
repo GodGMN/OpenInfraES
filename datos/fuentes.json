@@ -286,7 +286,7 @@
    "licencia": "CC BY 4.0",
    "actualizado": "2026-11-19",
    "descargado": "2026-11-19",
-   "features": 29,
+   "features": 26,
    "url": "https://i-rewater-hub.com",
    "metodo": "vector tiles MVT z7, deduplicado por id"
   },
@@ -298,7 +298,7 @@
    "licencia": "CC BY 4.0",
    "actualizado": "2026-11-19",
    "descargado": "2026-11-19",
-   "features": 3501,
+   "features": 2086,
    "url": "https://i-rewater-hub.com",
    "metodo": "vector tiles MVT z8, deduplicado por id"
   },

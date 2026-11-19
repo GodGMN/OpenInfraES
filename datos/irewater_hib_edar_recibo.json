@@ -3,47 +3,36 @@
  "url_catalogo": "https://api.i-rewater-hub.com/api/v1/webgis/public",
  "capa": "hib_edar",
  "zoom": 8,
- "features": 3501,
+ "features": 2086,
  "tiles_leidos": 95,
  "tiles_vacios": 33,
  "tiles_error": 0,
- "tamano_kb": 1857.4,
- "descargado": "2026-11-19T08:56:17",
+ "tamano_kb": 1159.0,
+ "descargado": "2026-11-19T10:07:29",
+ "pais_filtrado": "ES",
  "paises": [
   [
    "ES",
    2086
-  ],
-  [
-   "FR",
-   921
-  ],
-  [
-   "PT",
-   484
-  ],
-  [
-   "AD",
-   4
   ]
  ],
  "impacto": [
   [
    "Bajo Impacto",
-   1943
+   886
   ],
   [
    "Alto Impacto",
-   769
+   659
   ],
   [
    "Impacto Moderado",
-   569
+   387
   ],
   [
    "Impacto Nulo",
-   220
+   154
   ]
  ],
- "nota": "Vector tiles MVT decodificados y deduplicados por id. Solo puntos: los poligonos no se reproyectan (exigiria el borde del tile)."
+ "nota": "Vector tiles MVT decodificados, geometrias reproyectadas de coordenadas de tile a lon/lat y deduplicadas por id (o por primera coordenada si no hay id)."
 }
