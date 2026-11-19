@@ -8,7 +8,8 @@ import datetime
 import json
 import os
 
-DATOS = "C:/Users/d_ant/Projects/OpenInfraES/datos"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATOS = os.path.join(RAIZ, "datos")
 HOY = datetime.date.today().isoformat()
 
 # cada capa, a su organismo oficial. Sin agregadores.
@@ -297,7 +298,9 @@ def main():
             "url": OSM_RED["url"], "metodo": "%s · subconjunto: %s" % (OSM_RED["metodo"], filtro),
         }
 
-    # trasvases y canales comparten fichero pero no significado: misma fuente, distinto filtro
+    # trasvases y canales comparten fichero pero no significado: misma fuente, distinto filtro.
+    # Las cifras del trasvase salen de su RECIBO y del fichero que pinta la capa, no de la memoria:
+    # aqui decia "118 tramos unidos en 26 trazos" cuando el recibo mide 106 tramos y 11 trazos.
     r_agua = osm_agua.get("agua-conducciones")
     import re as _re
     n_tras, n_can = None, None
@@ -307,15 +310,28 @@ def main():
         n_tras = sum(1 for x in _f if _re.search(r"trasvase|postrasvase",
                                                  (x.get("properties") or {}).get("name") or "", _re.I))
         n_can = len(_f) - n_tras
+
+    rec_tras = leer("trasvases_recibo.json", {})
+    lista_tras = rec_tras.get("trasvases") or []
+    tramos_tras = sum(t.get("tramos") or 0 for t in lista_tras)
+    trazos_tras = sum(t.get("trazos") or 0 for t in lista_tras)
+    ruta_union = os.path.join(DATOS, "simplificado", "trasvases-union.geojson")
+    feat_tras = trazos_tras
+    if os.path.exists(ruta_union):
+        feat_tras = len(json.load(open(ruta_union, encoding="utf-8"))["features"])
+    metodo_tras = ("%d tramos unidos en %d trazos de %d trasvases "
+                   "(scripts/unir_trasvases_v2.py, tolerancia %s m)"
+                   % (tramos_tras, trazos_tras, len(lista_tras), rec_tras.get("tolerancia_m", "?")))
+
     if r_agua:
-        for capa, titulo, filtro in (
-            ("trasvases", "Trasvases", "118 tramos unidos en 26 trazos por scripts/unir_trasvases.py"),
-            ("canales", "Canales y acequias", "resto: canales de riego, acequias y aducciones"),
+        for capa, titulo, filtro, nfeat in (
+            ("trasvases", "Trasvases", metodo_tras, feat_tras),
+            ("canales", "Canales y acequias", "resto: canales de riego, acequias y aducciones", n_can),
         ):
             fuentes[capa] = {
                 "capa": capa, "titulo": titulo, "fuente": OSM["nombre"], "editor": OSM["editor"],
                 "licencia": OSM["licencia"], "actualizado": HOY, "descargado": HOY,
-                "features": (26 if capa == "trasvases" else n_can), "url": OSM["url"],
+                "features": nfeat, "url": OSM["url"],
                 "metodo": "%s · %s" % (OSM["metodo"], filtro),
             }
 

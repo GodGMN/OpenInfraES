@@ -123,3 +123,27 @@ python scripts/cifras.py --check   # rc=0 si la prosa cuadra
 python scripts/snapshot.py --lista # series archivadas
 python scripts/validar.py          # VERDE, y falla si las cifras se desfasan
 ```
+## Auditoría v3 — 19-11-2026
+
+Reproducido en producción **antes** de tocar nada: con la capa de Cercanías apagada, su leyenda seguía
+visible (`{hidden:false, de:"nap-lineas-cercanias", checked:false}`). La causa no era la leyenda: las
+vistas temáticas y el enlace permanente apagaban capas tocando `chk.checked` y `mapa` por su cuenta, sin
+avisar a nada. Corregido con **un solo camino** (`ponerCapa`) y **una sola dueña de la leyenda**
+(`actualizarLeyenda`), más guardas en `pintarLeyenda` y en la llegada tardía del GeoJSON.
+
+| Qué | Antes | Después |
+|---|---|---|
+| Escala del mapa | abajo-izquierda, tapada por la barra de estado (`elementFromPoint` devolvía el contador) | abajo-derecha, por encima del pie y visible |
+| Leyenda al cambiar de vista | se quedaba abierta sobre una capa apagada | se esconde o pasa a la capa encendida |
+| Bloque pegado en «Ver todas» | `setInterval` nuevo en cada clic (fuga) | eliminado |
+| Código muerto | `ficha`, `fichaTren`, `colorEscala`, bloque `_btnTrenes` | borrado |
+| Rutas `C:/Users/...` en scripts | 14 scripts | 0 (derivadas de `__file__`) |
+| `_capturas/` | 27 MB, 40 PNG, **ningún** documento los citaba | retirado del repo (el historial los guarda) |
+| Cifras del README | 28 capas / 7 grupos / 18.292 objetos | 53 / 9 / 80.719, **generadas** por `cifras.py` entre marcas |
+| Trasvases en el panel | «118 tramos en 26 trazos» | «106 tramos en 11 trazos de 8 trasvases» (del recibo) |
+| Panel «Qué es esto» | 74 capas y 10 organismos escritos a mano | 53 del visor · 74 del catálogo · 16 organismos, contados |
+
+Y el panel de dato pasa a ser **el índice del dato**: métricas destacadas en grande, todos los campos
+humanizados, procedencia y licencia en el pie, y **qué hay a menos de 30 km** (líneas, centrales,
+embalses) pinchable para saltar de un dato a otro. Nuclear, embalses y desaladoras codifican su magnitud
+en **tamaño y color**, con la leyenda como rampa de dos extremos.

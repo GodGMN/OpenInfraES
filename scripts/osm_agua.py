@@ -5,6 +5,7 @@
 - ETAP  -> man_made=water_works
 - agua  -> man_made=pipeline + substance=water (aproximacion a trasvases y aducciones)
 """
+import os
 import json
 import time
 import urllib.parse
@@ -16,7 +17,8 @@ ESPEJOS = [
     "https://overpass.private.coffee/api/interpreter",
 ]
 UA = {"User-Agent": "OpenInfraES/1.0 (datos abiertos)"}
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos")
 
 CONSULTAS = {
     "edar": """[out:json][timeout:180];

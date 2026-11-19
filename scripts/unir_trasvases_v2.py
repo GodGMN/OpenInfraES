@@ -10,11 +10,13 @@ Tres correcciones sobre la primera versión:
 
 Salida: datos/trasvases-union.geojson + datos/trasvases_recibo.json
 """
+import os
 import json
 import math
 import re
 
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos")
 TOL = 0.0006          # ~55 m: huecos reales del mapeo (carreteras, sifones)
 TOL_HOLGURA = 0.003   # ~330 m: segunda pasada dentro del mismo trasvase (túneles)
 MIN_KM = 0.5          # por debajo de esto es un fragmento, no un trazo

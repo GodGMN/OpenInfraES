@@ -6,13 +6,15 @@ Cubre la Península, Baleares y Canarias con un bbox amplio.
 
 Salida: datos/sismos.geojson
 """
+import os
 import json
 import urllib.parse
 import urllib.request
 from datetime import date, timedelta
 
 UA = {"User-Agent": "OpenInfraES/1.0", "Accept": "application/json"}
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos/sismos.geojson"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos", "sismos.geojson")
 DIAS = 7
 
 # bbox: Canarias por el oeste/sur, Pirineos y Baleares por el norte/este

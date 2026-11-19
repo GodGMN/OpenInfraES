@@ -6,13 +6,15 @@ data.attributes.values, sino en la lista `included[]`, un objeto por tecnología
 
 Deja datos/ree_estado.json con generación por tecnología, demanda y balance del día.
 """
+import os
 import json
 import urllib.request
 from datetime import date, timedelta
 
 UA = {"User-Agent": "Mozilla/5.0 (compatible; OpenInfraES/1.0)", "Accept": "application/json"}
 BASE = "https://apidatos.ree.es/es/datos/"
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos")
 
 
 def pedir(categoria, widget, dia):

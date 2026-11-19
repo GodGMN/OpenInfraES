@@ -5,6 +5,7 @@ Para cada río se agrupan sus tramos, se calcula la longitud total y se elige un
 (el vértice central del tramo más largo) donde consultar el caudal con la API de
 Open-Meteo Flood (GloFAS), que no necesita clave.
 """
+import os
 import json
 import math
 import time
@@ -17,7 +18,8 @@ ESPEJOS = [
     "https://overpass.private.coffee/api/interpreter",
 ]
 UA = {"User-Agent": "OpenInfraES/1.0 (datos abiertos; contacto: ntizar)"}
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos")
 MIN_KM = 12          # por debajo de esto es arroyo, no río
 MAX_RIOS = 260
 

@@ -11,7 +11,8 @@ import urllib.request
 
 UA = {"User-Agent": "Mozilla/5.0 (compatible; OpenInfraES/1.0)"}
 BASE = "https://mapas.fomento.gob.es/arcgis/rest/services/"
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos/hermes"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos", "hermes")
 
 CAPAS = [
     ("carreteras", "Hermes/0__CARRETERAS", 0, "Red de carreteras del Estado"),

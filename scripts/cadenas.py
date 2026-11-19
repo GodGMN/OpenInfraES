@@ -14,7 +14,8 @@ productor no lo declara, se dice.
 import json
 import os
 
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos")
 HOY = "2026-11-16"
 
 # capa -> (productor primario, como llega, nota)
@@ -103,7 +104,7 @@ ORGANISMOS = {
     "intermodales": "Adif / Puertos", "estaciones-gas": "MITECO",
     "edar": "OSM", "etap": "OSM", "trasvases": "OSM / confederaciones",
     "canales": "OSM / confederaciones", "rios": "OSM + Open-Meteo (GloFAS)",
-    "agua-conducciones": "OSM", "sismos": "EMSC-CSEM", "trenes": "Renfe",
+    "agua-conducciones": "OSM", "sismos": "EMSC-CSEM",
     "estaciones-cercanias": "Renfe", "carburantes": "MITECO", "demarcaciones": "MITECO",
     "eolicos": "MITECO", "solares": "MITECO", "residuos": "ENRESA",
     "petrolifero": "CORES", "h2red": "MITECO",

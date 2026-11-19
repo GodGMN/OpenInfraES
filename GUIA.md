@@ -44,8 +44,9 @@ Documentación: [`docs/PROYECTO.md`](docs/PROYECTO.md) (visión general) · [`do
 
 - **Carga bajo demanda**: ninguna capa se descarga hasta que se enciende. El visor no pide nada al abrir
   que no esté en las capas de por defecto.
-- **LOD por zoom (`zoomMin`)**: si una capa tiene miles de features y a escala nacional no aporta, se
-  retira del mapa por debajo de su zoom. No se vuelve a descargar.
+- **LOD por zoom (`zoomMin`)**: por debajo de su zoom recomendado la capa **se atenúa**, no se retira
+  (David: «todas las capas tienen que poder verse en cualquier zoom»; retirarlas parecía que estaban
+  rotas). No se vuelve a descargar nunca: el fichero se pide una sola vez por sesión.
 - **Puntos: solo lo que cae en la vista**, con margen, y se repintan al mover.
 - **Un popup reutilizable**, no un `bindPopup` por feature.
 - Antes de decir «va más fluido», **mide**: `OpenInfraES.bench()` para el arrastre y una secuencia de

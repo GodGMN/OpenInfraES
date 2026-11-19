@@ -75,7 +75,8 @@ Y del `trip_updates`: **80 avisos de servicio** y retrasos por viaje.
 ## Capa en el visor
 
 `datos/gtfsrt_vehiculos.geojson` — todas las capas de todos los operadores, con `operador` y `linea` en
-las propiedades. Se mantiene también `datos/trenes.geojson` para la capa que ya existía.
+las propiedades. Es la única capa de trenes en vivo: `datos/trenes.geojson` y `scripts/trenes.py` se
+retiraron al fusionarse aquí (dos capas con el mismo dato se leían como duplicado).
 
 ## Pendiente
 

@@ -13,7 +13,8 @@ import os
 import urllib.request
 from datetime import date, timedelta
 
-DESDE = "C:/Users/d_ant/Projects/OpenInfraES"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DESDE = os.path.join(RAIZ)
 DEST = DESDE + "/datos"
 UA = {"Accept": "application/json", "User-Agent": "OpenInfraES/1.0"}
 

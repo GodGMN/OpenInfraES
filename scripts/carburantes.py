@@ -17,7 +17,8 @@ import tempfile
 UA = {"User-Agent": "OpenInfraES/1.0", "Accept": "application/json"}
 URL = ("https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/"
        "PreciosCarburantes/EstacionesTerrestres/")
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos/carburantes.geojson"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos", "carburantes.geojson")
 
 # campo del origen -> nombre corto en el GeoJSON
 PRECIOS = {

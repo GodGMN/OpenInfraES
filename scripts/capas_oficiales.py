@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Descarga de las capas oficiales ya vectorizadas (IGN, MITECO, CSN, CORES, Enagas).com) las capas de energia y agua.
+"""Descarga de las capas oficiales ya vectorizadas (IGN, MITECO, CSN, CORES, Enagas): las capas
+de energia y agua.
 
 Licencia CC-BY-4.0. Se guarda el manifest filtrado como recibo (version, fecha de verificacion,
 atribucion). No se transforma nada: se copia la capa tal cual y se agrega aparte.

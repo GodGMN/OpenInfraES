@@ -7,6 +7,7 @@ El NAP de transporte (nap.transportes.gob.es) exige API key; su catálogo CKAN r
 
 Salida: datos/estaciones-cercanias.geojson
 """
+import os
 import csv
 import io
 import json
@@ -14,7 +15,8 @@ import urllib.request
 
 UA = {"User-Agent": "OpenInfraES/1.0 (datos abiertos)"}
 API = "https://data.renfe.com/api/3/action/"
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos/estaciones-cercanias.geojson"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos", "estaciones-cercanias.geojson")
 
 
 def get(url, crudo=False):

@@ -7,7 +7,8 @@ porque la descarga de OSM se corta a veces por timeout y el recibo no llega a es
 import json
 import os
 
-DATOS = "C:/Users/d_ant/Projects/OpenInfraES/datos"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATOS = os.path.join(RAIZ, "datos")
 CAPAS = {
     "edar": ("edar.geojson", "EDAR (depuradoras de aguas residuales)"),
     "etap": ("etap.geojson", "ETAP (plantas potabilizadoras)"),

@@ -4,6 +4,7 @@
 Sin filtro de nombre la consulta devuelve decenas de miles de tramos y el servidor la corta;
 con nombre quedan las infraestructuras que importan (Tajo-Segura, Ebro, etc.).
 """
+import os
 import json
 import time
 import urllib.parse
@@ -15,7 +16,8 @@ ESPEJOS = [
     "https://overpass.private.coffee/api/interpreter",
 ]
 UA = {"User-Agent": "OpenInfraES/1.0 (datos abiertos)"}
-DEST = "C:/Users/d_ant/Projects/OpenInfraES/datos"
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST = os.path.join(RAIZ, "datos")
 
 Q = """[out:json][timeout:240];
 area["ISO3166-1"="ES"][admin_level=2]->.a;

@@ -378,6 +378,24 @@
   #panel-dato .pd-pie a { color:var(--cian); text-decoration:none; }
   #panel-dato .pd-pie a:hover { text-decoration:underline; }
   #panel-dato .pd-fuente { color:var(--suave); }
+  /* métricas destacadas: los números que importan, en mono y en grande, mismo lenguaje que el resto */
+  #panel-dato .pd-hl { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 11px; }
+  #panel-dato .pd-hl div { background:rgba(56,189,248,.06); border:1px solid var(--borde);
+    border-radius:5px; padding:5px 10px; min-width:86px; }
+  #panel-dato .pd-hl b { display:block; font-family:var(--mono); font-size:17px; font-weight:600;
+    color:var(--tinta); line-height:1.15; font-variant-numeric:tabular-nums; }
+  #panel-dato .pd-hl span { display:block; font-size:9.2px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--suave); margin-top:2px; }
+  #panel-dato .pd-sec { margin:11px 0 3px; font-size:9.8px; text-transform:uppercase; letter-spacing:.09em;
+    color:var(--suave); }
+  #panel-dato .pd-cerca { display:flex; flex-direction:column; }
+  #panel-dato .pd-cerca a { display:flex; justify-content:space-between; gap:10px; align-items:baseline;
+    color:var(--tinta); text-decoration:none; font-size:12px; padding:3px 0;
+    border-bottom:1px dotted rgba(255,255,255,.07); }
+  #panel-dato .pd-cerca a:hover { color:var(--cian); }
+  #panel-dato .pd-cerca a em { font-style:normal; color:var(--suave); font-size:10px;
+    text-transform:uppercase; letter-spacing:.06em; }
+  #panel-dato .pd-cerca a b { color:var(--suave); font-weight:500; font-variant-numeric:tabular-nums; }
 
   #leyenda { position:fixed; right:16px; top:76px; width:220px; max-height:38vh; overflow-y:auto;
     background:rgba(8,12,20,.97); border:1px solid rgba(255,255,255,.22); border-radius:6px;
@@ -446,12 +464,18 @@
   #caja-salud .chip.vacia { background:rgba(248,113,113,.16); color:#f87171; }
   #caja-salud .chip.off { background:rgba(255,255,255,.07); color:var(--tenue); }
 
-  .leaflet-control-scale { margin-left:346px !important; margin-bottom:46px !important;
+  /* Escala grafica: abajo a la DERECHA (David: "la escala deberia salir abajo a la derecha").
+     Leaflet apila los controles del mismo rincon, asi que la escala queda ENCIMA de la
+     atribucion dentro de .leaflet-bottom.leaflet-right: no hay que colocarla a mano. */
+  /* La barra de estado ocupa el pie entero (bottom:14px, alto 30, z-index 1000) y tapaba la escala:
+     medido, la escala caia en y 1038-1058 y elementFromPoint devolvia el contador de objetos.
+     Se sube por encima del pie; la atribucion se queda abajo, fuera de la barra. */
+  .leaflet-control-scale { margin-right:8px !important; margin-bottom:34px !important;
     background:rgba(12,18,30,.85); border:1px solid var(--borde); border-radius:3px; padding:1px 5px; }
   .leaflet-control-scale-line { border-color:var(--suave) !important; color:var(--tinta);
     background:transparent !important; font-family:var(--mono); font-size:9.6px; }
-  body:has(#info-der.on) .leaflet-control-scale { margin-left:346px !important; }
-  @media (max-width:1100px) { .leaflet-control-scale { margin-left:8px !important; } }
+  /* el panel de dato ocupa el ancho de abajo: si esta abierto, la escala se separa a la derecha */
+  body:has(#panel-dato.on) .leaflet-control-scale { margin-right:8px !important; }
 
   #panel-dato .pd-lic { font-size:10.4px; padding:1px 7px; border-radius:9px; }
   #panel-dato .pd-lic.ok { background:rgba(74,222,128,.14); color:#4ade80; }
@@ -533,10 +557,10 @@
   proyecto sin repetir el trabajo.</p>
 
   <div class="cifras">
-    <div class="cifra"><b id="n-capas">—</b><span>capas</span></div>
-    <div class="cifra"><b id="n-obj">—</b><span>objetos</span></div>
-    <div class="cifra"><b>25</b><span>demarcaciones</span></div>
-    <div class="cifra"><b>10</b><span>organismos</span></div>
+    <div class="cifra"><b id="n-capas">—</b><span>capas en el visor</span></div>
+    <div class="cifra"><b id="n-catalogo">—</b><span>en el catálogo</span></div>
+    <div class="cifra"><b id="n-obj">—</b><span>objetos descargados</span></div>
+    <div class="cifra"><b id="n-org">16</b><span>organismos</span></div>
   </div>
 
   <h3>Qué se puede consultar</h3>
@@ -555,7 +579,7 @@
 
   <h3>De dónde sale cada dato</h3>
   <p class="nota">Solo se cita al organismo que produce el dato. No hay agregadores en la cadena.</p>
-  <div class="organismos">
+  <div class="organismos" id="organismos">
     <span class="org">MITECO</span><span class="org">IGN</span><span class="org">REE</span>
     <span class="org">MITMA</span><span class="org">Enagás</span><span class="org">CORES</span>
     <span class="org">CSN</span><span class="org">Renfe</span><span class="org">EMSC-CSEM</span>
@@ -660,66 +684,9 @@ const ETIQ = {
   Gases_licuados_del_petroleo:"GLP", Nombre_plataforma:"Plataforma", voltage:"Tensión (V)",
   operator:"Operador", circuits:"Circuitos", Elemento_portuario:"Elemento portuario" };
 
-function fichaTren(p, c) {
-  const t = p.hora ? " a las " + p.hora + " UTC" : "";
-  let h = '<div class="ficha"><div class="ft">Tren ' + (p.tren || "—") + "</div>";
-  h += '<div class="fs">' + c.label + " — " + (p.ruta || "ruta sin dato") + "</div>";
-  h += "<table>";
-  if (p.etiqueta) h += '<tr><td class="k">Etiqueta</td><td class="v">' + p.etiqueta + "</td></tr>";
-  if (p.viaje) h += '<tr><td class="k">Viaje</td><td class="v">' + p.viaje + "</td></tr>";
-  if (p.velocidad_kmh) h += '<tr><td class="k">Velocidad</td><td class="v">' + nf(p.velocidad_kmh) + " km/h</td></tr>";
-  if (p.rumbo) h += '<tr><td class="k">Rumbo</td><td class="v">' + nf(Math.round(p.rumbo)) + "°</td></tr>";
-  h += "</table>";
-  h += '<div class="cf" style="margin-top:9px;font-size:10.6px;color:var(--tenue)">Posición' + t +
-       ". Instantánea de gtfsrt.renfe.com (feed abierto, sin clave). Se actualiza al recargar.</div></div>";
-  return h;
-}
 
-function ficha(p, c) {
-  const titulo = p.nombre || p.name || p.Nombre || p.Nombre_terminal || p.Aeropuerto || p.Carretera ||
-                 p.Rotulo || p.rotulo || p.Direccion || p.direccion || p.Nombre_plataforma ||
-                 (p.mensaje ? p.mensaje + (p.carretera ? " — " + p.carretera : "") :
-                  (p.magnitud != null ? "Terremoto M" + p.magnitud :
-                  (c.popupTitulo && p[c.popupTitulo] ? String(p[c.popupTitulo]) : "Sin nombre"))) +
-                 (c.popupTitulo && p.km ? " · km " + p.km : "");
-  const estado = [p.categoria, p.estado_registro, p.verif]
-    .filter(v => v && !/^[A-Z0-9_]+$/.test(String(v))).join(" · ");
-  let h = '<div class="ficha"><div class="ft">' + titulo + "</div>";
-  h += '<div class="fs">' + c.label + (estado ? " — " + estado : "") + "</div>";
-  if (p.descripcion) h += '<p class="fd">' + p.descripcion + "</p>";
-  // camaras de la DGT: deviceUrl es la foto. Sin esto solo se ve la carretera y el km.
-  if (p.imagen) {
-    h += `<a href="${p.imagen}" target="_blank" rel="noopener"><img class="foto" src="${p.imagen}"
-           alt="Imagen de la cámara" loading="lazy"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='block'"></a>
-          <div class="fd" style="display:none">La imagen no está disponible ahora mismo.</div>`;
-  }
-  const filas = Object.entries(p).filter(([k, v]) =>
-    v !== null && v !== "" && v !== undefined && !OCULTAS.has(k) && !esTecnico(k) && typeof v !== "object");
-  if (filas.length) {
-    h += "<table>";
-    filas.slice(0, 15).forEach(([k, v]) => {
-      let valor = v;
-      if (typeof v === "boolean") valor = v ? "Sí" : "No";
-      if (k === "hidroelectrico") valor = v ? "Sí" : "No";
-      if (k === "voltage" && Number(v) > 1000) valor = (Number(v) / 1000) + " kV";
-      if (k === "profundidad_km" && Number(v) < 0) valor = "desconocida";
-      if (typeof v === "number" && v > 1e11 && v < 3e12)
-        valor = new Date(v).toLocaleDateString("es-ES", { day:"2-digit", month:"2-digit", year:"numeric" });
 
-      h += '<tr><td class="k">' + (ETIQ[k] || k.replace(/_/g, " ")) + '</td><td class="v">' + nf(valor) + "</td></tr>";
-    });
-    h += "</table>";
-  }
-  const enlaces = [];
-  if (p.osm_id) enlaces.push(["OpenStreetMap", "https://www.openstreetmap.org/way/" + p.osm_id]);
-  if (c.apiCaudal) h += '<div class="caudal" id="caudal-box"><div class="cl">Caudal</div>' +
-    '<div class="err">consultando…</div></div>';
-  if (enlaces.length) h += '<div class="links">' + enlaces.map(([t, u]) =>
-    '<a href="' + u + '" target="_blank" rel="noopener">' + t + "</a>").join("") + "</div>";
-  if (bloqueEstimacion) h += bloqueEstimacion(p);
-  return h + "</div>";
-}
+
 
 /* ficha de un grupo agregado: al alejar, un punto son N instalaciones */
 function etiquetaCorta(p, c) {
@@ -973,7 +940,10 @@ const CAPAS = [
     color:"#f472b6", fichero:"datos/simplificado/residuos-radiactivos.geojson", radio:6,
     siempreIndividual:true, popupTitulo:"nombre" },
   { id:"nuclear", grupo:"Generación", label:"Nucleares", tipo:"punto", on:true, color:"#c084fc",
-    fichero:"datos/oficial/nuclear.geojson", radio:9, siempreIndividual:true },
+    fichero:"datos/oficial/nuclear.geojson", radio:9, siempreIndividual:true,
+    // tamaño Y color = potencia del reactor: el mapa informa sin abrir la ficha
+    escala:{ campo:"potencia_mw", min:400, max:1100, unidad:"MW" },
+    radioPorMagnitud:true, radioMin:7, radioMax:15, colorPorEscala:true },
   { id:"gasgen", grupo:"Generación", label:"Ciclos combinados", tipo:"punto", on:false, color:"#a78bfa",
     fichero:"datos/plantas.geojson", magnitud:"installed_capacity_mw",
     filtro:f => ["ccgt","fuel_gas"].includes(f.properties.technology_normalized) },
@@ -997,12 +967,17 @@ const CAPAS = [
     fichero:"datos/oficial/refinerias.geojson", radio:6 },
 
   { id:"embalses", grupo:"Agua", label:"Embalses", tipo:"punto", on:true, color:"#60a5fa",
-    fichero:"datos/simplificado/agua-embalsada.geojson", radio:2.4, opacidad:.45 },
+    fichero:"datos/simplificado/agua-embalsada.geojson", radio:2.4, opacidad:.45,
+    // capacidad → tamaño y color (log: hay embalses de 1 hm³ y de 3.000)
+    escala:{ campo:"capacidad_hm3", min:1, max:3000, unidad:"hm³", log:true },
+    radioPorMagnitud:true, radioMin:2, radioMax:10, colorPorEscala:true },
   { id:"demarcaciones", grupo:"Agua", colorCampo:"color", label:"Demarcaciones hidrográficas", tipo:"poligono", on:false,
     color:"#0ea5e9", fichero:"datos/demarcaciones.geojson", opacidad:.10, peso:1.2, zoomMin:0,
     popupTitulo:"nom_demar", etiqueta:"nom_demar" },
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
-    fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
+    fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true,
+    escala:{ campo:"capacidad_hm3_anio", min:10, max:300, unidad:"hm³/año" },
+    radioPorMagnitud:true, radioMin:4, radioMax:11, colorPorEscala:true },
   { id:"ine-ccaa", grupo:"Demografía", label:"Población por comunidad (INE)", tipo:"poligono", on:false,
     color:"#31a354", fichero:"datos/nuts2_es.geojson", zoomMin:5, opacidad:.62,
     peso:1.1, popupTitulo:"nombre", colorCampo:"color", corteVar:"provincias_poblacion" },
@@ -1114,7 +1089,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19p";
+const VER_DATOS = "2026-11-19q";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1122,8 +1097,9 @@ CAPAS.forEach(c => {
   capas[c.id] = L.layerGroup();
   conteo[c.id] = 0; elementos[c.id] = []; datos[c.id] = null;
 });
-/* escala grafica del mapa: siempre visible (David: "tiene que salir siempre una escala") */
-L.control.scale({ position: "bottomleft", metric: true, imperial: false, maxWidth: 160 }).addTo(mapa);
+/* escala grafica del mapa: siempre visible (David: "tiene que salir siempre una escala"), abajo a
+   la derecha, encima de la linea de atribucion. No se coloca con margenes a ojo: el rincon ya apila. */
+L.control.scale({ position: "bottomright", metric: true, imperial: false, maxWidth: 160 }).addTo(mapa);
 
 
 const panel = $("#capas");
@@ -1247,7 +1223,24 @@ function pintarKPIs() {
 function pintarLeyenda(c) {
   const el = document.getElementById("leyenda");
   if (!el) return;
-  if (!c || !c.colorCampo) { el.hidden = true; return; }
+  // Una leyenda de una capa APAGADA no se pinta nunca: era el fallo del "cuadro de Cercanias
+  // que se queda abierto" (la capa se apagaba por una vista o por el enlace y el fetch, al llegar
+  // tarde, volvia a pintar su leyenda). Quien decide si hay leyenda es actualizarLeyenda().
+  const chkCapa = c ? document.querySelector('[data-capa="' + c.id + '"]') : null;
+  if (!c || !chkCapa || !chkCapa.checked) return;
+  // capas con magnitud continua: la leyenda es la rampa con sus dos extremos, no una lista
+  if (c.colorPorEscala && c.escala) {
+    const e = c.escala;
+    window.__leyendaDe = c.id;
+    el.innerHTML = "<h5>" + (c.label || c.id) + "</h5>" +
+      '<div class="ly"><i style="width:100%;height:9px;border-radius:2px;' +
+      'background:linear-gradient(90deg,#34d399,#facc15,#ef4444)"></i></div>' +
+      '<div class="ly"><span>' + numES(e.min) + " " + e.unidad + "</span>" +
+      '<b>' + numES(e.max) + " " + e.unidad + "</b></div>";
+    el.hidden = false;
+    return;
+  }
+  if (!c.colorCampo) { el.hidden = true; return; }
   const feats = datos[c.id];
   if (!feats || !feats.length) { el.hidden = true; return; }
 
@@ -1297,6 +1290,30 @@ function pintarLeyenda(c) {
     }).join("") +
     `<div class="ly-total">${nf(pares.reduce((a, x) => a + x.n, 0))} datos</div>`;
   el.hidden = false;
+}
+
+/* La leyenda tiene UN dueño, y tiene que estar encendido. Esta funcion es la unica que decide
+   que se ve: si la capa de la leyenda sigue encendida se queda; si no, se pasa a la ultima capa
+   con color que se encendio; y si no queda ninguna, se esconde. Asi el cuadro no puede quedarse
+   abierto sobre una capa apagada, ni por una vista tematica ni por un enlace permanente. */
+let ULTIMA_CON_COLOR = null;    // ultima capa con leyenda que se encendio a mano
+function actualizarLeyenda() {
+  const el = document.getElementById("leyenda");
+  if (!el) return;
+  const estaOn = id => !!(document.querySelector('[data-capa="' + id + '"]') || {}).checked;
+  const conColor = CAPAS.filter(x => x.colorCampo || x.colorPorEscala);
+  let dueno = null;
+  if (window.__leyendaDe && estaOn(window.__leyendaDe)) dueno = window.__leyendaDe;
+  else if (ULTIMA_CON_COLOR && estaOn(ULTIMA_CON_COLOR)) dueno = ULTIMA_CON_COLOR;
+  else {
+    const vivas = conColor.filter(x => estaOn(x.id));
+    dueno = vivas.length ? vivas[vivas.length - 1].id : null;
+  }
+  if (!dueno) { window.__leyendaDe = null; el.hidden = true; return; }
+  const c = conColor.find(x => x.id === dueno);
+  if (!c) { window.__leyendaDe = null; el.hidden = true; return; }
+  if (!datos[c.id] || !datos[c.id].length) { el.hidden = true; return; }   // aun sin datos: se pintara al cargar
+  pintarLeyenda(c);
 }
 
 /* ---------------- descargas ---------------- */
@@ -1365,6 +1382,12 @@ function nombreCampo(k) {
 }
 
 function valorLegible(v) {
+  // los arrays de datos (titulares de una nuclear, por ejemplo) se leen en una línea
+  if (Array.isArray(v)) {
+    const t = v.filter(x => x !== null && x !== undefined && typeof x !== "object")
+               .map(x => String(x).trim()).filter(Boolean).join(" · ");
+    return t || null;
+  }
   if (v === null || v === undefined || v === "") return null;
   // objetos y arrays no son datos legibles: "[object Object]" no le dice nada a nadie
   if (typeof v === "object") return null;
@@ -1391,6 +1414,62 @@ function esColor(v) {
   return typeof v === "string" && /^#[0-9a-fA-F]{3,8}$/.test(v.trim());
 }
 
+/* ---------- ficha: métricas destacadas y qué hay al lado ----------
+   El mapa es un índice de datos: al pinchar algo no basta con repetir sus atributos. Hay que dar
+   los números que importan en grande, de dónde salen y qué más hay cerca, pinchable. */
+const METRICAS = [
+  ["potencia_mw", "Potencia", "MW"], ["installed_capacity_mw", "Potencia", "MW"],
+  ["capacidad_hm3", "Capacidad", "hm³"], ["agua_actual_hm3", "Agua embalsada", "hm³"],
+  ["capacidad_hm3_anio", "Capacidad", "hm³/año"], ["potencia_max_kw", "Potencia", "kW"],
+  ["gasoleo_a", "Gasóleo A", "€/l"], ["magnitud", "Magnitud", "M"], ["km", "Distancia", "km"],
+];
+const numES = v => (typeof v === "number"
+  ? v.toLocaleString("es-ES", { maximumFractionDigits: Math.abs(v) >= 100 ? 0 : 2 })
+  : String(v));
+
+const _RAD = Math.PI / 180;
+function distKm(la1, lo1, la2, lo2) {
+  const dLa = (la2 - la1) * _RAD, dLo = (lo2 - lo1) * _RAD;
+  const a = Math.sin(dLa / 2) ** 2 +
+            Math.cos(la1 * _RAD) * Math.cos(la2 * _RAD) * Math.sin(dLo / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(a));
+}
+/* primer punto de una geometría: para "qué hay cerca" basta, y se declara Aproximado */
+function puntaDe(f) {
+  const g = (f && f.geometry) || {};
+  if (g.type === "Point") return g.coordinates;
+  if (g.type === "MultiPoint" || g.type === "LineString") return g.coordinates[0];
+  if (g.type === "MultiLineString" || g.type === "Polygon") return g.coordinates[0][0];
+  if (g.type === "MultiPolygon") return g.coordinates[0][0][0];
+  return null;
+}
+function nombreDe(p, c) {
+  return p.nombre || p.name || p.Nombre || p.nom_demar || p.titulo || p.Rotulo ||
+         (c && c.popupTitulo ? p[c.popupTitulo] : null) || null;
+}
+/* lo más cercano de cada OTRA capa ya cargada: el mapa como índice de datos */
+function cercanosA(c, lat, lon, km) {
+  const out = [];
+  CAPAS.forEach(o => {
+    if (o.id === c.id) return;
+    const feats = datos[o.id];
+    if (!feats || !feats.length) return;
+    let mejor = -1, mejorD = Infinity;
+    feats.forEach((f, i) => {
+      const pt = puntaDe(f);
+      if (!pt) return;
+      const d = distKm(lat, lon, pt[1], pt[0]);
+      if (d < mejorD) { mejorD = d; mejor = i; }
+    });
+    if (mejor >= 0 && mejorD <= km) {
+      const props = feats[mejor].properties || {};
+      out.push({ capa: o.id, grupo: o.grupo, etiqueta: nombreDe(props, o) || o.label,
+                 rotulo: o.label, i: mejor, d: mejorD });
+    }
+  });
+  return out.sort((a, b) => a.d - b.d).slice(0, 5);
+}
+
 function abrirPanelDato(p, c, latlng) {
   const panel = document.getElementById("panel-dato");
   const cuerpo = document.getElementById("panel-dato-cuerpo");
@@ -1407,7 +1486,6 @@ function abrirPanelDato(p, c, latlng) {
     if (!(k in p) || CAMPOS_OCULTOS.has(k) || claves.includes(k)) continue;
     if (p[k] !== null && typeof p[k] === "object") continue;
     if (k.indexOf("color") === 0 || k.indexOf("tramo_") === 0) continue;
-    if (p[k] !== null && typeof p[k] === "object") continue;
     claves.push(k);
   }
   for (const k of Object.keys(p)) {
@@ -1424,6 +1502,18 @@ function abrirPanelDato(p, c, latlng) {
     if (v === null) continue;
     filas += `<div class="pd-k"><span>${nombreCampo(k)}</span><span>${v}</span></div>`;
   }
+
+  // métricas destacadas: los números que importan, en grande y con su unidad
+  let hl = "", nhl = 0;
+  for (const [k, etq, uni] of METRICAS) {
+    const v = p[k];
+    if (nhl >= 3 || v === null || v === undefined || v === "" || isNaN(Number(v))) continue;
+    hl += `<div><b>${numES(Number(v))}</b><span>${etq} · ${uni}</span></div>`;
+    nhl++;
+  }
+  const lat = latlng ? (latlng.lat !== undefined ? latlng.lat : latlng[0]) : null;
+  const lon = latlng ? (latlng.lng !== undefined ? latlng.lng : latlng[1]) : null;
+  const cerca = (lat !== null && isFinite(lat) && isFinite(lon)) ? cercanosA(c, lat, lon, 30) : [];
 
   // fuente oficial de la capa
   const f = (typeof FUENTES !== "undefined" && FUENTES && FUENTES.capas) ? FUENTES.capas[c.id] : null;
@@ -1475,8 +1565,26 @@ function abrirPanelDato(p, c, latlng) {
     `<h3>${titulo}</h3>` +
     `<div class="pd-cap"><b>${c.grupo}</b> · ${c.label}</div>` +
     foto +
+    (hl ? `<div class="pd-hl">${hl}</div>` : "") +
     (filas ? `<div class="pd-grid">${filas}</div>` : "") +
+    (cerca.length
+      ? `<div class="pd-sec">A menos de 30 km · capas ya cargadas</div><div class="pd-cerca">` +
+        cerca.map(x =>
+          `<a href="#" data-ir="${x.capa}" data-i="${x.i}">` +
+          `<span>${x.etiqueta}${x.etiqueta === x.rotulo ? "" : " <em>· " + x.rotulo + "</em>"}</span>` +
+          `<b>${x.d < 1 ? Math.round(x.d * 1000) + " m" : x.d.toFixed(1) + " km"}</b></a>`).join("") +
+        `</div>`
+      : "") +
     `<div class="pd-pie">${btnJson}${btnCsv}${pie}</div>`;
+
+  // los enlaces de "cerca" abren ESA capa y su ficha: el dato lleva a otro dato
+  cuerpo.querySelectorAll("[data-ir]").forEach(a => {
+    a.onclick = ev => {
+      ev.preventDefault();
+      if (window.OpenInfraES && window.OpenInfraES.abrir)
+        window.OpenInfraES.abrir(a.dataset.ir, Number(a.dataset.i), Math.max(mapa.getZoom(), 10));
+    };
+  });
 
   const bj = document.getElementById("pd-json");
   if (bj) bj.onclick = ev => {
@@ -1533,19 +1641,31 @@ async function consultarCaudal(p) {
 }
 
 /* escala de color para capas con magnitud: verde barato -> rojo caro */
-function colorEscala(v, e) {
-  if (v == null) return "#5a6b80";
-  const t = Math.max(0, Math.min(1, (v - e.min) / (e.max - e.min)));
-  const paradas = [[34,197,94],[163,230,53],[250,204,21],[249,115,22],[239,68,68]];
-  const x = t * (paradas.length - 1), i = Math.min(paradas.length - 2, Math.floor(x)), f = x - i;
-  const a = paradas[i], b = paradas[i + 1];
-  return "rgb(" + [0,1,2].map(k => Math.round(a[k] + (b[k] - a[k]) * f)).join(",") + ")";
-}
 
+
+/* Rampa continua: el color de un punto dice cuánto vale su magnitud (verde = poco, rojo = mucho).
+   Misma paleta que el resto del visor, sin inventar un lenguaje nuevo. */
+function colorRampa(t) {
+  const par = [[52, 211, 153], [250, 204, 21], [239, 68, 68]];
+  t = Math.max(0, Math.min(1, t));
+  const x = t * (par.length - 1), i = Math.min(par.length - 2, Math.floor(x)), f = x - i;
+  const a = par[i], b = par[i + 1];
+  return "rgb(" + [0, 1, 2].map(k => Math.round(a[k] + (b[k] - a[k]) * f)).join(",") + ")";
+}
 const colorDe = (c, p) => {
   if (c.colorCampo && p) {
     const v = p[c.colorCampo];
     if (v) return c.colores ? (c.colores[v] || c.color) : String(v);
+  }
+  if (c.colorPorEscala && c.escala && p) {
+    const v = Number(p[c.escala.campo]);
+    if (isFinite(v)) {
+      const e = c.escala;
+      const t = e.log
+        ? (Math.log10(Math.max(v, 1e-6)) - Math.log10(e.min)) / (Math.log10(e.max) - Math.log10(e.min))
+        : (v - e.min) / (e.max - e.min);
+      return colorRampa(t);
+    }
   }
   return c.color;
 };
@@ -1722,7 +1842,7 @@ function cargar(c) {
       });
 
       datos[c.id] = feats;      // siempre: el panel derecho analiza el GeoJSON al abrirse
-      if (c.colorCampo) pintarLeyenda(c);
+      if (c.colorCampo) actualizarLeyenda();
       if (c.tipo === "punto") { pintarPuntos(c); }
       else {
         // lineas y poligonos: halo debajo si se pide (solo 400/220 kV)
@@ -1755,36 +1875,35 @@ function cargar(c) {
     .catch(e => {
       const el = document.getElementById("n-" + c.id);
       if (el) el.textContent = "—";
+      c.__cargada = false;      // una capa que fallo se puede reintentar al volver a encenderla
       console.warn("capa no disponible:", c.id, e.message);
     });
 }
-CAPAS.forEach(c => { if (c.on) { capas[c.id].addTo(mapa); cargar(c); } });
+CAPAS.forEach(c => { if (c.on) ponerCapa(c.id, true); });
+
+/* ---------------- encender y apagar una capa: un solo camino ----------------
+   El checkbox, las vistas tematicas, el enlace permanente y la API tienen que hacer LO MISMO.
+   Antes cada uno tocaba `chk.checked` y `mapa` por su cuenta: las vistas apagaban la capa sin
+   avisar a la leyenda, y el cuadro de Cercanias se quedaba abierto sobre una capa ya apagada. */
+function ponerCapa(id, on, silencioso) {
+  const c = CAPAS.find(x => x.id === id);
+  const chk = document.querySelector('[data-capa="' + id + '"]');
+  if (!c || !chk) return false;
+  if (chk.checked !== on) chk.checked = on;
+  if (on) {
+    cargar(c);
+    // siempre al mapa, en cualquier zoom: por debajo de su zoomMin se atenua, no se esconde
+    capas[id].addTo(mapa);
+    if (c.colorCampo) ULTIMA_CON_COLOR = id;
+  } else {
+    mapa.removeLayer(capas[id]);
+  }
+  if (!silencioso) { actualizarLeyenda(); estado(); }   // en lote (vistas, enlace) se hace una vez al final
+  return true;
+}
 
 document.querySelectorAll("[data-capa]").forEach(chk => {
-  chk.addEventListener("change", e => {
-    const id = e.target.dataset.capa;
-    if (e.target.checked) {
-      const c = CAPAS.find(x => x.id === id);
-      cargar(c);
-      if (mapa.getZoom() >= (c.zoomMin || 0)) capas[id].addTo(mapa);
-      if (c.colorCampo) setTimeout(function () {
-        const chk = document.querySelector('[data-capa="' + c.id + '"]');
-        if (chk && chk.checked) pintarLeyenda(c);
-      }, 350);
-    }
-    else {
-      mapa.removeLayer(capas[id]);
-      const ley = document.getElementById("leyenda");
-      // si la leyenda era de esta capa, se pasa a otra activa con color o se esconde
-      if (window.__leyendaDe === id) {
-        const otra = CAPAS.find(x => x.id !== id && x.colorCampo &&
-          (document.querySelector('[data-capa="' + x.id + '"]') || {}).checked);
-        if (otra) pintarLeyenda(otra);
-        else { window.__leyendaDe = null; if (ley) ley.hidden = true; }
-      }
-    }
-    estado();
-  });
+  chk.addEventListener("change", e => ponerCapa(e.target.dataset.capa, e.target.checked));
 });
 
 
@@ -1815,7 +1934,7 @@ mapa.on("moveend", () => {
     CAPAS.forEach(c => {
       if (c.tipo !== "punto" || !c.__cargada || c.__cargando) return;
       if (!document.querySelector(`[data-capa="${c.id}"]`)?.checked) return;
-      if (c.siempreIndividual && c.id !== "trenes") return;
+      if (c.siempreIndividual) return;
       // cada capa tiene su umbral de detalle; el global ya no corta aqui
       if (mapa.getZoom() < (c.zoomDetalle || ZOOM_DETALLE) && !c.__agrupada) {
         // agrupada y sin desplegar: nada que recalcular salvo el paso de nivel
@@ -1987,15 +2106,31 @@ $("#velo").addEventListener("click", e => { if (e.target.id === "velo") $("#velo
 document.addEventListener("keydown", e => { if (e.key === "Escape") { $("#velo").classList.remove("on"); $("#velo2").classList.remove("on"); } });
 
 
-/* ---------------- panel de proyecto ---------------- */
+/* ---------------- panel de proyecto ----------------
+   Tres numeros distintos que NO se suman entre si: capas del visor (las que se encienden), entradas
+   del catalogo (todo lo descargado, haya capa o no) y objetos de esos ficheros. Antes el panel decia
+   "74 capas" junto a un visor de 53 y parecia que el proyecto se contradecia. */
 function pintarProyecto() {
   const p = document.getElementById("proyecto"); if (p) p.scrollTop = 0;
+  const nc = document.getElementById("n-capas"), no = document.getElementById("n-obj");
+  if (nc) nc.textContent = CAPAS.length;                    // se cuenta del propio visor, no del catalogo
   fetch("datos/fuentes.json?v=" + VER_DATOS).then(r => r.json()).then(d => {
-    const capas = Object.keys(d.capas || {}).length;
-    const obj = Object.values(d.capas || {}).reduce((a, c) => a + (c.features || 0), 0);
-    const nc = document.getElementById("n-capas"), no = document.getElementById("n-obj");
-    if (nc) nc.textContent = capas;
+    const capasCat = d.capas || {};
+    const obj = Object.values(capasCat).reduce((a, c) => a + (c.features || 0), 0);
+    const ncat = document.getElementById("n-catalogo");
+    if (ncat) ncat.textContent = Object.keys(capasCat).length;
     if (no) no.textContent = obj > 9999 ? Math.round(obj / 1000) + "k" : obj;
+  }).catch(() => {});
+  // organismos y sus chips salen del catalogo: una lista escrita a mano se queda vieja al 2º commit
+  fetch("datos/catalogo.json?v=" + VER_DATOS).then(r => r.json()).then(d => {
+    const capas = d.capas || {};
+    const cuenta = {};
+    Object.values(capas).forEach(c => { const o = c.organismo; if (o) cuenta[o] = (cuenta[o] || 0) + 1; });
+    const orgs = Object.keys(cuenta).sort((a, b) => cuenta[b] - cuenta[a] || a.localeCompare(b));
+    const ne = document.getElementById("n-org");
+    if (ne) ne.textContent = orgs.length;
+    const caja = document.getElementById("organismos");
+    if (caja) caja.innerHTML = orgs.map(o => '<span class="org">' + o + "</span>").join("");
   }).catch(() => {});
 }
 document.getElementById("btn-proyecto").addEventListener("click", () => {
@@ -2154,15 +2289,6 @@ $("#btn-estado").addEventListener("click", () => { pintarSis(); $("#velo2").clas
 $("#cerrar-sis").addEventListener("click", () => $("#velo2").classList.remove("on"));
 $("#velo2").addEventListener("click", e => { if (e.target.id === "velo2") $("#velo2").classList.remove("on"); });
 
-/* ---------------- trenes (sin boton propio: es una capa mas) ---------------- */
-const _btnTrenes = document.getElementById("btn-trenes");
-if (_btnTrenes) _btnTrenes.addEventListener("click", () => {
-  const chk = document.querySelector('[data-capa="trenes"]');
-  if (!chk.checked) { chk.checked = true; cargar(CAPAS.find(x => x.id === "trenes")); capas["trenes"].addTo(mapa); }
-  else { mapa.removeLayer(capas["trenes"]); chk.checked = false; }
-  estado();
-});
-
 /* ---------------- opacidad global ---------------- */
 $("#op").addEventListener("input", e => {
   const v = e.target.value;
@@ -2198,9 +2324,9 @@ function aplicarUrl() {
       const chk = document.querySelector(`[data-capa="${x.id}"]`);
       const on = quiere.has(x.id);
       if (!chk || chk.checked === on) return;
-      chk.checked = on;
-      if (on) { cargar(x); capas[x.id].addTo(mapa); } else mapa.removeLayer(capas[x.id]);
+      ponerCapa(x.id, on, true);
     });
+    actualizarLeyenda();
     estado();
   }
   const b = p.get("b"), t = p.get("t");
@@ -2226,12 +2352,9 @@ function pintarAvisoVista(p) {
   if (b) b.onclick = () => {
     document.querySelectorAll("#capas .grupo").forEach(g => g.style.display = "");
     document.querySelectorAll("[data-preset]").forEach(x => x.classList.remove("on"));
+    // el aviso se reescribe sin boton: pintarAvisoVista("todos") no devuelve "Ver todas"
     pintarAvisoVista("todos");
-pintarKPIs();
-setTimeout(pintarKPIs, 2500);   // segundo pase, ya con el catalogo
-setInterval(pintarKPIs, 5 * 60 * 1000);
-fetch("datos/ine_recibo.json?v=" + VER_DATOS).then(r => r.json())
-  .then(d => { window.__cortes = d.cortes || {}; }).catch(() => {});
+    estado();
   };
 }
 pintarAvisoVista("todos");
@@ -2264,9 +2387,9 @@ document.querySelectorAll("[data-preset]").forEach(btn => {
       }
       const chk = document.querySelector('[data-capa="' + c.id + '"]');
       if (!chk || chk.checked === on) return;
-      chk.checked = on;
-      if (on) { cargar(c); capas[c.id].addTo(mapa); } else mapa.removeLayer(capas[c.id]);
+      ponerCapa(c.id, on, true);   // en lote: la leyenda y el estado se refrescan una vez al final
     });
+    actualizarLeyenda();
     estado();
   });
 });
@@ -2278,7 +2401,7 @@ window.OpenInfraES = {
   abrir(capaId, i = 0, zoom = 11) {
     if (!capas[capaId]) return "sin capa";
     const chk = document.querySelector('[data-capa="' + capaId + '"]');
-    if (chk && !chk.checked) { chk.checked = true; capas[capaId].addTo(mapa); estado(); }
+    if (chk && !chk.checked) ponerCapa(capaId, true);
     const def = CAPAS.find(x => x.id === capaId);
     if (def) cargar(def);
     const intentar = (n) => {

@@ -15,12 +15,12 @@ con todos sus atributos.
 oficial con licencia, frecuencia y limitaciones · [`apis.md`](apis.md) — estado técnico de cada API ·
 [`nap.md`](nap.md) — el NAP de transporte · [`../GUIA.md`](../GUIA.md) — reglas de trabajo.
 
-Corre en local (`python -m http.server`). **Todavía no está en un servidor**, y esa es una decisión
-consciente: primero el dato y el motor, después el alojamiento.
+Está publicado en **GitHub Pages** (`push` a `main` = live) y corre en local con `python -m http.server`.
+El despliegue no depende de nada más: son ficheros estáticos y los datos van al lado del visor.
 
 ## Qué contiene
 
-**28 capas en 6 grupos.** Con las capas de por defecto, ~7.400 objetos.
+**53 capas en 9 grupos.** Con las capas de por defecto, 8 capas y 444 objetos cargados al abrir.
 
 ### Red eléctrica
 | Capa | Registros | Fuente | Licencia |
