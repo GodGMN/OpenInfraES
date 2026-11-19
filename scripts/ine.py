@@ -82,6 +82,41 @@ def poblacion(tabla):
     return salida
 
 
+def aplica_codigo(fichero, pobl, etiqueta):
+    """Cruza por cod_ine. Es la via correcta: el nombre cambia, el codigo no."""
+    ruta = os.path.join(DATOS, fichero)
+    if not os.path.exists(ruta):
+        print("  falta %s" % fichero)
+        return 0
+    d = json.load(open(ruta, encoding="utf-8"))
+    puestos = sin = 0
+    for f in d["features"]:
+        p = f["properties"]
+        pob = pobl.get(p.get("cod_ine"))
+        if pob:
+            p["poblacion"] = pob
+            puestos += 1
+        else:
+            sin += 1
+    vals = sorted(f["properties"]["poblacion"] for f in d["features"]
+                  if f["properties"].get("poblacion"))
+    if vals:
+        cortes = [vals[int(len(vals) * q)] for q in (0.25, 0.5, 0.75)]
+        tramos = ["#fef3c7", "#fbbf24", "#f59e0b", "#b45309"]
+        nombres = ["baja", "media-baja", "media-alta", "alta"]
+        for f in d["features"]:
+            v = f["properties"].get("poblacion")
+            if not v:
+                continue
+            i = sum(1 for c in cortes if v >= c)
+            f["properties"]["color"] = tramos[i]
+            f["properties"]["tramo_poblacion"] = nombres[i]
+    json.dump(d, open(ruta, "w", encoding="utf-8"), ensure_ascii=False)
+    print("  %-14s %2d con población · %d sin · %d KB" % (
+        etiqueta, puestos, sin, os.path.getsize(ruta) // 1024))
+    return puestos
+
+
 def aplica(fichero, pobl, etiqueta):
     ruta = os.path.join(DATOS, fichero)
     if not os.path.exists(ruta):
@@ -129,14 +164,20 @@ def aplica(fichero, pobl, etiqueta):
 
 def main():
     print("  INE · Cifras oficiales del padrón")
-    prov = poblacion(2852)
-    com = poblacion(2853)
-    print("  España: %s habitantes" % f"{prov.get('__total__', 0):,}".replace(",", "."))
-    print("  provincias con dato: %d · comunidades: %d" % (
-        len([k for k in prov if k != "__total__"]), len([k for k in com if k != "__total__"])))
+    prov_nom = poblacion(2852)
+    com_nom = poblacion(2853)
+    # traducir nombre -> codigo INE con la misma tabla que usa la normalizacion
+    import sys
+    sys.path.insert(0, os.path.join(RAIZ, "scripts"))
+    from normaliza import PROVINCIAS, CCAA
+    prov = {cod: prov_nom.get(normaliza(nom)) for cod, (nom, _) in PROVINCIAS.items()}
+    com = {cod: com_nom.get(normaliza(nom)) for cod, (nom, _) in CCAA.items()}
+    prov = {k: v for k, v in prov.items() if v}
+    com = {k: v for k, v in com.items() if v}
+    print("  provincias con dato: %d · comunidades con dato: %d" % (len(prov), len(com)))
 
-    aplica("irewater_hib_nuts3.geojson", prov, "provincias (NUTS3)")
-    aplica("irewater_hib_nuts2.geojson", com, "comunidades (NUTS2)")
+    aplica_codigo("nuts3_es.geojson", prov, "provincias")
+    aplica_codigo("nuts2_es.geojson", com, "comunidades")
 
     recibo = {
         "fuente": "INE · Cifras Oficiales de Población (padrón)",

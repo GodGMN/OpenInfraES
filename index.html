@@ -865,11 +865,11 @@ const CAPAS = [
     popupTitulo:"nom_demar", etiqueta:"nom_demar" },
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
     fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
-  { id:"irewater-nuts2", grupo:"Demografía", label:"Población por comunidad (INE)", tipo:"poligono", on:false,
-    color:"#31a354", fichero:"datos/irewater_hib_nuts2.geojson", zoomMin:5, opacidad:.45,
+  { id:"ine-ccaa", grupo:"Demografía", label:"Población por comunidad (INE)", tipo:"poligono", on:false,
+    color:"#31a354", fichero:"datos/nuts2_es.geojson", zoomMin:5, opacidad:.45,
     peso:1, popupTitulo:"nombre", colorCampo:"color" },
-  { id:"irewater-nuts3", grupo:"Demografía", label:"Población por provincia (INE)", tipo:"poligono", on:false,
-    color:"#31a354", fichero:"datos/irewater_hib_nuts3.geojson", zoomMin:6, opacidad:.45,
+  { id:"ine-provincias", grupo:"Demografía", label:"Población por provincia (INE)", tipo:"poligono", on:false,
+    color:"#31a354", fichero:"datos/nuts3_es.geojson", zoomMin:6, opacidad:.45,
     peso:1, popupTitulo:"nombre", colorCampo:"color" },
   { id:"irewater-edar", grupo:"Agua", label:"EDAR · agua regenerable", tipo:"punto", on:false,
     color:"#00897B", fichero:"datos/irewater_hib_edar.geojson", zoomMin:6,
@@ -964,7 +964,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19c";
+const VER_DATOS = "2026-11-19d";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {

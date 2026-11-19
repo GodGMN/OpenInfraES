@@ -6,7 +6,7 @@
   "provincias": 2852,
   "comunidades": 2853
  },
- "total_nacional": 47385107,
- "provincias_con_dato": 59,
+ "total_nacional": null,
+ "provincias_con_dato": 51,
  "nota": "Cruce por nombre normalizado; el INE no da código de municipio en esta tabla."
 }
