@@ -445,6 +445,13 @@
   #caja-salud .chip.ok { background:rgba(74,222,128,.16); color:#4ade80; }
   #caja-salud .chip.vacia { background:rgba(248,113,113,.16); color:#f87171; }
   #caja-salud .chip.off { background:rgba(255,255,255,.07); color:var(--tenue); }
+
+  .leaflet-control-scale { margin-left:346px !important; margin-bottom:46px !important;
+    background:rgba(12,18,30,.85); border:1px solid var(--borde); border-radius:3px; padding:1px 5px; }
+  .leaflet-control-scale-line { border-color:var(--suave) !important; color:var(--tinta);
+    background:transparent !important; font-family:var(--mono); font-size:9.6px; }
+  body:has(#info-der.on) .leaflet-control-scale { margin-left:346px !important; }
+  @media (max-width:1100px) { .leaflet-control-scale { margin-left:8px !important; } }
 </style>
 </head>
 <body>
@@ -693,6 +700,7 @@ function ficha(p, c) {
       if (k === "profundidad_km" && Number(v) < 0) valor = "desconocida";
       if (typeof v === "number" && v > 1e11 && v < 3e12)
         valor = new Date(v).toLocaleDateString("es-ES", { day:"2-digit", month:"2-digit", year:"numeric" });
+
       h += '<tr><td class="k">' + (ETIQ[k] || k.replace(/_/g, " ")) + '</td><td class="v">' + nf(valor) + "</td></tr>";
     });
     h += "</table>";
@@ -1097,7 +1105,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19j";
+const VER_DATOS = "2026-11-19k";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1105,6 +1113,9 @@ CAPAS.forEach(c => {
   capas[c.id] = L.layerGroup();
   conteo[c.id] = 0; elementos[c.id] = []; datos[c.id] = null;
 });
+/* escala grafica del mapa: siempre visible (David: "tiene que salir siempre una escala") */
+L.control.scale({ position: "bottomleft", metric: true, imperial: false, maxWidth: 160 }).addTo(mapa);
+
 
 const panel = $("#capas");
 Object.entries(grupos).forEach(([nombre, lista]) => {
@@ -1235,7 +1246,7 @@ function pintarLeyenda(c) {
     if (v === undefined || v === null || v === "") return;
     const col = c.colores ? (c.colores[v] || c.color) : String(v);
     // etiquetaCampo manda: en las lineas de Cercanias el color no es la etiqueta, la linea si
-    let etiqueta = (c.etiquetaCampo && p[c.etiquetaCampo]) ? String(p[c.etiquetaCampo])
+    let etiqueta = (c.etiquetaCampo && p[c.etiquetaCampo]) ? nombreTecnologia(p[c.etiquetaCampo])
                  : (p[campoTramo] || p.nivel || p.tramo || null);
     if (!etiqueta) etiqueta = esColor(v) ? "" : String(v);
     if (!etiqueta) return;                      // sin etiqueta legible, no hay leyenda
@@ -1250,6 +1261,7 @@ function pintarLeyenda(c) {
   const cortes = (window.__cortes && c.corteVar) ? window.__cortes[c.corteVar] : null;
   const unidad = (c.corteVar || "").indexOf("paro") !== -1 ? " %"
                : (c.corteVar || "").indexOf("densidad") !== -1 ? " hab/km²" : "";
+  window.__leyendaDe = c.id;      // para saber a quien hay que ocultar al apagarla
   el.innerHTML = "<h5>" + (c.label || c.id) + "</h5>" +
     pares.map(x => {
       let etiqueta = x.lab;
@@ -1348,6 +1360,15 @@ function valorLegible(v) {
   if (!isNaN(n) && /^-?[0-9.,]+$/.test(t)) return n.toLocaleString("es-ES", { maximumFractionDigits: 2 });
   return t.slice(0, 160);
 }
+
+const TECNOLOGIA_ES = {
+  solar_pv: "Solar fotovoltaica", solar_thermal: "Solar térmica", wind: "Eólica",
+  hydro: "Hidráulica", pumped_hydro: "Hidro bombeo", ccgt: "Ciclo combinado",
+  nuclear: "Nuclear", coal: "Carbón", cogeneration: "Cogeneración",
+  fuel_gas: "Fuel/gas", other: "Otras", biomass: "Biomasa", waste: "Residuos",
+  eolica: "Eólica", solar: "Solar", hidraulica: "Hidráulica", gas: "Gas"
+};
+function nombreTecnologia(v) { return TECNOLOGIA_ES[String(v||"").toLowerCase()] || v; }
 
 /* Un valor que es un color (#rrggbb) no es una etiqueta: en la leyenda no dice nada. */
 function esColor(v) {
@@ -1712,13 +1733,21 @@ document.querySelectorAll("[data-capa]").forEach(chk => {
       const c = CAPAS.find(x => x.id === id);
       cargar(c);
       if (mapa.getZoom() >= (c.zoomMin || 0)) capas[id].addTo(mapa);
-      if (c.colorCampo) setTimeout(() => pintarLeyenda(c), 350);
+      if (c.colorCampo) setTimeout(function () {
+        const chk = document.querySelector('[data-capa="' + c.id + '"]');
+        if (chk && chk.checked) pintarLeyenda(c);
+      }, 350);
     }
     else {
       mapa.removeLayer(capas[id]);
       const ley = document.getElementById("leyenda");
-      if (ley && !ley.hidden && ley.textContent.indexOf((CAPAS.find(x => x.id === id) || {}).label || " ") !== -1)
-        ley.hidden = true;
+      // si la leyenda era de esta capa, se pasa a otra activa con color o se esconde
+      if (window.__leyendaDe === id) {
+        const otra = CAPAS.find(x => x.id !== id && x.colorCampo &&
+          (document.querySelector('[data-capa="' + x.id + '"]') || {}).checked);
+        if (otra) pintarLeyenda(otra);
+        else { window.__leyendaDe = null; if (ley) ley.hidden = true; }
+      }
     }
     estado();
   });
@@ -1783,13 +1812,24 @@ mapa.on("zoomend", () => {
    A escala nacional una capa de 3.000 líneas no aporta y cuesta un redibujado entero.
    Por debajo de su zoomMin se retira del mapa (sigue cargada: no vuelve a descargarse). */
 function aplicarZoomMin() {
+  // David: «todas las capas tienen que poder verse en cualquier zoom». Antes se quitaban por
+  // debajo de su zoomMin y parecia que la capa estaba rota. Ahora no se quita ninguna: solo se
+  // atenuan las que recomiendan mas zoom, para que no tapen a las de detalle.
   const z = mapa.getZoom();
   CAPAS.forEach(c => {
-    if (!c.zoomMin || !c.__cargada) return;
+    if (!c.__cargada) return;
     const chk = document.querySelector(`[data-capa="${c.id}"]`);
     if (!chk || !chk.checked) return;
-    if (z >= c.zoomMin) { if (!mapa.hasLayer(capas[c.id])) capas[c.id].addTo(mapa); }
-    else if (mapa.hasLayer(capas[c.id])) mapa.removeLayer(capas[c.id]);
+    if (!mapa.hasLayer(capas[c.id])) capas[c.id].addTo(mapa);
+    if (!c.zoomMin) return;
+    const tenue = z < c.zoomMin;
+    capas[c.id].eachLayer(function (l) {
+      if (!l.setStyle) return;
+      if (l.options.__opBase === undefined) l.options.__opBase = l.options.opacity != null ? l.options.opacity : 1;
+      l.setStyle({ opacity: tenue ? Math.min(l.options.__opBase, 0.35) : l.options.__opBase,
+                   fillOpacity: l.options.fillOpacity != null
+                     ? (tenue ? Math.min(l.options.fillOpacity, 0.12) : l.options.fillOpacity) : undefined });
+    });
   });
 }
 
