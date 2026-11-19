@@ -377,6 +377,21 @@ def main():
             }
 
 
+    # --- Adif: red ferroviaria fisica (no es NAP: es el gestor de infraestructura) ---
+    r = leer("adif_tramos_recibo.json", {})
+    if r:
+        fuentes["adif-tramos"] = {
+            "capa": "adif-tramos", "titulo": "Red ferroviaria (Adif)",
+            "fuente": "Adif", "editor": "Adif · IDEADIF",
+            "licencia": "CC BY 4.0",
+            "actualizado": r.get("descargado"), "descargado": HOY,
+            "features": r.get("features"),
+            "url": "https://ideadif.adif.es",
+            "metodo": ("Trazado oficial de tramos (1.178 tramos, 604.913 vertices). El WFS de "
+                       "IDEADIF responde 403 (Akamai); se parte del GeoJSON ya descargado y se "
+                       "simplifica con Douglas-Peucker a 40 m"),
+        }
+
     # --- DGT: NAP de Trafico (DATEX II) ---
     for capa, fich, titulo, ds in (
         ("dgt-camaras", "dgt_camaras_recibo.json", "Cámaras de tráfico (DGT)", "Cámaras DGT DATEX2 v3.7"),

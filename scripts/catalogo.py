@@ -19,6 +19,7 @@ Escribe `datos/catalogo.json` (el contrato) sin tocar `fuentes.json` (lo que lee
 """
 import datetime
 import json
+import re
 import os
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,7 +33,7 @@ ORGANISMO = {
     "OpenStreetMap (red)": "OpenStreetMap", "OpenStreetMap": "OpenStreetMap",
     "I-ReWater HUB (Interreg)": "I-ReWater HUB", "I-ReWater HUB (Interreg) + INE": "I-ReWater HUB",
     "INE · Eurostat GISCO": "INE / Eurostat", "INE · Cifras Oficiales del Padrón": "INE",
-    "Visor Hermes — MITMA": "MITMA", "Renfe": "Renfe", "OMIE": "OMIE",
+    "Visor Hermes — MITMA": "MITMA", "Renfe": "Renfe", "OMIE": "OMIE", "Adif": "Adif", "Adif · IDEADIF": "Adif", "IGME": "IGME", "EMODnet": "EMODnet",
     "Ministerio de Transportes (ArcGIS REST)": "MITMA",
 }
 
@@ -64,6 +65,10 @@ LICENCIA = {
             "https://www.ree.es/es/aviso-legal"),
     "OMIE": ("pendiente", "Sin cláusula de reutilización identificada para los datos publicados",
              "https://www.omie.es/es/aviso-legal"),
+    "IGME": ("si", "Reutilización Ley 37/2007", "https://www.igme.es"),
+    "EMODnet": ("si", "CC BY 4.0", "https://emodnet.ec.europa.eu/en/legal-notice"),
+    "Adif": ("si", "CC BY 4.0 según ficha de datos.gob.es",
+             "https://datos.gob.es/es/catalogo/e0dat0002-wfs-de-la-red-de-transporte-ferroviario-de-adif"),
     "Renfe": ("pendiente", "GTFS-RT sin condiciones localizadas (los conjuntos de data.renfe.com "
                            "de estaciones sí son CC BY 4.0)",
               "https://data.renfe.com"),
@@ -90,6 +95,61 @@ TTL = {
     "ine-paro": (7776000, "trimestral (EPA)", "foto"),
 }
 TTL_DEFECTO = (2592000, "mensual o inferior", "foto")
+
+# JERARQUIA de la fuente. David: «dar mas valor a los datos oficiales que a los no oficiales».
+#   1  organismo que PRODUCE el dato (INE, MITECO, REE, Adif, DGT, AEMET, IGN, CSN...)
+#   2  organismo oficial que AGREGA o publica el de otro (NAP, Eurostat, MITMA)
+#   3  comunitario / no oficial (OpenStreetMap). Vale, pero no manda cuando hay oficial.
+JERARQUIA = {
+    "INE": 1, "INE / Eurostat": 1, "MITECO": 1, "REE": 1, "Adif": 1, "DGT": 1,
+    "AEMET": 1, "IGN": 1, "CSN": 1, "ENRESA": 1, "CORES": 1, "Enagás": 1,
+    "I-ReWater HUB": 1, "OMIE": 1, "Renfe": 1, "EMSC-CSEM": 2,
+    "MITMA": 2, "EMODnet": 2, "IGME": 1, "OpenStreetMap": 3,
+}
+ETIQUETA_JERARQUIA = {1: "organismo productor", 2: "organismo agregador", 3: "fuente comunitaria"}
+
+
+# capa -> fichero en datos/ (para saber cuanto pesa lo que se descarga)
+def rutas_del_visor():
+    """id -> ruta del fichero, leida de index.html. El nombre no siempre coincide con el id
+    (`embalses` vive en `embalses.geojson` pero `adif-tramos` en `adif_tramos.geojson`), asi que
+    adivinar por el id falla; la ruta real esta declarada en la capa."""
+    html = open(os.path.join(RAIZ, "index.html"), encoding="utf-8").read()
+    ini = html.index("const CAPAS = [")
+    fin = html.index("];", ini)
+    bloque = html[ini:fin]
+    salida = {}
+    for m in re.finditer(r'id:"([a-z0-9\-_]+)"', bloque):
+        resto = bloque[m.end():m.end() + 700]
+        f = re.search(r'fichero:"([^"]+)"', resto)
+        if f:
+            salida[m.group(1)] = f.group(1)
+    return salida
+
+
+RUTAS = rutas_del_visor()
+
+
+def fichero_de(cid):
+    f = RUTAS.get(cid)
+    if f:
+        ruta = os.path.join(RAIZ, f.replace("/", os.sep))
+        if os.path.exists(ruta):
+            return ruta
+    for ext in (".geojson", ".json"):
+        for nombre in (cid.replace("-", "_"), cid):
+            ruta = os.path.join(DATOS, nombre + ext)
+            if os.path.exists(ruta):
+                return ruta
+    return None
+
+
+def tamano(cid):
+    ruta = fichero_de(cid)
+    if not ruta:
+        return None, None
+    b = os.path.getsize(ruta)
+    return b, round(b / 1024.0, 1)
 
 
 def hoy_iso():
@@ -146,10 +206,14 @@ def main():
             except ValueError:
                 pass
 
+        nivel = JERARQUIA.get(organismo, 3)
         catalogo[cid] = {
             "id": cid,
             "titulo": f.get("titulo") or cid,
             "organismo": organismo,
+            "oficial": nivel <= 2,
+            "jerarquia": nivel,
+            "jerarquia_txt": ETIQUETA_JERARQUIA[nivel],
             "producto": f.get("metodo") or "",
             "licencia": {
                 "estado": estado_lic,
@@ -163,6 +227,8 @@ def main():
             "ultima_verificacion": hoy_iso(),
             "crs": "EPSG:4326",
             "features": f.get("features"),
+            "bytes": tamano(cid)[0],
+            "kb": tamano(cid)[1],
             "fecha_dato": fecha_dato,
             "fecha_descarga": fecha_desc,
             "edad_dias": edad_dias,
@@ -186,6 +252,13 @@ def main():
             "licencia_si": sum(1 for c in catalogo.values() if c["licencia"]["estado"] == "si"),
             "licencia_pendiente": len(avisos["pendiente"]),
             "caducados": len(avisos["caducado"]),
+            "oficiales": sum(1 for c in catalogo.values() if c["oficial"]),
+            "comunitarias": sum(1 for c in catalogo.values() if not c["oficial"]),
+            "por_jerarquia": {k: sum(1 for c in catalogo.values() if c["jerarquia"] == k)
+                              for k in (1, 2, 3)},
+            "descargables_ligeros": sum(1 for c in catalogo.values()
+                                        if c.get("kb") and c["kb"] <= 1024),
+            "kb_total": round(sum(c.get("kb") or 0 for c in catalogo.values()), 1),
         },
         "avisos": avisos,
         "capas": catalogo,
@@ -194,6 +267,8 @@ def main():
               ensure_ascii=False, indent=1)
 
     print("  catálogo: %d capas" % len(catalogo))
+    print("   oficiales: %d · comunitarias: %d" % (
+        salida["resumen"]["oficiales"], salida["resumen"]["comunitarias"]))
     print("   licencia evaluada: %d · pendiente: %d · caducadas: %d" % (
         salida["resumen"]["licencia_si"], len(avisos["pendiente"]), len(avisos["caducado"])))
     if avisos["pendiente"]:

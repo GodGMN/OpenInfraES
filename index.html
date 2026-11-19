@@ -1075,6 +1075,9 @@ const CAPAS = [
   { id:"nap-lineas-cercanias", grupo:"Transporte", label:"Líneas de Cercanías", tipo:"linea", on:false,
     color:"#c084fc", fichero:"datos/nap_lineas_cercanias-renfe.geojson", peso:2.6, opacidad:.92,
     zoomMin:7, popupTitulo:"linea", colorCampo:"color", etiquetaCampo:"linea" },
+  { id:"adif-tramos", grupo:"Transporte", label:"Red ferroviaria (Adif)", tipo:"linea", on:false,
+    color:"#38bdf8", fichero:"datos/adif_tramos.geojson", peso:2.2, opacidad:.9,
+    colorCampo:"color_uso", etiquetaCampo:"uso", popupTitulo:"cod_linea" },
   { id:"nap-metro", grupo:"Transporte", label:"Metro de Madrid (NAP)", tipo:"punto", on:false,
     color:"#38bdf8", fichero:"datos/nap_paradas_metro-madrid.geojson", radio:3.4,
     zoomMin:9, popupTitulo:"nombre" },
@@ -1111,7 +1114,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19m";
+const VER_DATOS = "2026-11-19p";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1446,6 +1449,11 @@ function abrirPanelDato(p, c, latlng) {
       pie += `<span class="pd-lic ok">reutilizable · ${(cat.licencia.nombre || "").slice(0, 34)}</span>`;
     if (cat.caducado)
       pie += `<span class="pd-lic cad">dato de hace ${cat.edad_dias} días (TTL ${Math.round(cat.ttl_segundos / 3600)} h)</span>`;
+    // jerarquia de la fuente: el dato de un organismo productor manda sobre el de un agregador
+    const jt = { 1: "organismo productor", 2: "organismo agregador", 3: "fuente comunitaria" }[cat.jerarquia];
+    pie += `<span class="pd-lic ${cat.jerarquia === 1 ? "ok" : (cat.jerarquia === 2 ? "pend" : "cad")}">${jt}</span>`;
+    if (cat.kb)
+      pie += `<span class="pd-fuente">${cat.kb < 1024 ? cat.kb.toFixed(1) + " KB" : (cat.kb / 1024).toFixed(1) + " MB"}</span>`;
   }
   if (latlng) {
     const la = (latlng.lat !== undefined ? latlng.lat : latlng[0]).toFixed(5);

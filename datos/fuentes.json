@@ -806,6 +806,18 @@
    "url": "https://nap.transportes.gob.es/api",
    "metodo": "GTFS-ZIP del NAP; cabecera `ApiKey`"
   },
+  "adif-tramos": {
+   "capa": "adif-tramos",
+   "titulo": "Red ferroviaria (Adif)",
+   "fuente": "Adif",
+   "editor": "Adif · IDEADIF",
+   "licencia": "CC BY 4.0",
+   "actualizado": "2026-11-19",
+   "descargado": "2026-11-19",
+   "features": 1178,
+   "url": "https://ideadif.adif.es",
+   "metodo": "Trazado oficial de tramos (1.178 tramos, 604.913 vertices). El WFS de IDEADIF responde 403 (Akamai); se parte del GeoJSON ya descargado y se simplifica con Douglas-Peucker a 40 m"
+  },
   "dgt-camaras": {
    "capa": "dgt-camaras",
    "titulo": "Cámaras de tráfico (DGT)",
@@ -1025,5 +1037,5 @@
    "kb": 18
   }
  },
- "total_capas": 73
+ "total_capas": 74
 }

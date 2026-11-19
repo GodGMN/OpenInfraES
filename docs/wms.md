@@ -72,3 +72,40 @@ por referencia catastral, no una capa de infraestructura.
 
 - Capa `pnoa` (`tipo:"xyz"`) en `index.html`.
 - Constante `BASES_PNOA` con la misma plantilla, para el selector de mapa base.
+
+## Servicios probados el 19-11-2026: por qué NO se integran todavía
+
+Cuatro servicios responden con `GetCapabilities` y con **imagen válida pedida a mano**, y ninguno se
+pinta bien dentro de Leaflet. Es el mismo fallo del PNOA de arriba, y merece quedar escrito con la
+medida, no con un «no funciona».
+
+| Servicio | GetCapabilities | GetMap directo | En Leaflet |
+|---|---|---|---|
+| **IGME** — `mapas.igme.es/gis/services/Cartografia_Geologica/IGME_GEODE_50/MapServer/WMSServer` | 200, 37 KB, 20 capas | — | pide teselas, no pinta |
+| **EMODnet** — `ows.emodnet-bathymetry.eu/wms` | 200, 51 KB, 53 capas | **200, 84 KB, PNG con batimetría real** | pide teselas, no pinta |
+| **Catastro** — `ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx` | 200, 28 KB, 27 capas | — | desalineado |
+| **Adif IDEADIF** — `ideadif.adif.es/services/wfs` | **403 (Akamai)** | — | no aplica |
+
+**La causa, medida dos veces y con la misma firma que el PNOA:** el mapa base está en
+**EPSG:3857** y estos servicios piden el bbox en **EPSG:4326**. Forzar `crs: L.CRS.EPSG4326` hace
+que Leaflet cambie la proyección del *tile layer*, y entonces las teselas se piden con un bbox que
+el servicio devuelve correcto **pero referido a otra retícula**: la imagen llega (se ve en el
+contador de teselas) y aterriza desplazada o en parches.
+
+**Lo probado para arreglarlo y descartado:**
+
+- `version:"1.3.0"` con `crs: CRS:84` — la 1.3.0 invierte el orden de ejes (`lat,lon`) y Leaflet
+  no lo compensa. Fue la primera prueba de EMODnet: la capa pidió teselas y el mar salió blanco.
+- `version:"1.1.1"` con `SRS` y `lon,lat` — el orden de ejes es el correcto, la capa siguió sin
+  cuadrar con la costa. Segunda prueba, mismo resultado visual.
+- `uppercase:true` + `zIndex` — no afecta a la geometría, solo al estilo de la petición.
+
+**Lo que sí funciona y es la vía:** pedir el **GetMap completo** con el bbox del encuadre y pintarlo
+como `L.imageOverlay` con las esquinas en 4326, en vez de teselar. Un solo `GetMap` por movimiento
+de mapa, sin retícula de teselas que desalinear. No se ha implementado porque exige recalcular en
+`moveend` y probar el coste en un mapa que ya carga 5.800 puntos; queda como la vía para la próxima
+tanda, no como un «casi».
+
+**Y la lección que sí queda cerrada:** un `Content-Type: image/png` de 200 no significa que la capa
+esté bien puesta. La prueba de fuego es **mirar la captura**, no el contador de teselas. Las dos
+veces que di la capa por buena fue con 143 teselas en el DOM y el mar en blanco.
