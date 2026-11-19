@@ -411,6 +411,40 @@
   #kpis .kpi.alerta b { color:#f87171; }
   #kpis .kpi.bien b { color:#4ade80; }
   @media (max-width:1100px) { #kpis { left:16px; right:16px; } #kpis .kpi:nth-child(n+6) { display:none; } }
+  #panel-dato .pd-foto { display:block; margin:0 0 10px; }
+  #panel-dato .pd-foto img { width:100%; max-height:210px; object-fit:cover; border-radius:5px;
+    border:1px solid var(--borde); display:block; }
+  #leyenda .ly-total { margin-top:7px; padding-top:6px; border-top:1px solid rgba(255,255,255,.12);
+    font-size:10.2px; color:var(--suave); text-align:right; }
+
+  #velo-salud { position:fixed; inset:0; background:rgba(4,7,12,.86); z-index:3000;
+    display:flex; align-items:center; justify-content:center; }
+  #velo-salud[hidden] { display:none; }
+  #caja-salud { position:relative; width:min(880px, 94vw); max-height:86vh; overflow-y:auto;
+    background:var(--panel-solido); border:1px solid var(--borde-fuerte); border-radius:8px;
+    padding:20px 24px 22px; box-shadow:0 24px 70px rgba(0,0,0,.7); font-size:12.6px; }
+  #salud-x { position:absolute; top:10px; right:12px; background:transparent; border:0;
+    color:var(--suave); font-size:17px; cursor:pointer; }
+  #caja-salud h3 { margin:0 0 4px; font-size:18px; color:var(--tinta); }
+  #caja-salud .sb { color:var(--suave); font-size:11.4px; margin-bottom:16px; }
+  #caja-salud .resumen { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:9px; margin-bottom:18px; }
+  #caja-salud .rc { background:rgba(255,255,255,.04); border:1px solid var(--borde);
+    border-radius:5px; padding:10px 12px; }
+  #caja-salud .rc b { display:block; font-family:var(--mono); font-size:20px; color:var(--tinta); }
+  #caja-salud .rc span { font-size:9.8px; text-transform:uppercase; letter-spacing:.07em; color:var(--suave); }
+  #caja-salud .rc.mal b { color:#f87171; }
+  #caja-salud .rc.bien b { color:#4ade80; }
+  #caja-salud table { width:100%; border-collapse:collapse; font-size:11.8px; }
+  #caja-salud th { text-align:left; font-size:9.6px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--suave); border-bottom:1px solid var(--borde-fuerte); padding:6px 8px 6px 0; }
+  #caja-salud td { padding:5px 8px 5px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+  #caja-salud td.n { text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  #caja-salud .chip { display:inline-block; padding:1px 7px; border-radius:9px; font-size:9.6px;
+    text-transform:uppercase; letter-spacing:.05em; }
+  #caja-salud .chip.ok { background:rgba(74,222,128,.16); color:#4ade80; }
+  #caja-salud .chip.vacia { background:rgba(248,113,113,.16); color:#f87171; }
+  #caja-salud .chip.off { background:rgba(255,255,255,.07); color:var(--tenue); }
 </style>
 </head>
 <body>
@@ -427,6 +461,7 @@
 
     <button id="btn-fuentes" title="Fuentes y fecha de los datos"><b>ⓘ</b>Fuentes</button>
     <button id="btn-enlace" title="Copiar enlace a esta vista"><b>⧉</b>Enlace</button>
+    <button id="btn-salud" title="Diagnóstico: capas vacías, fuentes sin declarar y errores"><b>⚕</b>Salud</button>
     <button id="btn-proyecto" title="Qué es este proyecto y de dónde sale cada dato"><b>◈</b>Proyecto</button>
     <button id="btn-tema" title="Cambiar tema"><b>◐</b>Tema</button>
   </div>
@@ -449,6 +484,7 @@
   <div id="pie"><select id="base"></select></div>
 </div>
 
+<div id="velo-salud" hidden><div id="caja-salud"><button id="salud-x">✕</button><div id="salud-cuerpo"></div></div></div>
 <div id="kpis"></div>
 <div id="leyenda" hidden></div>
 <div id="panel-dato" hidden>
@@ -717,7 +753,7 @@ function engancharGrupo() {
       const f = GRUPO_ITEMS[Number(a.dataset.grupoI)];
       if (!f) return;
       const [lng, lat] = f.geometry.coordinates;
-      abrirFicha(f.properties || {}, GRUPO_CAPA, [lat, lng]);
+      abrirFicha(f.properties || {}, GRUPO_CAPA, L.latLng(lat, lng));
     });
   });
 }
@@ -954,16 +990,16 @@ const CAPAS = [
     fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
   { id:"ine-ccaa", grupo:"Demografía", label:"Población por comunidad (INE)", tipo:"poligono", on:false,
     color:"#31a354", fichero:"datos/nuts2_es.geojson", zoomMin:5, opacidad:.62,
-    peso:1.1, popupTitulo:"nombre", colorCampo:"color" },
+    peso:1.1, popupTitulo:"nombre", colorCampo:"color", corteVar:"provincias_poblacion" },
   { id:"ine-densidad", grupo:"Demografía", label:"Densidad de población", tipo:"poligono", on:false,
     color:"#3b82f6", fichero:"datos/nuts3_es.geojson", zoomMin:6, opacidad:.62,
-    peso:1.1, popupTitulo:"nombre", colorCampo:"color_densidad" },
+    peso:1.1, popupTitulo:"nombre", colorCampo:"color_densidad", corteVar:"provincias_densidad" },
   { id:"ine-paro", grupo:"Demografía", label:"Tasa de paro (EPA)", tipo:"poligono", on:false,
     color:"#ef4444", fichero:"datos/nuts2_es.geojson", zoomMin:5, opacidad:.62,
-    peso:1.1, popupTitulo:"nombre", colorCampo:"color_paro" },
+    peso:1.1, popupTitulo:"nombre", colorCampo:"color_paro", corteVar:"comunidades_paro" },
   { id:"ine-provincias", grupo:"Demografía", label:"Población por provincia (INE)", tipo:"poligono", on:false,
     color:"#31a354", fichero:"datos/nuts3_es.geojson", zoomMin:6, opacidad:.62,
-    peso:1.1, popupTitulo:"nombre", colorCampo:"color" },
+    peso:1.1, popupTitulo:"nombre", colorCampo:"color", corteVar:"provincias_poblacion" },
   { id:"irewater-edar", grupo:"Agua", label:"EDAR · agua regenerable", tipo:"punto", on:false,
     color:"#00897B", fichero:"datos/irewater_hib_edar.geojson", zoomMin:6,
     popupTitulo:"municipio", radio:2.6,
@@ -1058,7 +1094,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19h";
+const VER_DATOS = "2026-11-19i";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1202,9 +1238,27 @@ function pintarLeyenda(c) {
   const pares = Object.keys(cuenta).map(k => ({ col: k.split("|")[0], lab: k.split("|")[1], n: cuenta[k] }));
   if (pares.length < 2 || pares.length > 14) { el.hidden = true; return; }
 
+  const cortes = (window.__cortes && c.corteVar) ? window.__cortes[c.corteVar] : null;
+  const unidad = (c.corteVar || "").indexOf("paro") !== -1 ? " %"
+               : (c.corteVar || "").indexOf("densidad") !== -1 ? " hab/km²" : "";
   el.innerHTML = "<h5>" + (c.label || c.id) + "</h5>" +
-    pares.map(x => `<div class="ly"><i style="background:${x.col}"></i>` +
-      `<span>${x.lab}</span><b>${nf(x.n)}</b></div>`).join("");
+    pares.map(x => {
+      let etiqueta = x.lab;
+      if (cortes && cortes.length === 3) {
+        const orden = ["bajo", "medio-bajo", "medio-alto", "alto"];
+        const i = orden.indexOf(x.lab);
+        if (i !== -1) {
+          const fmt = v => v.toLocaleString("es-ES", { maximumFractionDigits: 1 }) + unidad;
+          const desde = i === 0 ? 0 : cortes[i - 1];
+          const hasta = i === 3 ? null : cortes[i];
+          etiqueta = x.lab + " · " + (hasta === null ? "≥ " + fmt(desde)
+                                                     : fmt(desde) + " – " + fmt(hasta));
+        }
+      }
+      return `<div class="ly"><i style="background:${x.col}"></i>` +
+             `<span>${etiqueta}</span><b>${nf(x.n)}</b></div>`;
+    }).join("") +
+    `<div class="ly-total">${nf(pares.reduce((a, x) => a + x.n, 0))} datos</div>`;
   el.hidden = false;
 }
 
@@ -1327,7 +1381,8 @@ function abrirPanelDato(p, c, latlng) {
       pie += `<span class="pd-fuente">dato: ${f.actualizado || f.descargado}</span>`;
   }
   if (latlng) {
-    const la = latlng.lat.toFixed(5), lo = latlng.lng.toFixed(5);
+    const la = (latlng.lat !== undefined ? latlng.lat : latlng[0]).toFixed(5);
+    const lo = (latlng.lng !== undefined ? latlng.lng : latlng[1]).toFixed(5);
     pie += `<span class="pd-fuente">${la}, ${lo}</span>`;
     pie += `<a href="https://www.google.com/maps?q=${la},${lo}" target="_blank" rel="noopener">Ver en mapa ↗</a>`;
   }
@@ -1335,9 +1390,16 @@ function abrirPanelDato(p, c, latlng) {
   const btnJson = `<a href="#" id="pd-json">Descargar este dato (JSON) ↓</a>`;
   const btnCsv = `<a href="#" id="pd-csv">Descargar la capa (CSV) ↓</a>`;
 
+  const foto = p.imagen
+    ? `<a class="pd-foto" href="${p.imagen}" target="_blank" rel="noopener">` +
+      `<img src="${p.imagen}" alt="Imagen de la cámara" referrerpolicy="no-referrer" loading="lazy" ` +
+      `onerror="this.parentElement.style.display='none'"></a>`
+    : "";
+
   cuerpo.innerHTML =
     `<h3>${titulo}</h3>` +
     `<div class="pd-cap"><b>${c.grupo}</b> · ${c.label}</div>` +
+    foto +
     (filas ? `<div class="pd-grid">${filas}</div>` : "") +
     `<div class="pd-pie">${btnJson}${btnCsv}${pie}</div>`;
 
@@ -2059,11 +2121,15 @@ function pintarAvisoVista(p) {
     pintarAvisoVista("todos");
 pintarKPIs();
 setInterval(pintarKPIs, 5 * 60 * 1000);
+fetch("datos/ine_recibo.json?v=" + VER_DATOS).then(r => r.json())
+  .then(d => { window.__cortes = d.cortes || {}; }).catch(() => {});
   };
 }
 pintarAvisoVista("todos");
 pintarKPIs();
 setInterval(pintarKPIs, 5 * 60 * 1000);
+fetch("datos/ine_recibo.json?v=" + VER_DATOS).then(r => r.json())
+  .then(d => { window.__cortes = d.cortes || {}; }).catch(() => {});
 
 document.querySelectorAll("[data-preset]").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -2118,6 +2184,14 @@ window.OpenInfraES = {
     return intentar(20);
   },
   capas: () => ({ ...conteo }),
+  datos: () => datos,
+  fuentes: () => (typeof FUENTES !== "undefined" ? FUENTES : null),
+  estados: () => CAPAS.map(c => {
+    const chk = document.querySelector('[data-capa="' + c.id + '"]');
+    return { id: c.id, grupo: c.grupo, etiqueta: c.label, tipo: c.tipo,
+             activa: !!(chk && chk.checked), cargada: !!c.__cargada,
+             features: (datos[c.id] || []).length, fichero: c.fichero || null };
+  }),
   zoom: () => mapa.getZoom(),
   // fps medido en un arrastre real
   bench(ms = 2200) {
@@ -2147,6 +2221,78 @@ document.querySelectorAll("#capas .grupo").forEach(g => {
 });
 
 
+
+/* ---------------- panel de salud ----------------
+   Una capa sin datos se veia igual que una capa sin encender: en silencio. */
+const ERRORES_JS = [];
+window.addEventListener("error", e => {
+  ERRORES_JS.push({ t: new Date().toISOString().slice(11, 19),
+    m: (e.message || "error") + " · " + (e.filename || "").split("/").pop() + ":" + (e.lineno || 0) });
+});
+window.addEventListener("unhandledrejection", e => {
+  ERRORES_JS.push({ t: new Date().toISOString().slice(11, 19),
+    m: "promesa: " + String((e.reason && e.reason.message) || e.reason).slice(0, 90) });
+});
+
+function abrirSalud() {
+  const velo = document.getElementById("velo-salud");
+  const cuerpo = document.getElementById("salud-cuerpo");
+  if (!velo || !cuerpo) return;
+  const est = window.OpenInfraES.estados();
+  const fuente = (window.OpenInfraES.fuentes() || {}).capas || {};
+  const sinFuente = est.filter(c => !fuente[c.id]);
+  const vacias = est.filter(c => c.cargada && c.features === 0 && c.tipo !== "xyz");
+  const conDatos = est.filter(c => c.cargada && c.features > 0);
+
+  const chip = c => !c.cargada ? '<span class="chip off">sin cargar</span>'
+    : c.features === 0 ? '<span class="chip vacia">vacía</span>'
+    : '<span class="chip ok">' + nf(c.features) + "</span>";
+
+  let h = '<h3>Salud del visor</h3><div class="sb">Capas sin datos, capas sin fuente declarada ' +
+          'y errores de JavaScript.</div><div class="resumen">' +
+    `<div class="rc"><b>${est.length}</b><span>capas</span></div>` +
+    `<div class="rc bien"><b>${conDatos.length}</b><span>con datos</span></div>` +
+    `<div class="rc ${vacias.length ? "mal" : "bien"}"><b>${vacias.length}</b><span>vacías</span></div>` +
+    `<div class="rc ${sinFuente.length ? "mal" : "bien"}"><b>${sinFuente.length}</b><span>sin fuente</span></div>` +
+    `<div class="rc ${ERRORES_JS.length ? "mal" : "bien"}"><b>${ERRORES_JS.length}</b><span>errores JS</span></div>` +
+    '</div>';
+
+  if (ERRORES_JS.length) {
+    h += '<h4 style="margin:0 0 6px;font-size:13px;color:#f87171">Errores de JavaScript</h4>' +
+         '<table><tbody>' + ERRORES_JS.slice(-12).map(e =>
+           `<tr><td class="n" style="width:64px">${e.t}</td><td>${e.m}</td></tr>`).join("") +
+         '</tbody></table><div style="height:16px"></div>';
+  }
+  if (vacias.length) {
+    h += '<h4 style="margin:0 0 6px;font-size:13px;color:#f87171">Encendidas sin datos</h4>' +
+         '<table><tbody>' + vacias.map(c =>
+           `<tr><td>${c.etiqueta}</td><td style="color:var(--suave);font-size:10.6px">${c.id}</td>` +
+           `<td class="n" style="font-size:10.4px">${c.fichero || "—"}</td></tr>`).join("") +
+         '</tbody></table><div style="height:16px"></div>';
+  }
+  h += '<h4 style="margin:0 0 6px;font-size:13px">Todas las capas</h4>' +
+       '<table><thead><tr><th>capa</th><th>grupo</th><th style="text-align:right">objetos</th>' +
+       '<th>fuente</th></tr></thead><tbody>' +
+       est.slice().sort((a, b) => (a.grupo + a.etiqueta).localeCompare(b.grupo + b.etiqueta)).map(c => {
+         const f = fuente[c.id];
+         return `<tr><td>${c.etiqueta}</td><td style="color:var(--suave)">${c.grupo}</td>` +
+                `<td class="n">${chip(c)}</td>` +
+                `<td style="color:${f ? "var(--suave)" : "#fbbf24"};font-size:10.8px">` +
+                `${f ? (f.fuente || "—") : "SIN DECLARAR"}</td></tr>`;
+       }).join("") + '</tbody></table>';
+
+  cuerpo.innerHTML = h;
+  velo.hidden = false;
+}
+
+
+document.getElementById("btn-salud").addEventListener("click", abrirSalud);
+document.getElementById("salud-x").addEventListener("click", () => {
+  document.getElementById("velo-salud").hidden = true;
+});
+document.getElementById("velo-salud").addEventListener("click", e => {
+  if (e.target.id === "velo-salud") e.target.hidden = true;
+});
 </script>
 </body>
 </html>

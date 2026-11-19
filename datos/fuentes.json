@@ -410,6 +410,66 @@
    "url": "https://www.ree.es",
    "metodo": "registro RAIPEE cruzado con ELECTRA"
   },
+  "estaciones-cercanias": {
+   "capa": "estaciones-cercanias",
+   "titulo": "Estaciones de Cercanías",
+   "fuente": "NAP · MITMA",
+   "editor": "Ministerio de Transportes (NAP)",
+   "licencia": "Ley 37/2007 · reutilización",
+   "actualizado": "2026-11-19",
+   "descargado": "2026-11-19",
+   "features": 405,
+   "url": "https://nap.transportes.gob.es",
+   "metodo": "GTFS de Renfe Cercanías, tabla stops.txt"
+  },
+  "ine-provincias": {
+   "capa": "ine-provincias",
+   "titulo": "Población por provincia",
+   "fuente": "INE · Eurostat GISCO",
+   "editor": "INE (padrón y EPA) + Eurostat (geometrías NUTS 2021)",
+   "licencia": "datos abiertos INE · Eurostat CC BY 4.0",
+   "actualizado": "2026-11-19",
+   "descargado": "2026-11-19",
+   "features": 52,
+   "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=2852",
+   "metodo": "padrón del INE cruzado por cod_ine con polígonos NUTS de Eurostat"
+  },
+  "ine-ccaa": {
+   "capa": "ine-ccaa",
+   "titulo": "Población por comunidad",
+   "fuente": "INE · Eurostat GISCO",
+   "editor": "INE (padrón y EPA) + Eurostat (geometrías NUTS 2021)",
+   "licencia": "datos abiertos INE · Eurostat CC BY 4.0",
+   "actualizado": "2026-11-19",
+   "descargado": "2026-11-19",
+   "features": 19,
+   "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=2852",
+   "metodo": "padrón del INE cruzado por cod_ine con polígonos NUTS de Eurostat"
+  },
+  "ine-densidad": {
+   "capa": "ine-densidad",
+   "titulo": "Densidad de población",
+   "fuente": "INE · Eurostat GISCO",
+   "editor": "INE (padrón y EPA) + Eurostat (geometrías NUTS 2021)",
+   "licencia": "datos abiertos INE · Eurostat CC BY 4.0",
+   "actualizado": "2026-11-19",
+   "descargado": "2026-11-19",
+   "features": 52,
+   "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=14506",
+   "metodo": "población / superficie del polígono"
+  },
+  "ine-paro": {
+   "capa": "ine-paro",
+   "titulo": "Tasa de paro (EPA)",
+   "fuente": "INE · Eurostat GISCO",
+   "editor": "INE (padrón y EPA) + Eurostat (geometrías NUTS 2021)",
+   "licencia": "datos abiertos INE · Eurostat CC BY 4.0",
+   "actualizado": "2026-11-19",
+   "descargado": "2026-11-19",
+   "features": 19,
+   "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=14506",
+   "metodo": "padrón del INE cruzado por cod_ine con polígonos NUTS de Eurostat"
+  },
   "l400": {
    "capa": "l400",
    "titulo": "Líneas 400 kV",
@@ -965,5 +1025,5 @@
    "kb": 18
   }
  },
- "total_capas": 68
+ "total_capas": 73
 }

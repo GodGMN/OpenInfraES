@@ -32,6 +32,8 @@ OFICIAL = {
     "hidrogeno-red": ("MITECO", "https://www.miteco.gob.es", "Red de hidrógeno (PCI)"),
     "irewater-edar": ("I-ReWater HUB (Interreg)", "https://i-rewater-hub.com",
                       "vector tiles MVT del catálogo abierto, deduplicado"),
+    "estaciones-cercanias": ("NAP · MITMA", "https://nap.transportes.gob.es",
+                             "GTFS de Renfe Cercanías, paradas"),
     "plantas": ("REE · Registro administrativo de instalaciones de producción",
                 "https://www.ree.es", "registro RAIPEE cruzado con ELECTRA"),
 }
@@ -216,6 +218,49 @@ def main():
             "fuente": org, "editor": org, "licencia": "condiciones del editor",
             "actualizado": None, "descargado": HOY, "features": n_pl,
             "url": url, "metodo": metodo,
+        }
+
+    # paradas de Cercanias del NAP
+    ruta_ec = os.path.join(DATOS, "estaciones-cercanias.geojson")
+    if os.path.exists(ruta_ec):
+        try:
+            n_ec = len(json.load(open(ruta_ec, encoding="utf-8"))["features"])
+        except Exception:
+            n_ec = None
+        fuentes["estaciones-cercanias"] = {
+            "capa": "estaciones-cercanias", "titulo": "Estaciones de Cercanías",
+            "fuente": "NAP · MITMA", "editor": "Ministerio de Transportes (NAP)",
+            "licencia": "Ley 37/2007 · reutilización", "actualizado": HOY, "descargado": HOY,
+            "features": n_ec, "url": "https://nap.transportes.gob.es",
+            "metodo": "GTFS de Renfe Cercanías, tabla stops.txt",
+        }
+
+    # capas demograficas: geometria de Eurostat GISCO + datos del INE
+    DEMO = {
+        "ine-provincias": ("Población por provincia", "poblacion"),
+        "ine-ccaa": ("Población por comunidad", "poblacion"),
+        "ine-densidad": ("Densidad de población", "densidad"),
+        "ine-paro": ("Tasa de paro (EPA)", "paro_pct"),
+    }
+    for cid, (titulo, campo) in DEMO.items():
+        base = "nuts3_es.geojson" if "provincia" in cid or "densidad" in cid else "nuts2_es.geojson"
+        ruta = os.path.join(DATOS, base)
+        n = None
+        if os.path.exists(ruta):
+            try:
+                n = len(json.load(open(ruta, encoding="utf-8"))["features"])
+            except Exception:
+                pass
+        fuentes[cid] = {
+            "capa": cid, "titulo": titulo,
+            "fuente": "INE · Eurostat GISCO",
+            "editor": "INE (padrón y EPA) + Eurostat (geometrías NUTS 2021)",
+            "licencia": "datos abiertos INE · Eurostat CC BY 4.0",
+            "actualizado": HOY, "descargado": HOY, "features": n,
+            "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=2852" if campo == "poblacion"
+                   else "https://www.ine.es/jaxiT3/Tabla.htm?t=14506",
+            "metodo": ("padrón del INE cruzado por cod_ine con polígonos NUTS de Eurostat"
+                       if campo != "densidad" else "población / superficie del polígono"),
         }
 
     # capas que salen de ficheros propios generados con Overpass/REE

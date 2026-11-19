@@ -273,8 +273,26 @@ def main():
     except Exception as e:
         print("  EPA no disponible:", str(e)[:60])
 
+    # cortes de los tramos, para que la leyenda del visor muestre RANGOS y no solo etiquetas
+    cortes = {}
+    for fichero, clave in (("nuts3_es.geojson", "provincias"), ("nuts2_es.geojson", "comunidades")):
+        ruta = os.path.join(DATOS, fichero)
+        if not os.path.exists(ruta):
+            continue
+        d = json.load(open(ruta, encoding="utf-8"))
+        for campo, nombre in (("poblacion", "poblacion"), ("densidad", "densidad"),
+                              ("paro_pct", "paro")):
+            vals = sorted(f["properties"][campo] for f in d["features"]
+                          if f["properties"].get(campo))
+            if len(vals) > 3:
+                cortes[clave + "_" + nombre] = [round(vals[int(len(vals) * q)], 1)
+                                                for q in (0.25, 0.5, 0.75)]
+                cortes[clave + "_" + nombre + "_min"] = round(vals[0], 1)
+                cortes[clave + "_" + nombre + "_max"] = round(vals[-1], 1)
+
     recibo = {
         "fuente": "INE · Cifras Oficiales de Población (padrón)",
+        "cortes": cortes,
         "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=2852",
         "api": "servicios.ine.es/wstempus/js/ES/DATOS_TABLA/2852",
         "tablas": {"provincias": 2852, "comunidades": 2853},

@@ -1,5 +1,42 @@
 {
  "fuente": "INE · Cifras Oficiales de Población (padrón)",
+ "cortes": {
+  "provincias_poblacion": [
+   319796,
+   587064,
+   1011792
+  ],
+  "provincias_poblacion_min": 83517,
+  "provincias_poblacion_max": 6751251,
+  "provincias_densidad": [
+   25.6,
+   64.1,
+   167.4
+  ],
+  "provincias_densidad_min": 8.5,
+  "provincias_densidad_max": 10782.6,
+  "comunidades_poblacion": [
+   661537,
+   1518486,
+   2383139
+  ],
+  "comunidades_poblacion_min": 83517,
+  "comunidades_poblacion_max": 8472407,
+  "comunidades_densidad": [
+   63.7,
+   96.6,
+   293.3
+  ],
+  "comunidades_densidad_min": 25.3,
+  "comunidades_densidad_max": 10782.6,
+  "comunidades_paro": [
+   8.8,
+   11.4,
+   14.3
+  ],
+  "comunidades_paro_min": 4.7,
+  "comunidades_paro_max": 30.2
+ },
  "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=2852",
  "api": "servicios.ine.es/wstempus/js/ES/DATOS_TABLA/2852",
  "tablas": {
