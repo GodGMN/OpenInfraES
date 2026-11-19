@@ -950,6 +950,7 @@ const CAPAS = [
   { id:"sismos", grupo:"Riesgo", label:"Terremotos (7 días)", tipo:"punto", on:false,
     color:"#f97316", fichero:"datos/sismos.geojson", radio:5, siempreIndividual:true,
     escala:{ campo:"magnitud", min:1, max:5, unidad:"M" }, radioPorMagnitud:true,
+    colorCampo:"color",
     popupExtra:"sismo" },
   { id:"estaciones-gas", grupo:"Transporte", label:"Estaciones GNL/GNC/H₂", tipo:"punto", on:false,
     color:"#4ade80", fichero:"datos/hermes/estaciones-gas.geojson", radio:5,
@@ -964,7 +965,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19d";
+const VER_DATOS = "2026-11-19e";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1040,6 +1041,13 @@ function colorEscala(v, e) {
   return "rgb(" + [0,1,2].map(k => Math.round(a[k] + (b[k] - a[k]) * f)).join(",") + ")";
 }
 
+const colorDe = (c, p) => {
+  if (c.colorCampo && p) {
+    const v = p[c.colorCampo];
+    if (v) return c.colores ? (c.colores[v] || c.color) : String(v);
+  }
+  return c.color;
+};
 const radioDe = (c, p) => {
   // radio por magnitud: usa el campo que declare `escala.campo` y lo normaliza.
   // Antes estaba fijado a `p.magnitud`, asi que solo servia para sismos.
@@ -1090,7 +1098,7 @@ function pintarPuntos(c) {
       const [lng, lat] = f.geometry.coordinates;
       const p = f.properties || {};
       const m = L.circleMarker([lat, lng], {
-        radius: radioDe(c, p), fillColor: c.color, fillOpacity: c.opacidad || .78,
+        radius: radioDe(c, p), fillColor: colorDe(c, p), fillOpacity: c.opacidad || .78,
         color: "#fff", weight: 1, opacity: .45
       });
       m.on("click", e => { abrirFicha(p, c, e.latlng); L.DomEvent.stopPropagation(e); });
