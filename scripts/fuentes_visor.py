@@ -32,6 +32,8 @@ OFICIAL = {
     "hidrogeno-red": ("MITECO", "https://www.miteco.gob.es", "Red de hidrógeno (PCI)"),
     "irewater-edar": ("I-ReWater HUB (Interreg)", "https://i-rewater-hub.com",
                       "vector tiles MVT del catálogo abierto, deduplicado"),
+    "plantas": ("REE · Registro administrativo de instalaciones de producción",
+                "https://www.ree.es", "registro RAIPEE cruzado con ELECTRA"),
 }
 
 HERMES = {
@@ -198,6 +200,23 @@ def main():
         if base:
             f = dict(base); f["capa"] = capa
             fuentes[capa] = f
+
+    # capa de plantas: un solo fichero con todas, potencia y tecnologia
+    ruta_pl = os.path.join(DATOS, "plantas.geojson")
+    if os.path.exists(ruta_pl):
+        try:
+            n_pl = len(json.load(open(ruta_pl, encoding="utf-8"))["features"])
+        except Exception:
+            n_pl = None
+        org, url, metodo = OFICIAL.get("plantas",
+            ("REE · Registro administrativo de instalaciones de producción",
+             "https://www.ree.es", "registro RAIPEE cruzado con ELECTRA"))
+        fuentes["plantas"] = {
+            "capa": "plantas", "titulo": "Todas las plantas (con potencia)",
+            "fuente": org, "editor": org, "licencia": "condiciones del editor",
+            "actualizado": None, "descargado": HOY, "features": n_pl,
+            "url": url, "metodo": metodo,
+        }
 
     # capas que salen de ficheros propios generados con Overpass/REE
     propios = {

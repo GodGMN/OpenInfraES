@@ -349,6 +349,32 @@
     background:rgba(56,189,248,.07); border-radius:0 3px 3px 0; font-size:10.6px; }
   .est-prod b { color:var(--cian); font-size:12px; }
   .est-prod i { display:block; color:var(--suave); font-style:normal; font-size:9.6px; margin-top:1px; }
+
+  #panel-dato { position:fixed; left:314px; right:16px; bottom:44px; max-height:190px; overflow-y:auto;
+    background:rgba(12,18,30,.94); border:1px solid var(--borde-fuerte); border-radius:8px;
+    backdrop-filter:blur(12px); box-shadow:0 -6px 28px rgba(0,0,0,.5); padding:11px 14px 12px;
+    z-index:900; font-size:11px; color:var(--tinta); }
+  @media (max-width:900px) { #panel-dato { left:10px; } }
+  #panel-dato-x { position:absolute; top:6px; right:8px; background:transparent; border:0;
+    color:var(--suave); font-size:13px; cursor:pointer; padding:2px 5px; }
+  #panel-dato-x:hover { color:var(--tinta); }
+  #panel-dato h3 { margin:0 0 3px; font-size:13.5px; font-weight:600; color:var(--tinta);
+    padding-right:22px; line-height:1.25; }
+  #panel-dato .pd-cap { font-size:9.6px; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--suave); margin-bottom:7px; }
+  #panel-dato .pd-cap b { color:var(--cian); font-weight:600; }
+  #panel-dato .pd-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+    gap:2px 18px; margin-bottom:7px; }
+  #panel-dato .pd-k { display:flex; justify-content:space-between; gap:10px; font-size:10.6px;
+    border-bottom:1px dotted rgba(255,255,255,.06); padding:2px 0; }
+  #panel-dato .pd-k span:first-child { color:var(--suave); }
+  #panel-dato .pd-k span:last-child { color:var(--tinta); text-align:right;
+    font-variant-numeric:tabular-nums; }
+  #panel-dato .pd-pie { display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+    padding-top:7px; border-top:1px solid var(--borde); font-size:10.2px; }
+  #panel-dato .pd-pie a { color:var(--cian); text-decoration:none; }
+  #panel-dato .pd-pie a:hover { text-decoration:underline; }
+  #panel-dato .pd-fuente { color:var(--suave); }
 </style>
 </head>
 <body>
@@ -387,6 +413,10 @@
   <div id="pie"><select id="base"></select></div>
 </div>
 
+<div id="panel-dato" hidden>
+    <button id="panel-dato-x" title="Cerrar">✕</button>
+    <div id="panel-dato-cuerpo"></div>
+  </div>
 <aside id="info-der" aria-live="polite">
   <button class="cerrar" id="cerrar-info-der">×</button>
   <div id="info-der-cuerpo"></div>
@@ -984,7 +1014,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19f";
+const VER_DATOS = "2026-11-19g";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1046,7 +1076,97 @@ function bloqueEstimacion(p) {
     ' · no es medida</i></div>';
 }
 
+
+/* ---------------- panel de dato (abajo) ----------------
+   Al pinchar un elemento no basta con un popup: el dato necesita su contexto. Este panel muestra
+   los atributos, de qué capa sale, quién produce el dato y el enlace a la fuente oficial. */
+const CAMPOS_OCULTOS = new Set(["slug","claves","geo_fuente","geo_fuente__f","geo_fuente__v","verif",
+  "fecha_verificacion","color","color_tec","_objeto","objectid","id","gid","osm_id","fuente","source"]);
+
+const ETIQUETA = {
+  name:"Nombre", nombre:"Nombre", nombre_oficial:"Nombre oficial", nom_demar:"Demarcación",
+  technology_normalized:"Tecnología", technology_ree:"Tecnología (REE)", installed_capacity_mw:"Potencia (MW)",
+  installed_capacity_mw_electra:"Potencia ELECTRA (MW)", owner:"Propietario", province:"Provincia",
+  Provincia:"Provincia", municipality:"Municipio", autonomous_region:"Comunidad", status:"Estado",
+  cod_ine:"Código INE", nuts:"Código NUTS", poblacion:"Población", superficie_km2:"Superficie (km²)",
+  magnitud:"Magnitud", profundidad_km:"Profundidad (km)", lugar:"Lugar", hora:"Hora", region:"Región",
+  mensaje:"Mensaje del panel", carretera:"Carretera", km:"Kilómetro", nivel:"Nivel",
+  potencia_max_kw:"Potencia máx. (kW)", conectores:"Conectores", direccion:"Dirección",
+  titular:"Titular", tipo:"Tipo", categoria:"Categoría", uso:"Uso", estado_registro:"Estado"
+};
+
+function nombreCampo(k) {
+  return ETIQUETA[k] || k.replace(/_/g, " ").replace(/\w/g, m => m.toUpperCase());
+}
+
+function valorLegible(v) {
+  if (v === null || v === undefined || v === "") return null;
+  if (typeof v === "number") return v.toLocaleString("es-ES", { maximumFractionDigits: 2 });
+  const n = Number(v);
+  if (!isNaN(n) && String(v).trim() !== "" && /^-?[0-9.,]+$/.test(String(v).trim()))
+    return n.toLocaleString("es-ES", { maximumFractionDigits: 2 });
+  return String(v).slice(0, 160);
+}
+
+function abrirPanelDato(p, c, latlng) {
+  const panel = document.getElementById("panel-dato");
+  const cuerpo = document.getElementById("panel-dato-cuerpo");
+  if (!panel || !cuerpo) return;
+
+  const titulo = p.nombre || p.name || p.nombre_oficial || p.nom_demar || p.municipio ||
+                 (p.mensaje ? p.mensaje + (p.carretera ? " — " + p.carretera : "") : null) ||
+                 p.lugar || "Sin nombre";
+
+  // atributos: los declarados por la capa primero, luego el resto
+  const preferidos = (c.campos || []).concat(Object.keys(ETIQUETA));
+  const claves = [];
+  for (const k of preferidos) if (k in p && !CAMPOS_OCULTOS.has(k) && !claves.includes(k)) claves.push(k);
+  for (const k of Object.keys(p)) {
+    if (claves.length >= 14) break;
+    if (CAMPOS_OCULTOS.has(k) || claves.includes(k)) continue;
+    if (k.endsWith("__f") || k.endsWith("__v")) continue;
+    claves.push(k);
+  }
+
+  let filas = "";
+  for (const k of claves) {
+    const v = valorLegible(p[k]);
+    if (v === null) continue;
+    filas += `<div class="pd-k"><span>${nombreCampo(k)}</span><span>${v}</span></div>`;
+  }
+
+  // fuente oficial de la capa
+  const f = (typeof FUENTES !== "undefined" && FUENTES && FUENTES.capas) ? FUENTES.capas[c.id] : null;
+  let pie = "";
+  if (f) {
+    const enlace = f.url
+      ? `<a href="${f.url}" target="_blank" rel="noopener">${f.fuente} ↗</a>`
+      : `<span class="pd-fuente">${f.fuente}</span>`;
+    pie += `<span>${enlace}</span>`;
+    if (f.licencia) pie += `<span class="pd-fuente">${String(f.licencia).slice(0, 46)}</span>`;
+    if (f.actualizado || f.descargado)
+      pie += `<span class="pd-fuente">dato: ${f.actualizado || f.descargado}</span>`;
+  }
+  if (latlng) {
+    const la = latlng.lat.toFixed(5), lo = latlng.lng.toFixed(5);
+    pie += `<span class="pd-fuente">${la}, ${lo}</span>`;
+    pie += `<a href="https://www.google.com/maps?q=${la},${lo}" target="_blank" rel="noopener">Ver en mapa ↗</a>`;
+  }
+
+  cuerpo.innerHTML =
+    `<h3>${titulo}</h3>` +
+    `<div class="pd-cap"><b>${c.grupo}</b> · ${c.label}</div>` +
+    (filas ? `<div class="pd-grid">${filas}</div>` : "") +
+    (pie ? `<div class="pd-pie">${pie}</div>` : "");
+
+  panel.hidden = false;
+  const x = document.getElementById("panel-dato-x");
+  if (x) x.onclick = () => { panel.hidden = true; };
+}
+
+
 function abrirFicha(p, c, latlng) {
+  abrirPanelDato(p, c, latlng);
   POPUP.setLatLng(latlng).setContent(c.modoTren ? fichaTren(p, c) : ficha(p, c)).openOn(mapa);
   if (c.apiCaudal) consultarCaudal(p);
 }
@@ -1434,7 +1554,7 @@ cajaQ.addEventListener("input", () => {
 
 /* ---------------- panel de fuentes ---------------- */
 let FUENTES = null;
-fetch("datos/fuentes.json").then(r => r.json()).then(d => { FUENTES = d; }).catch(() => {});
+fetch("datos/fuentes.json?v=" + VER_DATOS).then(r => r.json()).then(d => { FUENTES = d; }).catch(() => {});
 
 function pintarFuentes() {
   const tabla = $("#fuentes-tabla");
@@ -1497,7 +1617,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") { $("#velo")
 /* ---------------- panel de proyecto ---------------- */
 function pintarProyecto() {
   const p = document.getElementById("proyecto"); if (p) p.scrollTop = 0;
-  fetch("datos/fuentes.json").then(r => r.json()).then(d => {
+  fetch("datos/fuentes.json?v=" + VER_DATOS).then(r => r.json()).then(d => {
     const capas = Object.keys(d.capas || {}).length;
     const obj = Object.values(d.capas || {}).reduce((a, c) => a + (c.features || 0), 0);
     const nc = document.getElementById("n-capas"), no = document.getElementById("n-obj");

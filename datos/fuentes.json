@@ -302,18 +302,6 @@
    "url": "https://i-rewater-hub.com",
    "metodo": "vector tiles MVT z6 + padrón del INE (tabla 2852/2853)"
   },
-  "irewater-nuts3": {
-   "capa": "irewater-nuts3",
-   "titulo": "Población por provincia + agua aprovechable (NUTS3)",
-   "fuente": "I-ReWater HUB (Interreg) + INE",
-   "editor": "I-ReWater HUB (Interreg) + INE",
-   "licencia": "CC BY 4.0",
-   "actualizado": "2026-11-19",
-   "descargado": "2026-11-19",
-   "features": 48,
-   "url": "https://i-rewater-hub.com",
-   "metodo": "vector tiles MVT z6 + padrón del INE (tabla 2852/2853)"
-  },
   "edar": {
    "capa": "edar",
    "titulo": "EDAR (depuradoras)",
@@ -409,6 +397,18 @@
    "features": 383,
    "url": "https://mapas.fomento.gob.es/VisorHermes/",
    "metodo": "Hermes/0__TERMINALES_INTERMODALES/1 — query ArcGIS REST, paginado de 500 en 500"
+  },
+  "plantas": {
+   "capa": "plantas",
+   "titulo": "Todas las plantas (con potencia)",
+   "fuente": "REE · Registro administrativo de instalaciones de producción",
+   "editor": "REE · Registro administrativo de instalaciones de producción",
+   "licencia": "condiciones del editor",
+   "actualizado": null,
+   "descargado": "2026-11-19",
+   "features": 5797,
+   "url": "https://www.ree.es",
+   "metodo": "registro RAIPEE cruzado con ELECTRA"
   },
   "l400": {
    "capa": "l400",
