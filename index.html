@@ -941,8 +941,9 @@ const CAPAS = [
     color:"#e879f9", fichero:"datos/oficial/electricidad-interconexiones.geojson", radio:7 },
 
   { id:"plantas", grupo:"Generación", label:"Todas las plantas (con potencia)", tipo:"punto", on:false,
-    color:"#94a3b8", fichero:"datos/plantas.geojson", zoomMin:6, radio:4.5,
-    siempreIndividual:false, popupTitulo:"name", colorCampo:"color_tec",
+    color:"#94a3b8", fichero:"datos/plantas.geojson", zoomMin:8, radio:4.5,
+    siempreIndividual:true, popupTitulo:"name", colorCampo:"color_tec", etiquetaCampo:"technology_normalized",
+    radioPorMagnitud:true, escala:{ campo:"installed_capacity_mw", min:0.5, max:2000, unidad:"MW", log:true },
     campos:["name","technology_normalized","installed_capacity_mw","owner","province",
             "municipality","autonomous_region","status"] },
   { id:"hidro", grupo:"Generación", label:"Hidráulicas", tipo:"punto", on:true, color:"#22d3ee",
@@ -1024,13 +1025,15 @@ const CAPAS = [
   { id:"carreteras", grupo:"Transporte", label:"Carreteras del Estado", tipo:"linea", on:false, color:"#64748b",
     fichero:"datos/hermes/carreteras.geojson", peso:1.1, opacidad:.6, zoomMin:7.5 },
   { id:"puertos", grupo:"Transporte", label:"Puertos interés general", tipo:"punto", on:false, color:"#38bdf8",
-    fichero:"datos/hermes/puertos-interes-general.geojson", radio:7 },
+    fichero:"datos/hermes/puertos-interes-general.geojson", radio:8 },
   { id:"terminales-puerto", grupo:"Transporte", label:"Terminales portuarias", tipo:"poligono", on:false,
-    color:"#3b82f6", fichero:"datos/hermes/terminales-portuarias.geojson", peso:1, zoomMin:9 },
+    color:"#3b82f6", fichero:"datos/hermes/terminales-portuarias.geojson", peso:1.4,
+    opacidad:.5, zoomMin:7 },
   { id:"terminales-aero", grupo:"Transporte", label:"Terminales aeropuerto", tipo:"poligono", on:false,
-    color:"#a78bfa", fichero:"datos/hermes/terminales-aeropuerto.geojson", peso:1, zoomMin:9 },
+    color:"#a78bfa", fichero:"datos/hermes/terminales-aeropuerto.geojson", peso:1.4,
+    opacidad:.5, zoomMin:7 },
   { id:"intermodales", grupo:"Transporte", label:"Terminales mercancías", tipo:"punto", on:false,
-    color:"#f59e0b", fichero:"datos/hermes/terminales-mercancias.geojson", radio:5 },
+    color:"#f59e0b", fichero:"datos/hermes/terminales-mercancias.geojson", radio:6 },
   { id:"dgt-camaras", grupo:"DGT · Tráfico", label:"Cámaras de tráfico (DGT)", tipo:"punto", on:false,
     color:"#fb7185", fichero:"datos/dgt_camaras.geojson", radio:4, zoomMin:7, zoomDetalle:11,
     // sin `siempreIndividual`: 1.977 camaras sueltas a zoom nacional son una masa en la
@@ -1054,10 +1057,10 @@ const CAPAS = [
     escala:{ campo:"gasoleo_a", min:1.40, max:2.20, unidad:"€/l" } },
   { id:"nap-lineas-metro", grupo:"Transporte", label:"Líneas de Metro Madrid", tipo:"linea", on:false,
     color:"#38bdf8", fichero:"datos/nap_lineas_metro-madrid.geojson", peso:2.6, opacidad:.92,
-    zoomMin:9, popupTitulo:"linea", colorCampo:"color" },
+    zoomMin:9, popupTitulo:"linea", colorCampo:"color", etiquetaCampo:"linea" },
   { id:"nap-lineas-cercanias", grupo:"Transporte", label:"Líneas de Cercanías", tipo:"linea", on:false,
     color:"#c084fc", fichero:"datos/nap_lineas_cercanias-renfe.geojson", peso:2.6, opacidad:.92,
-    zoomMin:7, popupTitulo:"linea", colorCampo:"color" },
+    zoomMin:7, popupTitulo:"linea", colorCampo:"color", etiquetaCampo:"linea" },
   { id:"nap-metro", grupo:"Transporte", label:"Metro de Madrid (NAP)", tipo:"punto", on:false,
     color:"#38bdf8", fichero:"datos/nap_paradas_metro-madrid.geojson", radio:3.4,
     zoomMin:9, popupTitulo:"nombre" },
@@ -1094,7 +1097,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19i";
+const VER_DATOS = "2026-11-19j";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1231,12 +1234,18 @@ function pintarLeyenda(c) {
     const v = p[campoColor];
     if (v === undefined || v === null || v === "") return;
     const col = c.colores ? (c.colores[v] || c.color) : String(v);
-    const etiqueta = p[campoTramo] || p.nivel || p.tramo || String(v);
-    const k = col + "|" + etiqueta;
-    cuenta[k] = (cuenta[k] || 0) + 1;
+    // etiquetaCampo manda: en las lineas de Cercanias el color no es la etiqueta, la linea si
+    let etiqueta = (c.etiquetaCampo && p[c.etiquetaCampo]) ? String(p[c.etiquetaCampo])
+                 : (p[campoTramo] || p.nivel || p.tramo || null);
+    if (!etiqueta) etiqueta = esColor(v) ? "" : String(v);
+    if (!etiqueta) return;                      // sin etiqueta legible, no hay leyenda
+    if (!cuenta[etiqueta]) cuenta[etiqueta] = { col: col, n: 0 };
+    cuenta[etiqueta].n += 1;
   });
-  const pares = Object.keys(cuenta).map(k => ({ col: k.split("|")[0], lab: k.split("|")[1], n: cuenta[k] }));
-  if (pares.length < 2 || pares.length > 14) { el.hidden = true; return; }
+  const pares = Object.keys(cuenta).map(lab => ({ col: cuenta[lab].col, lab: lab, n: cuenta[lab].n }))
+    .sort((a, b) => b.n - a.n);
+  // Cercanias tiene 12 lineas + las de otros nucleos (R11, R17...): con tope 14 se ocultaba entera
+  if (pares.length < 2 || pares.length > 40) { el.hidden = true; return; }
 
   const cortes = (window.__cortes && c.corteVar) ? window.__cortes[c.corteVar] : null;
   const unidad = (c.corteVar || "").indexOf("paro") !== -1 ? " %"
@@ -1329,11 +1338,20 @@ function nombreCampo(k) {
 
 function valorLegible(v) {
   if (v === null || v === undefined || v === "") return null;
+  // objetos y arrays no son datos legibles: "[object Object]" no le dice nada a nadie
+  if (typeof v === "object") return null;
+  if (typeof v === "boolean") return v ? "sí" : "no";
   if (typeof v === "number") return v.toLocaleString("es-ES", { maximumFractionDigits: 2 });
-  const n = Number(v);
-  if (!isNaN(n) && String(v).trim() !== "" && /^-?[0-9.,]+$/.test(String(v).trim()))
-    return n.toLocaleString("es-ES", { maximumFractionDigits: 2 });
-  return String(v).slice(0, 160);
+  const t = String(v).trim();
+  if (t === "" || t === "[object Object]" || t === "undefined" || t === "null" || t === "NaN") return null;
+  const n = Number(t);
+  if (!isNaN(n) && /^-?[0-9.,]+$/.test(t)) return n.toLocaleString("es-ES", { maximumFractionDigits: 2 });
+  return t.slice(0, 160);
+}
+
+/* Un valor que es un color (#rrggbb) no es una etiqueta: en la leyenda no dice nada. */
+function esColor(v) {
+  return typeof v === "string" && /^#[0-9a-fA-F]{3,8}$/.test(v.trim());
 }
 
 function abrirPanelDato(p, c, latlng) {
@@ -1350,7 +1368,9 @@ function abrirPanelDato(p, c, latlng) {
   const claves = [];
   for (const k of preferidos) {
     if (!(k in p) || CAMPOS_OCULTOS.has(k) || claves.includes(k)) continue;
+    if (p[k] !== null && typeof p[k] === "object") continue;
     if (k.indexOf("color") === 0 || k.indexOf("tramo_") === 0) continue;
+    if (p[k] !== null && typeof p[k] === "object") continue;
     claves.push(k);
   }
   for (const k of Object.keys(p)) {
@@ -1482,7 +1502,17 @@ const radioDe = (c, p) => {
     const v = Number(p[e.campo || "magnitud"]) || 0;
     const min = (e.min !== undefined) ? e.min : 0;
     const max = (e.max !== undefined) ? e.max : v;
-    const t = (max > min) ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0.5;
+    let t;
+    if (e.log) {
+      // potencia: la mediana son 2,5 MW y el maximo 2.017. En lineal casi todo cae en el mismo
+      // tamano; en logaritmica se separan las grandes de las miniaturas.
+      const lv = Math.log10(Math.max(v, 1e-3));
+      const lmin = Math.log10(Math.max(min, 1e-3));
+      const lmax = Math.log10(Math.max(max, min * 1.01));
+      t = Math.max(0, Math.min(1, (lv - lmin) / (lmax - lmin)));
+    } else {
+      t = (max > min) ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0.5;
+    }
     return 3.5 + t * 10.5;          // 3,5 px a 14 px
   }
   const rmin = c.radioMin || c.radio || 4.5, rmax = c.radioMax || 11;
@@ -1550,7 +1580,8 @@ function pintarPuntos(c) {
                       : Math.min(19, 6 + 3.1 * Math.log2(n + 1));
     const m = L.circleMarker([lat, lng], {
       radius: r,
-      fillColor: c.color, fillOpacity: n === 1 ? (c.opacidad || .78) : .3,
+      fillColor: n === 1 ? colorDe(c, items[0].properties) : c.color,
+      fillOpacity: n === 1 ? (c.opacidad || .78) : .3,
       color: c.color, weight: n === 1 ? 1 : 1.6, opacity: n === 1 ? .45 : .95
     });
     m.on("click", e => {
