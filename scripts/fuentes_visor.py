@@ -133,7 +133,9 @@ def main():
                    "hib_uda": "Unidades de Demanda Agrícola",
                    "hib_regadio": "Perímetros de regadío",
                    "hib_regadio_particion": "Particiones de regadío (25 h)",
-                   "hib_demarcacion": "Demarcaciones hidrográficas (I-ReWater)"}
+                   "hib_demarcacion": "Demarcaciones hidrográficas (I-ReWater)",
+                   "hib_nuts2": "Agua aprovechable por comunidad (NUTS2)",
+                   "hib_nuts3": "Agua aprovechable por provincia (NUTS3)"}
     for fich in sorted(os.listdir(DATOS)):
         if not (fich.startswith("irewater_") and fich.endswith("_recibo.json")):
             continue

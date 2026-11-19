@@ -75,19 +75,19 @@ funciona siempre.
 
 ## Capas del visor
 
-**48 capas en 8 grupos temáticos**, con carga bajo demanda: nada se descarga hasta que lo enciendes.
+**50 capas en 8 grupos temáticos**, con carga bajo demanda: nada se descarga hasta que lo enciendes.
 
 | Grupo | Capas | Objetos |
 |---|---:|---:|
 | **Red eléctrica** | 4 | 664 |
 | **Generación** | 7 | 2.733 |
 | **Gas** | 6 | 165 |
-| **Agua** | 11 | 19.640 |
+| **Agua** | 13 | 18.286 |
 | **Transporte** | 11 | 17.445 |
 | **DGT · Tráfico** | 4 | 16.490 |
 | **Tiempo real** | 3 | 11.836 |
 | **Riesgo** | 2 | 150 |
-| **Total** | **48** | **69.123** |
+| **Total** | **50** | **67.769** |
 
 Cifras contadas del propio `datos/fuentes.json`, no estimadas. **No suman lo que se ve en pantalla**:
 una capa que no está encendida no ha descargado sus datos, y `fuentes.json` guarda el total del fichero.
@@ -277,8 +277,8 @@ detalla además la licencia de cada conjunto de datos.
 
 | | |
 |---|---|
-| Capas en el visor | **48** |
-| Capas documentadas en `fuentes.json` | **67** |
+| Capas en el visor | **50** |
+| Capas documentadas en `fuentes.json` | **69** |
 | Organismos citados | **11** — MITECO, IGN, REE, MITMA, Enagás, CORES, CSN, ENRESA, Renfe, DGT, AEMET |
 | Fuentes sin clave | MITECO, IGN, MITMA, Enagás, CORES, CSN, ENRESA, Renfe, DGT, AEMET, OMIE, ESIOS (19 indicadores) |
 | Fuentes con clave | NAP de transportes (`ApiKey`), ENTSO-E (token) |

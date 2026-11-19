@@ -302,6 +302,30 @@
    "url": "https://i-rewater-hub.com",
    "metodo": "vector tiles MVT z8, deduplicado por id"
   },
+  "irewater-nuts2": {
+   "capa": "irewater-nuts2",
+   "titulo": "Agua aprovechable por comunidad (NUTS2)",
+   "fuente": "I-ReWater HUB (Interreg)",
+   "editor": "I-ReWater HUB (Interreg)",
+   "licencia": "CC BY 4.0",
+   "actualizado": "2026-11-19",
+   "descargado": "2026-11-19",
+   "features": 16,
+   "url": "https://i-rewater-hub.com",
+   "metodo": "vector tiles MVT z6, deduplicado por id"
+  },
+  "irewater-nuts3": {
+   "capa": "irewater-nuts3",
+   "titulo": "Agua aprovechable por provincia (NUTS3)",
+   "fuente": "I-ReWater HUB (Interreg)",
+   "editor": "I-ReWater HUB (Interreg)",
+   "licencia": "CC BY 4.0",
+   "actualizado": "2026-11-19",
+   "descargado": "2026-11-19",
+   "features": 48,
+   "url": "https://i-rewater-hub.com",
+   "metodo": "vector tiles MVT z6, deduplicado por id"
+  },
   "edar": {
    "capa": "edar",
    "titulo": "EDAR (depuradoras)",
@@ -953,5 +977,5 @@
    "kb": 18
   }
  },
- "total_capas": 67
+ "total_capas": 69
 }

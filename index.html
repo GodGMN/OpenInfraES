@@ -656,14 +656,17 @@ const RESUMEN_CAT = {
   carretera: "carreteras", mensaje: "mensajes en panel", fenomenos: "fenómenos",
   tecnologia: "tecnologías", categoria: "categorías", demarcacion: "demarcaciones",
   operador: "operadores", zona: "zonas", pais: "países",
-  indice_impacto_hidrologico: "impacto hidrológico", uso: "usos", estado: "estado"
+  indice_impacto_hidrologico: "impacto hidrológico", uso: "usos", estado: "estado",
+  tramo: "tramo de agua aprovechable"
 };
 const RESUMEN_NUM = {
   potencia_max_kw: ["kW", 1], conectores: ["conectores", 0], magnitud: ["magnitud", 1],
   km: ["km", 1], salidas_dia: ["salidas/día", 0], voltage: ["V", 0],
   qentrada_he: ["habitantes equivalentes", 0], capacidad: ["capacidad", 0],
   volumen_reutilizable_m3: ["m³/año reutilizables", 0],
-  superficie_pot_regable_ha: ["hectáreas regables", 0]
+  superficie_pot_regable_ha: ["hectáreas regables", 0],
+  volumen_aprovechable_m3: ["m³ aprovechables", 0],
+  superficie_potencialmente_regable_ha: ["hectáreas potencialmente regables", 0]
 };
 
 function analizarCapa(id) {
@@ -856,6 +859,12 @@ const CAPAS = [
     popupTitulo:"nom_demar", etiqueta:"nom_demar" },
   { id:"desaladoras", grupo:"Agua", label:"Desaladoras", tipo:"punto", on:true, color:"#2dd4bf",
     fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true },
+  { id:"irewater-nuts2", grupo:"Agua", label:"Agua aprovechable por comunidad", tipo:"poligono", on:false,
+    color:"#31a354", fichero:"datos/irewater_hib_nuts2.geojson", zoomMin:5, opacidad:.45,
+    peso:1, popupTitulo:"nombre", colorCampo:"color" },
+  { id:"irewater-nuts3", grupo:"Agua", label:"Agua aprovechable por provincia", tipo:"poligono", on:false,
+    color:"#31a354", fichero:"datos/irewater_hib_nuts3.geojson", zoomMin:6, opacidad:.45,
+    peso:1, popupTitulo:"nombre", colorCampo:"color" },
   { id:"irewater-demarcacion", grupo:"Agua", label:"Demarcaciones transfronterizas", tipo:"poligono", on:false,
     color:"#00897B", fichero:"datos/irewater_hib_demarcacion.geojson", zoomMin:5, opacidad:.22,
     peso:1.4, popupTitulo:"nombre", colorCampo:"color" },

@@ -1,0 +1,21 @@
+{
+ "fuente": "I-ReWater HUB (proyecto Interreg)",
+ "url_catalogo": "https://api.i-rewater-hub.com/api/v1/webgis/public",
+ "capa": "hib_nuts3",
+ "zoom": 6,
+ "features": 48,
+ "tiles_leidos": 11,
+ "tiles_vacios": 3,
+ "tiles_error": 0,
+ "tamano_kb": 2953.2,
+ "descargado": "2026-11-19T10:10:56",
+ "pais_filtrado": "ES",
+ "paises": [
+  [
+   "ES",
+   48
+  ]
+ ],
+ "impacto": [],
+ "nota": "Vector tiles MVT decodificados, geometrias reproyectadas de coordenadas de tile a lon/lat y deduplicadas por id (o por primera coordenada si no hay id)."
+}

@@ -191,6 +191,18 @@ def main():
             print(f"  unidos por nombre: {len(feats)} trozos -> {len(por_nombre)} objetos")
         feats = list(por_nombre.values())
 
+    # Coropleta por volumen aprovechable en las capas de indicadores: el color dice el dato,
+    # no solo distingue el polígono.
+    if a.capa in ("hib_nuts2", "hib_nuts3") and feats:
+        vals = sorted(float(f["properties"].get("volumen_aprovechable_m3") or 0) for f in feats)
+        cortes = [vals[int(len(vals) * q)] for q in (0.25, 0.5, 0.75)] if vals else [0, 0, 0]
+        tramos = ["#c7e9c0", "#74c476", "#31a354", "#006d2c"]
+        for f in feats:
+            v = float(f["properties"].get("volumen_aprovechable_m3") or 0)
+            i = sum(1 for c in cortes if v >= c)
+            f["properties"]["color"] = tramos[i]
+            f["properties"]["tramo"] = ["bajo", "medio-bajo", "medio-alto", "alto"][i]
+
     # color estable por objeto (ordenado por nombre) para las capas de polígonos
     if a.capa in ("hib_demarcacion", "hib_regadio", "hib_uda"):
         feats.sort(key=lambda f: str(f["properties"].get("nombre") or
