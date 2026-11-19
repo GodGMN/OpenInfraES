@@ -1,0 +1,11 @@
+{
+ "fuente": "Tablas oficiales INE (provincias 01-52, comunidades 01-19) y Eurostat NUTS 2021",
+ "regla": "provincia y comunidad se identifican por cod_ine, nunca por nombre",
+ "campos": [
+  "cod_ine",
+  "codigo",
+  "nuts",
+  "nombre_oficial",
+  "slug"
+ ]
+}
