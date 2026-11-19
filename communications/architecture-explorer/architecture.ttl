@@ -157,7 +157,8 @@
     c4:path "scripts/" ;
     dcterms:isPartOf :openinfraes ;
     c4v:order 11 ;
-    dcterms:hasPart :conectores-fuente, :normaliza, :simplificar, :agregados, :procedencia, :snapshot .
+    dcterms:hasPart :conectores-fuente, :normaliza, :simplificar, :agregados, :procedencia, :snapshot ;
+    c4:uses :osm, :miteco, :energia, :transporte, :riesgo .
 
 :almacen a c4:Element, c4:Container, c4:DataStore ;
     rdfs:label "Datos" ;
@@ -318,7 +319,6 @@
     dcterms:identifier "st-cargada" ;
     dcterms:description "Features en datos[id], pintados en el mapa e indexados para el buscador." ;
     c4:level 4 ;
-    c4:final true ;
     dcterms:isPartOf :ciclo-capa ;
     c4v:order 24 ;
     c4:transitionsTo :st-apagada .
@@ -342,7 +342,9 @@
     c4:path "scripts/descargar.py" ;
     dcterms:isPartOf :conectores ;
     c4v:order 26 ;
-    c4:uses :osm, :miteco, :energia, :transporte, :riesgo, :normaliza, :simplificar .
+    c4v:column 0 ;
+    c4v:row 1 ;
+    c4:uses :normaliza, :simplificar .
 
 :normaliza a c4:Element, c4:Component ;
     rdfs:label "normaliza.py" ;
@@ -354,6 +356,8 @@
     c4:path "scripts/normaliza.py" ;
     dcterms:isPartOf :conectores ;
     c4v:order 27 ;
+    c4v:column 1 ;
+    c4v:row 0 ;
     c4:uses :almacen .
 
 :simplificar a c4:Element, c4:Component ;
@@ -366,6 +370,8 @@
     c4:path "scripts/simplificar.py" ;
     dcterms:isPartOf :conectores ;
     c4v:order 28 ;
+    c4v:column 1 ;
+    c4v:row 1 ;
     c4:uses :almacen .
 
 :agregados a c4:Element, c4:Component ;
@@ -378,6 +384,8 @@
     c4:path "scripts/agregar.py" ;
     dcterms:isPartOf :conectores ;
     c4v:order 29 ;
+    c4v:column 2 ;
+    c4v:row 0 ;
     c4:uses :almacen .
 
 :procedencia a c4:Element, c4:Component ;
@@ -390,6 +398,8 @@
     c4:path "scripts/fuentes_visor.py" ;
     dcterms:isPartOf :conectores ;
     c4v:order 30 ;
+    c4v:column 1 ;
+    c4v:row 2 ;
     c4:uses :almacen .
 
 :snapshot a c4:Element, c4:Component ;
@@ -402,6 +412,8 @@
     c4:path "scripts/snapshot.py" ;
     dcterms:isPartOf :conectores ;
     c4v:order 31 ;
+    c4v:column 2 ;
+    c4v:row 1 ;
     c4:uses :almacen .
 
 :validador a c4:Element, c4:Component ;
@@ -507,7 +519,7 @@
     c4v:style "accent" .
 
 :rel:2 a c4:Relationship ;
-    c4:source :conectores-fuente ;
+    c4:source :conectores ;
     c4:target :osm ;
     rdfs:label "Overpass" ;
     c4:summaryLabel "descarga del organismo" ;
@@ -515,7 +527,7 @@
     c4v:dashed true .
 
 :rel:3 a c4:Relationship ;
-    c4:source :conectores-fuente ;
+    c4:source :conectores ;
     c4:target :miteco ;
     rdfs:label "agua y plantas" ;
     c4:summaryLabel "descarga del organismo" ;
@@ -523,7 +535,7 @@
     c4v:dashed true .
 
 :rel:4 a c4:Relationship ;
-    c4:source :conectores-fuente ;
+    c4:source :conectores ;
     c4:target :energia ;
     rdfs:label "demanda y mix" ;
     c4:summaryLabel "descarga del organismo" ;
@@ -531,7 +543,7 @@
     c4v:dashed true .
 
 :rel:5 a c4:Relationship ;
-    c4:source :conectores-fuente ;
+    c4:source :conectores ;
     c4:target :transporte ;
     rdfs:label "NAP y GTFS-RT" ;
     c4:summaryLabel "descarga del organismo" ;
@@ -539,7 +551,7 @@
     c4v:dashed true .
 
 :rel:6 a c4:Relationship ;
-    c4:source :conectores-fuente ;
+    c4:source :conectores ;
     c4:target :riesgo ;
     rdfs:label "sismos y avisos" ;
     c4:summaryLabel "descarga del organismo" ;

@@ -17,7 +17,10 @@ jobs:
         with:
           python-version: "3.12"
       - name: Validar cuadres de datos
-        run: python scripts/cifras.py --check
+        # OJO: sin `run: |` YAML pliega las dos líneas en UNA y validar.py acaba siendo un
+        # argumento de cifras.py (rc=0, verde, y el gate de recibos sin correr nunca).
+        run: |
+          python scripts/cifras.py --check
           python scripts/validar.py
       - name: Sintaxis
         run: |

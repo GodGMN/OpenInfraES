@@ -427,6 +427,13 @@
         "https://github.com/Ntizar/OpenInfraES#agregados",
         "https://github.com/Ntizar/OpenInfraES#procedencia",
         "https://github.com/Ntizar/OpenInfraES#snapshot"
+      ],
+      "uses": [
+        "https://github.com/Ntizar/OpenInfraES#osm",
+        "https://github.com/Ntizar/OpenInfraES#miteco",
+        "https://github.com/Ntizar/OpenInfraES#energia",
+        "https://github.com/Ntizar/OpenInfraES#transporte",
+        "https://github.com/Ntizar/OpenInfraES#riesgo"
       ]
     },
     {
@@ -691,7 +698,6 @@
       "identifier": "st-cargada",
       "description": "Features en datos[id], pintados en el mapa e indexados para el buscador.",
       "level": 4,
-      "final": true,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#ciclo-capa",
       "order": 24,
       "transitionsTo": "https://github.com/Ntizar/OpenInfraES#st-apagada"
@@ -725,12 +731,9 @@
       "path": "scripts/descargar.py",
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
       "order": 26,
+      "column": 0,
+      "row": 1,
       "uses": [
-        "https://github.com/Ntizar/OpenInfraES#osm",
-        "https://github.com/Ntizar/OpenInfraES#miteco",
-        "https://github.com/Ntizar/OpenInfraES#energia",
-        "https://github.com/Ntizar/OpenInfraES#transporte",
-        "https://github.com/Ntizar/OpenInfraES#riesgo",
         "https://github.com/Ntizar/OpenInfraES#normaliza",
         "https://github.com/Ntizar/OpenInfraES#simplificar"
       ]
@@ -750,6 +753,8 @@
       "path": "scripts/normaliza.py",
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
       "order": 27,
+      "column": 1,
+      "row": 0,
       "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
     },
     {
@@ -767,6 +772,8 @@
       "path": "scripts/simplificar.py",
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
       "order": 28,
+      "column": 1,
+      "row": 1,
       "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
     },
     {
@@ -784,6 +791,8 @@
       "path": "scripts/agregar.py",
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
       "order": 29,
+      "column": 2,
+      "row": 0,
       "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
     },
     {
@@ -801,6 +810,8 @@
       "path": "scripts/fuentes_visor.py",
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
       "order": 30,
+      "column": 1,
+      "row": 2,
       "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
     },
     {
@@ -818,6 +829,8 @@
       "path": "scripts/snapshot.py",
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#conectores",
       "order": 31,
+      "column": 2,
+      "row": 1,
       "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
     },
     {
@@ -972,7 +985,7 @@
     {
       "@id": "https://github.com/Ntizar/OpenInfraES#rel:2",
       "@type": "c4:Relationship",
-      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores",
       "target": "https://github.com/Ntizar/OpenInfraES#osm",
       "name": "Overpass",
       "summaryLabel": "descarga del organismo",
@@ -982,7 +995,7 @@
     {
       "@id": "https://github.com/Ntizar/OpenInfraES#rel:3",
       "@type": "c4:Relationship",
-      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores",
       "target": "https://github.com/Ntizar/OpenInfraES#miteco",
       "name": "agua y plantas",
       "summaryLabel": "descarga del organismo",
@@ -992,7 +1005,7 @@
     {
       "@id": "https://github.com/Ntizar/OpenInfraES#rel:4",
       "@type": "c4:Relationship",
-      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores",
       "target": "https://github.com/Ntizar/OpenInfraES#energia",
       "name": "demanda y mix",
       "summaryLabel": "descarga del organismo",
@@ -1002,7 +1015,7 @@
     {
       "@id": "https://github.com/Ntizar/OpenInfraES#rel:5",
       "@type": "c4:Relationship",
-      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores",
       "target": "https://github.com/Ntizar/OpenInfraES#transporte",
       "name": "NAP y GTFS-RT",
       "summaryLabel": "descarga del organismo",
@@ -1012,7 +1025,7 @@
     {
       "@id": "https://github.com/Ntizar/OpenInfraES#rel:6",
       "@type": "c4:Relationship",
-      "source": "https://github.com/Ntizar/OpenInfraES#conectores-fuente",
+      "source": "https://github.com/Ntizar/OpenInfraES#conectores",
       "target": "https://github.com/Ntizar/OpenInfraES#riesgo",
       "name": "sismos y avisos",
       "summaryLabel": "descarga del organismo",

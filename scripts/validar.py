@@ -59,24 +59,15 @@ def main():
         seg = sum(int(f["segmentos"]) for f in agg_l)
         if lineas is not None and seg != len(lineas):
             error("agregado_lineas: %d segmentos != %d features" % (seg, len(lineas)))
-        if seg != 4929:
-            error("agregado_lineas: %d segmentos != 4929 declarados" % seg)
-        kv = {}
-        for f in agg_l:
-            k = int(f["tension_kv"])
-            kv[k] = kv.get(k, 0) + int(f["segmentos"])
-        if kv.get(400000) != 1752:
-            error("400 kV: %s != 1752" % kv.get(400000))
-        if kv.get(220000) != 3176:
-            error("220 kV: %s != 3176" % kv.get(220000))
+        # La referencia es el propio GeoJSON (arriba), no una cifra escrita aquí: los números
+        # 4.929 / 1.752 / 3.176 vivían dos veces (validador y README) y solo uno se actualizaba.
+        # Lo que el README publica lo vigila scripts/cifras.py contra el dato medido.
 
     if agg_t:
         mw = sum(float(f["mw"]) for f in agg_t)
         n = sum(int(f["plantas"]) for f in agg_t)
         if plantas is not None and n != len(plantas):
             error("agregado_plantas: %d plantas != %d features" % (n, len(plantas)))
-        if n != 5797:
-            error("agregado_plantas: %d plantas != 5797 declaradas" % n)
         if not (120000 < mw < 135000):
             error("MW totales fuera de rango razonable: %.0f" % mw)
 
