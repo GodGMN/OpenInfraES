@@ -378,7 +378,7 @@
   #panel-dato .pd-pie a:hover { text-decoration:underline; }
   #panel-dato .pd-fuente { color:var(--suave); }
 
-  #leyenda { position:fixed; right:16px; top:132px; width:214px; max-height:38vh; overflow-y:auto;
+  #leyenda { position:fixed; right:16px; top:76px; width:214px; max-height:38vh; overflow-y:auto;
     background:rgba(12,18,30,.94); border:1px solid var(--borde); border-radius:6px;
     padding:9px 11px; z-index:880; font-size:11.4px; color:var(--tinta);
     backdrop-filter:blur(10px); box-shadow:0 6px 22px rgba(0,0,0,.45); }
@@ -390,6 +390,25 @@
     border:1px solid rgba(255,255,255,.25); }
   #leyenda .ly span { flex:1; color:var(--tinta); }
   #leyenda .ly b { color:var(--suave); font-weight:500; font-variant-numeric:tabular-nums; }
+
+  /* barra de KPIs: los numeros que resumen el pais ahora mismo, siempre a la vista */
+  #kpis { position:fixed; top:16px; left:354px; right:16px; display:flex; gap:8px;
+    z-index:850; pointer-events:none; transition:right .18s ease; }
+  body:has(#info-der.on) #kpis { right:322px; }
+  #kpis .kpi { flex:1 1 0; min-width:0; display:flex; align-items:center; gap:9px;
+    background:rgba(12,18,30,.92); border:1px solid var(--borde); border-radius:6px;
+    padding:8px 11px; backdrop-filter:blur(12px); box-shadow:0 4px 18px rgba(0,0,0,.35);
+    pointer-events:auto; }
+  #kpis .kpi i { font-size:15px; font-style:normal; opacity:.75; flex:0 0 auto; }
+  #kpis .kpi div { min-width:0; }
+  #kpis .kpi b { display:block; font-family:var(--mono); font-size:15px; font-weight:600;
+    color:var(--tinta); line-height:1.1; letter-spacing:-.02em; white-space:nowrap; }
+  #kpis .kpi span { display:block; font-size:8.8px; text-transform:uppercase; letter-spacing:.09em;
+    color:var(--suave); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #kpis .kpi.alerta { border-color:rgba(239,68,68,.45); }
+  #kpis .kpi.alerta b { color:#f87171; }
+  #kpis .kpi.bien b { color:#4ade80; }
+  @media (max-width:1100px) { #kpis { left:16px; right:16px; } #kpis .kpi:nth-child(n+6) { display:none; } }
 </style>
 </head>
 <body>
@@ -428,6 +447,7 @@
   <div id="pie"><select id="base"></select></div>
 </div>
 
+<div id="kpis"></div>
 <div id="leyenda" hidden></div>
 <div id="panel-dato" hidden>
     <button id="panel-dato-x" title="Cerrar">✕</button>
@@ -1094,6 +1114,57 @@ function bloqueEstimacion(p) {
 
 
 
+
+
+/* ---------------- barra de KPIs ----------------
+   Los numeros que resumen el pais ahora mismo. Se alimentan de los mismos JSON que el resto del
+   visor: si un dato no esta, su chip no se pinta (mejor hueco que un cero mintiendo). */
+function chipKPI(icono, valor, etiqueta, clase) {
+  return `<div class="kpi ${clase || ""}"><i>${icono}</i><div><b>${valor}</b><span>${etiqueta}</span></div></div>`;
+}
+
+function pintarKPIs() {
+  const barra = document.getElementById("kpis");
+  if (!barra) return;
+  const pedidos = [
+    fetch("datos/entsoe_mix.json?v=" + VER_DATOS).then(r => r.json()).catch(() => null),
+    fetch("datos/omie_precio.json?v=" + VER_DATOS).then(r => r.json()).catch(() => null),
+    fetch("datos/ree_vivo.json?v=" + VER_DATOS).then(r => r.json()).catch(() => null),
+    fetch("datos/sismos.geojson?v=" + VER_DATOS).then(r => r.json()).catch(() => null),
+    fetch("datos/aemet_zonas.geojson?v=" + VER_DATOS).then(r => r.json()).catch(() => null)
+  ];
+  Promise.all(pedidos).then(([mix, omie, vivo, sismos, aemet]) => {
+    let h = "";
+    if (mix && mix.total_mwh) {
+      const eol = (mix.tecnologias || []).find(t => t.nombre === "Eólica terrestre");
+      h += chipKPI("⚡", (mix.total_mwh / 1000).toFixed(0), "GWh generados hoy",
+                   mix.total_mwh > 0 ? "bien" : "");
+      if (eol) h += chipKPI("🌬", eol.pct.toFixed(0) + "%", "eólica del mix");
+    }
+    if (omie && omie.media != null) {
+      h += chipKPI("€", omie.media.toFixed(1), "€/MWh media del día");
+    }
+    if (vivo && vivo.series) {
+      const d = vivo.series.demanda;
+      if (d && d.valor) h += chipKPI("◉", Math.round(Number(d.valor)).toLocaleString("es-ES"),
+                                     "MW de demanda · " + (d.hora || ""));
+      // el CO2 de ESIOS viene en tCO2/MW: 1 t/MW = 1.000 g/kWh
+      const co2 = vivo.series.co2;
+      if (co2 && co2.valor) h += chipKPI("CO₂", Math.round(Number(co2.valor) * 1000),
+                                        "g CO₂/kWh");
+    }
+    if (sismos && sismos.features) {
+      const n = sismos.features.length;
+      const max = Math.max(...sismos.features.map(f => Number(f.properties.magnitud) || 0));
+      h += chipKPI("〜", n, "sismos 7 días · máx M" + max.toFixed(1));
+    }
+    if (aemet && aemet.features) {
+      const n = aemet.features.length;
+      h += chipKPI("⚠", n, "avisos AEMET activos", n > 20 ? "alerta" : "");
+    }
+    barra.innerHTML = h;
+  });
+}
 
 /* ---------------- leyenda ----------------
    Cuando una capa pinta por un campo (tramos de poblacion, nivel de aviso, tecnologia), la leyenda
@@ -1967,9 +2038,13 @@ function pintarAvisoVista(p) {
     document.querySelectorAll("#capas .grupo").forEach(g => g.style.display = "");
     document.querySelectorAll("[data-preset]").forEach(x => x.classList.remove("on"));
     pintarAvisoVista("todos");
+pintarKPIs();
+setInterval(pintarKPIs, 5 * 60 * 1000);
   };
 }
 pintarAvisoVista("todos");
+pintarKPIs();
+setInterval(pintarKPIs, 5 * 60 * 1000);
 
 document.querySelectorAll("[data-preset]").forEach(btn => {
   btn.addEventListener("click", () => {
