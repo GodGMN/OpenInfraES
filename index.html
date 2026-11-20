@@ -1100,7 +1100,8 @@ const CAPAS = [
     escala:{ campo:"capacidad_hm3_anio", min:10, max:300, unidad:"hm³/año" },
     radioPorMagnitud:true, radioMin:4, radioMax:11, colorPorEscala:true },
   { id:"municipios", grupo:"Demografía", label:"Municipios (polígono y población)", tipo:"poligono",
-    color:"#0ea5e9", fichero:"datos/municipios.geojson", opacidad:.16, peso:1.1, zoomMin:7,
+    color:"#0ea5e9", fichero:"datos/municipios.geojson", opacidad:.34, peso:1.1, zoomMin:7,
+    paleta:"secuencial",
     popupTitulo:"nombre", colorCampo:"color", corteVar:"municipios_poblacion",
     campos:["cod_ine","poblacion","anio_poblacion","area_km2","provincia"] },
   { id:"ine-ccaa", grupo:"Demografía", label:"Población por comunidad (INE)", tipo:"poligono", on:false,
@@ -1214,7 +1215,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-20b";
+const VER_DATOS = "2026-11-20c";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {

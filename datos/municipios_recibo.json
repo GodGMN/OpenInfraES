@@ -81311,5 +81311,15 @@
    "area_geometria_km2": 14.26,
    "desvio_area_pct": 2.39
   }
- ]
+ ],
+ "paleta": {
+  "tipo": "secuencial",
+  "nombre": "cian",
+  "valores": {
+   "bajo": "#0e4a5c",
+   "medio-bajo": "#14788f",
+   "medio-alto": "#1aa7c4",
+   "alto": "#67e8f9"
+  }
+ }
 }
