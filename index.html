@@ -415,6 +415,9 @@
     color:var(--tinta); line-height:1.15; font-variant-numeric:tabular-nums; }
   #panel-dato .pd-hl span { display:block; font-size:9.2px; text-transform:uppercase; letter-spacing:.08em;
     color:var(--suave); margin-top:2px; }
+  #panel-dato .pd-res { margin:0 0 9px; padding:6px 9px; border-left:2px solid var(--cian);
+    background:rgba(56,189,248,.07); border-radius:0 4px 4px 0; font-size:12.8px; line-height:1.45;
+    color:var(--tinta); }
   #panel-dato .pd-sec { margin:11px 0 3px; font-size:9.8px; text-transform:uppercase; letter-spacing:.09em;
     color:var(--suave); }
   #panel-dato .pd-cerca { display:flex; flex-direction:column; }
@@ -1499,6 +1502,13 @@ const CAMPOS_OCULTOS = new Set(["slug","claves","geo_fuente","geo_fuente__f","ge
   "fecha_verificacion","color","color_tec","_objeto","objectid","id","gid","osm_id","fuente","source"]);
 
 const ETIQUETA = {
+  // «distancia» en una incidencia de la DGT no es una distancia: es el punto kilométrico
+  distancia: "Punto kilométrico", kilometro: "Kilómetro", km: "Kilómetro",
+  carril: "Carril afectado", sentido: "Sentido", tipo: "Tipo de incidencia",
+  subtipo: "Detalle", estado: "Estado", tipo_sitio: "Ubicación", status: "Estado",
+  disponibilidad: "Disponibilidad", categoria: "Categoría", fase: "Fase",
+  gravedad: "Gravedad", provincia: "Provincia", municipio: "Municipio",
+  desde: "Desde", hasta: "Hasta", carretera: "Carretera",
   name:"Nombre", nombre:"Nombre", nombre_oficial:"Nombre oficial", nom_demar:"Demarcación",
   technology_normalized:"Tecnología", technology_ree:"Tecnología (REE)", installed_capacity_mw:"Potencia (MW)",
   installed_capacity_mw_electra:"Potencia ELECTRA (MW)", owner:"Propietario", province:"Provincia",
@@ -1518,13 +1528,70 @@ function nombreCampo(k) {
 
 /* Códigos de estado del registro: al usuario le dicen algo, al leerlos crudos no.
    Se traducen aquí y no en el capturador, para que valga en todas las capas. */
+/* Códigos → castellano. Salen del barrido de las 47 capas del visor: son los valores que
+   realmente aparecen en los GeoJSON, no una lista de la documentación.
+   Los de la DGT son DATEX II (norma europea); traducirlos es lo que convierte un pinchar en
+   «subtipo: slipperyRoad» en «Firme deslizante». */
 const VALORES = {
-  en_operacion: "En operación", en_construccion: "En construcción",
+  // estado de registro / fase
+  en_operacion: "En operación", en_construccion: "En construcción", en_servicio: "En servicio",
   desmantelamiento: "En desmantelamiento", autorizada: "Autorizada", autorizado: "Autorizado",
-  vigente: "Vigente", historico: "Histórico", historica: "Histórica", produccion: "En producción",
+  vigente: "Vigente", historico: "Histórico", produccion: "En producción", parado: "Parado",
   clausurada: "Clausurada", clausurado: "Clausurado", paralizada: "Paralizada",
-  fuera_de_servicio: "Fuera de servicio", desaladora: "Desaladora", embalse: "Embalse",
-  "en servicio": "En servicio", "fuera de servicio": "Fuera de servicio",
+  fuera_de_servicio: "Fuera de servicio", active: "Activa", inactive: "Inactiva",
+  // gravedad de la incidencia (DATEX)
+  highest: "Máxima", high: "Alta", medium: "Media", low: "Baja",
+  // categoría de instalación
+  parque_eolico: "Parque eólico", fotovoltaica: "Planta fotovoltaica", termosolar: "Planta termosolar",
+  aeroportuaria: "Instalación aeroportuaria", terminal: "Terminal",
+  almacen_temporal_individualizado: "Almacenamiento temporal individualizado",
+  interes_general_estado: "Interés general del Estado", estacion_compresion: "Estación de compresión",
+  logistica_gnl: "Logística de GNL", desaladora: "Desaladora", embalse: "Embalse",
+  // carburantes
+  arrendada: "Arrendada", uso_propio: "Uso propio", reserva_estrategica: "Reserva estratégica",
+  sin_actividad: "Sin actividad", sin_consignaciones: "Sin consignaciones",
+  sin_contratos: "Sin contratos", materias_primas: "Materias primas",
+  // DGT · DATEX II · tipo de incidencia
+  roadOrCarriagewayOrLaneManagement: "Gestión de la vía",
+  abnormalTraffic: "Tráfico anómalo",
+  speedManagement: "Gestión de velocidad",
+  nonWeatherRelatedRoadCondition: "Estado de la vía",
+  poorEnvironment: "Condiciones ambientales adversas",
+  generalInstructionToRoadUsers: "Indicación a los conductores",
+  vehicleObstruction: "Vehículo obstruyendo", obstruction: "Obstrucción",
+  camera: "Cámara", otra: "Otra",
+  // DATEX · detalle
+  laneClosures: "Corte de carriles", carriagewayClosures: "Corte de calzada",
+  singleAlternateLineTraffic: "Paso alternativo", slowTraffic: "Tráfico lento",
+  narrowLanes: "Carriles estrechos", obstructionOnTheRoad: "Obstrucción en la calzada",
+  lanesDeviated: "Carriles desviados", speedRestrictionInOperation: "Limitación de velocidad",
+  roadClosed: "Carretera cortada", roadSurfaceInPoorCondition: "Firme en mal estado",
+  slipperyRoad: "Firme deslizante", badWeather: "Mal tiempo",
+  visibilityReduced: "Visibilidad reducida", driveCarefully: "Conduzca con precaución",
+  incident: "Incidente", newRoadworksLayout: "Obras · nuevo trazado",
+  intermittentShortTermClosures: "Cortes intermitentes",
+  doNotUseSpecifiedLanesOrCarriageways: "No usar los carriles indicados",
+  useOfSpecifiedLanesOrCarriagewaysAllowed: "Uso permitido de los carriles indicados",
+  vehicleWithOverwideLoad: "Vehículo con carga sobredimensionada",
+  weightRestrictionInOperation: "Limitación de peso",
+  // DATEX · carril
+  allLanesCompleteCarriageway: "Calzada completa", rightLane: "Carril derecho",
+  leftLane: "Carril izquierdo", middleLane: "Carril central", tidalFlowLane: "Carril reversible",
+  carPoolLane: "Carril VAO", centralReservation: "Mediana", turningLane: "Carril de giro",
+  // DATEX · sentido
+  unspecifiedCarriageway: "No especificado", exitSlipRoad: "Salida", entrySlipRoad: "Incorporación",
+  serviceRoad: "Vía de servicio", both: "Ambos sentidos",
+  positive: "Sentido creciente", negative: "Sentido decreciente",
+  // tecnología normalizada (plantas.geojson) y estado del registro OSM
+  solar_pv: "Solar fotovoltaica", solar_thermal: "Solar térmica", wind: "Eólica",
+  hydro: "Hidráulica", pumped_hydro: "Hidro bombeo", ccgt: "Ciclo combinado",
+  coal: "Carbón", nuclear: "Nuclear", other: "Otras", fuel_gas: "Fuel/gas",
+  in_service: "En servicio",
+  // categorías de CORES
+  almacen_definitivo: "Almacenamiento definitivo", fabrica_combustible: "Fábrica de combustible",
+  almacen_temporal_centralizado: "Almacenamiento temporal centralizado",
+  // ubicación del panel de mensaje variable
+  openSpace: "Aire libre", inBuilding: "En edificio",
 };
 
 function valorLegible(v) {
@@ -1538,8 +1605,16 @@ function valorLegible(v) {
   // objetos y arrays no son datos legibles: "[object Object]" no le dice nada a nadie
   if (typeof v === "object") return null;
   if (typeof v === "string") {
-    const t = VALORES[v.trim().toLowerCase()];
-    if (t) return t;
+    const crudo = v.trim();
+    // primero tal cual (los códigos DATEX son camelCase) y solo después en minúsculas
+    if (VALORES[crudo]) return VALORES[crudo];
+    const bajo = crudo.toLowerCase();
+    if (VALORES[bajo]) return VALORES[bajo];
+    // fechas ISO → dd/mm/aaaa hh:mm, que es como se leen aquí
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(crudo)) {
+      return crudo.slice(0, 16).replace("T", " ")
+        .replace(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})$/, "$3/$2/$1 $4:$5");
+    }
   }
   if (typeof v === "boolean") return v ? "sí" : "no";
   if (typeof v === "number") return v.toLocaleString("es-ES", { maximumFractionDigits: 2 });
@@ -1637,13 +1712,35 @@ function cerrarPanelesDerecha(excepto) {
   }
 }
 
+/* Resumen en una línea: qué pasa, dónde y desde cuándo. Es lo primero que se lee de un dato
+   crudo, y es el hueco donde entrará el resumen de la API de IA cuando esté: misma firma
+   (propiedades, capa) → texto, así que no habrá que tocar el panel. */
+function resumenDe(p, c) {
+  const que = VALORES[p.subtipo] || VALORES[p.tipo];
+  if (!que) return null;
+  const via = p.carretera || p.Carretera || p.Rotulo || null;
+  const km = p.kilometro != null ? p.kilometro : (p.km != null ? p.km : p.distancia);
+  const sitio = [p.municipio, p.provincia].filter(Boolean).join(", ");
+  const donde = [];
+  if (via) donde.push(via + (km != null && km !== "" ? ", km " + km : ""));
+  if (sitio && sitio !== via) donde.push(sitio);
+  let t = que + (donde.length ? " · " + donde.join(" · ") : "");
+  if (p.estado === "active") t += " · activa";
+  if (p.desde) t += " · desde " + (valorLegible(p.desde) || String(p.desde).slice(0, 16));
+  return t;
+}
+
 function abrirPanelDato(p, c, latlng) {
   cerrarPanelesDerecha("dato");
   const panel = document.getElementById("panel-dato");
   const cuerpo = document.getElementById("panel-dato-cuerpo");
   if (!panel || !cuerpo) return;
 
-  const titulo = p.nombre || p.name || p.nombre_oficial || p.nom_demar || p.municipio ||
+  // en una incidencia no hay nombre: el título útil es la vía y su punto kilométrico
+  const viaTit = p.carretera
+    ? p.carretera + ((p.km ?? p.kilometro ?? p.distancia) != null ? " · km " + (p.km ?? p.kilometro ?? p.distancia) : "")
+    : null;
+  const titulo = p.nombre || p.name || p.nombre_oficial || p.nom_demar || viaTit || p.municipio ||
                  (p.mensaje ? p.mensaje + (p.carretera ? " — " + p.carretera : "") : null) ||
                  p.lugar || "Sin nombre";
 
@@ -1664,10 +1761,13 @@ function abrirPanelDato(p, c, latlng) {
     claves.push(k);
   }
 
-  let filas = "";
+  let filas = "", yaVisto = {};
   for (const k of claves) {
     const v = valorLegible(p[k]);
     if (v === null) continue;
+    const firma = nombreCampo(k) + "=" + v;     // «Kilómetro 45» dos veces no informa de nada
+    if (yaVisto[firma]) continue;
+    yaVisto[firma] = 1;
     filas += `<div class="pd-k"><span>${nombreCampo(k)}</span><span>${v}</span></div>`;
   }
 
@@ -1729,9 +1829,11 @@ function abrirPanelDato(p, c, latlng) {
       `onerror="this.parentElement.style.display='none'"></a>`
     : "";
 
+  const resumen = resumenDe(p, c);
   cuerpo.innerHTML =
     `<h3>${titulo}</h3>` +
     `<div class="pd-cap"><b>${c.grupo}</b> · ${c.label}</div>` +
+    (resumen ? `<div class="pd-res">${resumen}</div>` : "") +
     foto +
     (hl ? `<div class="pd-hl">${hl}</div>` : "") +
     (filas ? `<div class="pd-grid">${filas}</div>` : "") +

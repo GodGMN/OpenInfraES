@@ -197,7 +197,7 @@
     c4:tag "CONFIG · 53 CAPAS" ;
     c4:level 3 ;
     c4:path "index.html" ;
-    c4:line 925 ;
+    c4:line 1028 ;
     dcterms:isPartOf :visor ;
     c4v:order 14 ;
     c4:uses :motor-capas .
@@ -210,7 +210,7 @@
     c4:tag "COMPONENT · JS" ;
     c4:level 3 ;
     c4:path "index.html" ;
-    c4:line 1922 ;
+    c4:line 2061 ;
     dcterms:isPartOf :visor ;
     c4v:order 15 ;
     c4v:style "highlight" ;
@@ -225,7 +225,7 @@
     c4:tag "COMPONENT · LEAFLET" ;
     c4:level 3 ;
     c4:path "index.html" ;
-    c4:line 1736 ;
+    c4:line 1875 ;
     dcterms:isPartOf :visor ;
     c4v:order 16 ;
     c4:uses :ficha .
@@ -238,7 +238,7 @@
     c4:tag "COMPONENT · JS" ;
     c4:level 3 ;
     c4:path "index.html" ;
-    c4:line 1638 ;
+    c4:line 1777 ;
     dcterms:isPartOf :visor ;
     c4v:order 17 ;
     dcterms:hasPart :fn-abrirficha ;
@@ -252,7 +252,7 @@
     c4:tag "COMPONENT · JS" ;
     c4:level 3 ;
     c4:path "index.html" ;
-    c4:line 1314 ;
+    c4:line 1431 ;
     dcterms:isPartOf :visor ;
     c4v:order 18 .
 
@@ -264,7 +264,7 @@
     c4:tag "COMPONENT · JS" ;
     c4:level 3 ;
     c4:path "index.html" ;
-    c4:line 2080 ;
+    c4:line 2233 ;
     dcterms:isPartOf :visor ;
     c4v:order 19 ;
     c4:uses :almacen .
@@ -277,7 +277,7 @@
     c4:tag "COMPONENT · JS" ;
     c4:level 3 ;
     c4:path "index.html" ;
-    c4:line 2457 ;
+    c4:line 2614 ;
     dcterms:isPartOf :visor ;
     c4v:order 20 ;
     c4:uses :motor-capas, :ficha .
@@ -290,7 +290,7 @@
     c4:tag "CLASS · ESTADOS" ;
     c4:level 3 ;
     c4:path "index.html" ;
-    c4:line 1912 ;
+    c4:line 2051 ;
     dcterms:isPartOf :visor ;
     c4v:order 21 ;
     dcterms:hasPart :st-apagada, :st-cargando, :st-cargada, :st-fallo .
@@ -463,7 +463,7 @@
     c4:tag "FUNCIÓN · JS" ;
     c4:level 4 ;
     c4:path "index.html" ;
-    c4:line 1922 ;
+    c4:line 2061 ;
     dcterms:isPartOf :motor-capas ;
     c4v:order 35 .
 
@@ -474,7 +474,7 @@
     c4:tag "FUNCIÓN · JS" ;
     c4:level 4 ;
     c4:path "index.html" ;
-    c4:line 1804 ;
+    c4:line 1943 ;
     dcterms:isPartOf :motor-capas ;
     c4v:order 36 .
 
@@ -485,7 +485,7 @@
     c4:tag "FUNCIÓN · JS" ;
     c4:level 4 ;
     c4:path "index.html" ;
-    c4:line 1638 ;
+    c4:line 1777 ;
     dcterms:isPartOf :ficha ;
     c4v:order 37 .
 

@@ -507,7 +507,7 @@
       "tag": "CONFIG · 53 CAPAS",
       "level": 3,
       "path": "index.html",
-      "line": 925,
+      "line": 1028,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
       "order": 14,
       "uses": "https://github.com/Ntizar/OpenInfraES#motor-capas"
@@ -525,7 +525,7 @@
       "tag": "COMPONENT · JS",
       "level": 3,
       "path": "index.html",
-      "line": 1922,
+      "line": 2061,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
       "order": 15,
       "style": "highlight",
@@ -553,7 +553,7 @@
       "tag": "COMPONENT · LEAFLET",
       "level": 3,
       "path": "index.html",
-      "line": 1736,
+      "line": 1875,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
       "order": 16,
       "uses": "https://github.com/Ntizar/OpenInfraES#ficha"
@@ -571,7 +571,7 @@
       "tag": "COMPONENT · JS",
       "level": 3,
       "path": "index.html",
-      "line": 1638,
+      "line": 1777,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
       "order": 17,
       "hasPart": "https://github.com/Ntizar/OpenInfraES#fn-abrirficha",
@@ -590,7 +590,7 @@
       "tag": "COMPONENT · JS",
       "level": 3,
       "path": "index.html",
-      "line": 1314,
+      "line": 1431,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
       "order": 18
     },
@@ -607,7 +607,7 @@
       "tag": "COMPONENT · JS",
       "level": 3,
       "path": "index.html",
-      "line": 2080,
+      "line": 2233,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
       "order": 19,
       "uses": "https://github.com/Ntizar/OpenInfraES#almacen"
@@ -625,7 +625,7 @@
       "tag": "COMPONENT · JS",
       "level": 3,
       "path": "index.html",
-      "line": 2457,
+      "line": 2614,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
       "order": 20,
       "uses": [
@@ -646,7 +646,7 @@
       "tag": "CLASS · ESTADOS",
       "level": 3,
       "path": "index.html",
-      "line": 1912,
+      "line": 2051,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#visor",
       "order": 21,
       "hasPart": [
@@ -905,7 +905,7 @@
       "tag": "FUNCIÓN · JS",
       "level": 4,
       "path": "index.html",
-      "line": 1922,
+      "line": 2061,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#motor-capas",
       "order": 35
     },
@@ -921,7 +921,7 @@
       "tag": "FUNCIÓN · JS",
       "level": 4,
       "path": "index.html",
-      "line": 1804,
+      "line": 1943,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#motor-capas",
       "order": 36
     },
@@ -937,7 +937,7 @@
       "tag": "FUNCIÓN · JS",
       "level": 4,
       "path": "index.html",
-      "line": 1638,
+      "line": 1777,
       "isPartOf": "https://github.com/Ntizar/OpenInfraES#ficha",
       "order": 37
     },
