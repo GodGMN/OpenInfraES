@@ -222,6 +222,17 @@ def main():
 
     pob = padron()
 
+    # código de provincia → nombre, desde la capa de provincias que ya está en el repo
+    prov = {}
+    ruta_prov = os.path.join(DATOS, "nuts3_es.geojson")
+    if os.path.exists(ruta_prov):
+        for f in json.load(open(ruta_prov, encoding="utf-8")).get("features", []):
+            pr2 = f.get("properties") or {}
+            cod = str(pr2.get("cod_ine") or "").zfill(2)
+            if cod and pr2.get("nombre"):
+                prov[cod] = pr2["nombre"]
+    print("  provincias para el cruce: %d" % len(prov))
+
     salida, recibo_mun = [], []
     sin_padron = 0
     area_suma = 0.0
@@ -263,7 +274,7 @@ def main():
         salida.append({"type": "Feature", "properties": {
             "cod_ine": cod, "nombre": nombre, "poblacion": p, "anio_poblacion": anio,
             "poblacion_fuente": fuente_pob, "area_km2": round(area_oficial, 2),
-            "provincia": cod[:2],
+            "provincia": cod[:2], "provincia_nombre": prov.get(cod[:2]),
         }, "geometry": g})
 
     # ---- validaciones duras: si no cuadran, no se escribe nada ----

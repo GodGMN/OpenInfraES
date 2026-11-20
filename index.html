@@ -1214,7 +1214,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-20a";
+const VER_DATOS = "2026-11-20b";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1515,6 +1515,8 @@ const ETIQUETA = {
   disponibilidad: "Disponibilidad", categoria: "Categoría", fase: "Fase",
   gravedad: "Gravedad", provincia: "Provincia", municipio: "Municipio",
   capacidad: "Caudal de diseño (m³/día)", qentrada_he: "Habitantes equivalentes",
+  anio_poblacion: "Año del padrón", area_km2: "Superficie (km²)",
+  poblacion_fuente: "Fuente de la población", provincia_nombre: "Provincia",
   paraje: "Paraje", municipio: "Núcleo municipal", exacta: "Exacta", aproximada: "Aproximada",
   geo_precision: "Precisión de la coordenada", indice_impacto_hidrologico: "Índice de impacto",
   desde: "Desde", hasta: "Hasta", carretera: "Carretera",
