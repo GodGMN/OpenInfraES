@@ -1,0 +1,142 @@
+{
+ "fuente": "MITECO · demarcaciones hidrográficas (datos/demarcaciones.geojson)",
+ "demarcaciones": {
+  "123": "LANZAROTE",
+  "124": "TENERIFE",
+  "125": "LA PALMA",
+  "126": "LA GOMERA",
+  "127": "EL HIERRO",
+  "14": "GALICIA-COSTA",
+  "150": "CEUTA",
+  "17": "CANTABRICO ORIENTAL",
+  "18": "CANTABRICO OCCIDENTAL",
+  "21": "DUERO",
+  "31": "TAJO",
+  "40": "GUADIANA",
+  "51": "GUADALQUIVIR",
+  "61": "CUENCAS MEDITERRANEAS ANDALUZAS",
+  "63": "GUADALETE Y BARBATE",
+  "64": "TINTO, ODIEL Y PIEDRAS",
+  "71": "SEGURA",
+  "81": "JUCAR",
+  "91": "EBRO",
+  "111": "ISLAS BALEARES",
+  "160": "MELILLA",
+  "101": "CUENCAS INTERNAS DE CATALUÑA",
+  "11": "MIÑO-SIL",
+  "121": "GRAN CANARIA",
+  "122": "FUERTEVENTURA"
+ },
+ "alias": {
+  "Tajo": {
+   "cod_demar": "31",
+   "nombre_oficial": "TAJO",
+   "cruce": "exacto"
+  },
+  "Duero": {
+   "cod_demar": "21",
+   "nombre_oficial": "DUERO",
+   "cruce": "exacto"
+  },
+  "Guadalquivir": {
+   "cod_demar": "51",
+   "nombre_oficial": "GUADALQUIVIR",
+   "cruce": "exacto"
+  },
+  "Guadiana": {
+   "cod_demar": "40",
+   "nombre_oficial": "GUADIANA",
+   "cruce": "exacto"
+  },
+  "Júcar": {
+   "cod_demar": "81",
+   "nombre_oficial": "JUCAR",
+   "cruce": "exacto"
+  },
+  "Miño - Sil": {
+   "cod_demar": "11",
+   "nombre_oficial": "MIÑO-SIL",
+   "cruce": "exacto"
+  },
+  "Ebro": {
+   "cod_demar": "91",
+   "nombre_oficial": "EBRO",
+   "cruce": "exacto"
+  },
+  "Cantábrico Occidental": {
+   "cod_demar": "18",
+   "nombre_oficial": "CANTABRICO OCCIDENTAL",
+   "cruce": "exacto"
+  },
+  "Segura": {
+   "cod_demar": "71",
+   "nombre_oficial": "SEGURA",
+   "cruce": "exacto"
+  },
+  "Guadalete-Barbate": {
+   "cod_demar": "63",
+   "nombre_oficial": "GUADALETE Y BARBATE",
+   "cruce": "exacto"
+  },
+  "Cantábrico Oriental": {
+   "cod_demar": "17",
+   "nombre_oficial": "CANTABRICO ORIENTAL",
+   "cruce": "exacto"
+  },
+  "Galicia Costa": {
+   "cod_demar": "14",
+   "nombre_oficial": "GALICIA-COSTA",
+   "cruce": "exacto"
+  },
+  "Cuenca Mediterránea Andaluza": {
+   "cod_demar": "61",
+   "nombre_oficial": "CUENCAS MEDITERRANEAS ANDALUZAS",
+   "cruce": "alias (0.95)"
+  },
+  "Cuencas Internas de Cataluña": {
+   "cod_demar": "101",
+   "nombre_oficial": "CUENCAS INTERNAS DE CATALUÑA",
+   "cruce": "exacto"
+  },
+  "Tinto, Odiel y Piedras": {
+   "cod_demar": "64",
+   "nombre_oficial": "TINTO, ODIEL Y PIEDRAS",
+   "cruce": "exacto"
+  },
+  "Cuencas Mediterráneas Andaluzas": {
+   "cod_demar": "61",
+   "nombre_oficial": "CUENCAS MEDITERRANEAS ANDALUZAS",
+   "cruce": "exacto"
+  },
+  "Illes Balears": {
+   "cod_demar": "111",
+   "nombre_oficial": "ISLAS BALEARES",
+   "cruce": "alias (0.81)"
+  },
+  "El Hierro": {
+   "cod_demar": "127",
+   "nombre_oficial": "EL HIERRO",
+   "cruce": "exacto"
+  },
+  "Gran Canaria": {
+   "cod_demar": "121",
+   "nombre_oficial": "GRAN CANARIA",
+   "cruce": "exacto"
+  }
+ },
+ "notas": {
+  "Cuenca Mediterránea Andaluza": {
+   "cod_demar": "61",
+   "nombre_oficial": "CUENCAS MEDITERRANEAS ANDALUZAS",
+   "similitud": 0.949
+  },
+  "Illes Balears": {
+   "cod_demar": "111",
+   "nombre_oficial": "ISLAS BALEARES",
+   "similitud": 0.815
+  }
+ },
+ "sin_resolver": [
+  "Cuencas Internas del País Vasco"
+ ]
+}

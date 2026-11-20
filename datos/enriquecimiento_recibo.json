@@ -1,0 +1,114 @@
+{
+ "fuente_municipios": "datos/municipios.geojson (Eurostat GISCO + INE)",
+ "metodo": "punto dentro del polígono municipal oficial; en polígonos y líneas se usa el centro de su envolvente, declarado como tal",
+ "capas": {
+  "embalses": {
+   "puntos": 402,
+   "encajados": 397,
+   "sin_municipio": 5,
+   "pct": 98.8
+  },
+  "desaladoras": {
+   "puntos": 28,
+   "encajados": 27,
+   "sin_municipio": 1,
+   "pct": 96.4
+  },
+  "nuclear": {
+   "puntos": 7,
+   "encajados": 7,
+   "sin_municipio": 0,
+   "pct": 100.0
+  },
+  "edar": {
+   "puntos": 3034,
+   "encajados": 2976,
+   "sin_municipio": 58,
+   "pct": 98.1
+  },
+  "etap": {
+   "puntos": 1551,
+   "encajados": 1541,
+   "sin_municipio": 10,
+   "pct": 99.4
+  },
+  "carburantes": {
+   "puntos": 11433,
+   "encajados": 11349,
+   "sin_municipio": 84,
+   "pct": 99.3
+  },
+  "plantas": {
+   "puntos": 5797,
+   "encajados": 5746,
+   "sin_municipio": 51,
+   "pct": 99.1
+  },
+  "estaciones-cercanias": {
+   "puntos": 405,
+   "encajados": 401,
+   "sin_municipio": 4,
+   "pct": 99.0
+  },
+  "dgt-electrolineras": {
+   "puntos": 12144,
+   "encajados": 12046,
+   "sin_municipio": 98,
+   "pct": 99.2
+  },
+  "eolicos": {
+   "puntos": 1382,
+   "encajados": 1367,
+   "sin_municipio": 15,
+   "pct": 98.9
+  },
+  "solares": {
+   "puntos": 1330,
+   "encajados": 1325,
+   "sin_municipio": 5,
+   "pct": 99.6
+  },
+  "regas": {
+   "puntos": 7,
+   "encajados": 7,
+   "sin_municipio": 0,
+   "pct": 100.0
+  },
+  "gasalm": {
+   "puntos": 5,
+   "encajados": 3,
+   "sin_municipio": 2,
+   "pct": 60.0
+  },
+  "refinerias": {
+   "puntos": 10,
+   "encajados": 10,
+   "sin_municipio": 0,
+   "pct": 100.0
+  },
+  "residuos": {
+   "puntos": 14,
+   "encajados": 14,
+   "sin_municipio": 0,
+   "pct": 100.0
+  },
+  "petrolifero": {
+   "puntos": 133,
+   "encajados": 131,
+   "sin_municipio": 2,
+   "pct": 98.5
+  },
+  "h2red": {
+   "puntos": 10,
+   "encajados": 9,
+   "sin_municipio": 1,
+   "pct": 90.0
+  },
+  "subestaciones": {
+   "puntos": 659,
+   "encajados": 644,
+   "sin_municipio": 15,
+   "pct": 97.7
+  }
+ }
+}

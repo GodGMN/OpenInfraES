@@ -281,6 +281,28 @@ def main():
     else:
         error("falta datos/municipios_recibo.json (ejecuta scripts/municipios.py)")
 
+    # 4j. encaje en el municipio (código) y demarcación por código
+    ren = os.path.join(DATOS, "enriquecimiento_recibo.json")
+    if os.path.exists(ren):
+        e = json.load(open(ren, encoding="utf-8"))
+        # el umbral va donde hay muestra: con 5 almacenamientos, dos centroides fuera del
+        # término municipal son un dato, no un fallo del encaje
+        flojos = [k for k, vv in e.get("capas", {}).items()
+                  if vv.get("puntos", 0) >= 20 and vv.get("pct", 0) < 95]
+        if flojos:
+            error("encaje en municipio por debajo del 95%%: %s" % ", ".join(
+                "%s (%.1f%%)" % (k, e["capas"][k]["pct"]) for k in flojos))
+        tot = sum(x["puntos"] for x in e["capas"].values())
+        okk = sum(x["encajados"] for x in e["capas"].values())
+        print("  municipio por geometría .... %d/%d puntos (%.1f %%)"
+              % (okk, tot, 100 * okk / max(1, tot)))
+    ra = os.path.join(DATOS, "alias_demarcaciones.json")
+    if os.path.exists(ra):
+        al = json.load(open(ra, encoding="utf-8"))
+        if al.get("sin_resolver"):
+            print("  demarcación sin código ...... %d (declaradas)" % len(al["sin_resolver"]))
+        print("  demarcación por código ..... %d alias resueltos" % len(al.get("alias", {})))
+
     # 5. visor
     for f in ("index.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):

@@ -1215,7 +1215,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-20d";
+const VER_DATOS = "2026-11-20e";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1518,6 +1518,10 @@ const ETIQUETA = {
   gravedad: "Gravedad", provincia: "Provincia", municipio: "Municipio",
   capacidad: "Caudal de diseño (m³/día)", qentrada_he: "Habitantes equivalentes",
   anio_poblacion: "Año del padrón", area_km2: "Superficie (km²)",
+  cod_ine_municipio: "Código INE del municipio", municipio_ine: "Municipio",
+  poblacion_municipio: "Población del municipio", anio_poblacion_municipio: "Año del padrón",
+  provincia_municipio: "Provincia del municipio", cod_demar: "Código de demarcación",
+  demarcacion_oficial: "Demarcación (nombre oficial)",
   poblacion_fuente: "Fuente de la población", provincia_nombre: "Provincia",
   provincia: "Código de provincia",
   paraje: "Paraje", municipio: "Núcleo municipal", exacta: "Exacta", aproximada: "Aproximada",
@@ -1661,6 +1665,7 @@ const METRICAS = [
   ["capacidad_hm3", "Capacidad", "hm³"], ["agua_actual_hm3", "Agua embalsada", "hm³"],
   ["capacidad_hm3_anio", "Capacidad", "hm³/año"], ["potencia_max_kw", "Potencia", "kW"],
   ["gasoleo_a", "Gasóleo A", "€/l"], ["magnitud", "Magnitud", "M"], ["km", "Distancia", "km"],
+  ["poblacion_municipio", "Población del municipio", "hab"],
 ];
 const numES = v => (typeof v === "number"
   ? v.toLocaleString("es-ES", { maximumFractionDigits: Math.abs(v) >= 100 ? 0 : 2 })
@@ -1808,6 +1813,11 @@ function abrirPanelDato(p, c, latlng) {
     if (f.licencia) pie += `<span class="pd-fuente">${String(f.licencia).slice(0, 46)}</span>`;
     if (f.actualizado || f.descargado)
       pie += `<span class="pd-fuente">dato: ${f.actualizado || f.descargado}</span>`;
+  }
+  if (p.cod_ine_municipio) {
+    // el municipio no se hereda "a ojo": se encaja por geometría contra el polígono oficial
+    pie += `<span class="pd-fuente">municipio: INE ${p.cod_ine_municipio}` +
+           (p.anio_poblacion_municipio ? ` · padrón ${p.anio_poblacion_municipio}` : "") + `</span>`;
   }
   // contrato del catalogo: licencia en tres estados y caducidad declarada, nunca escondida
   const cat = (window.CATALOGO && window.CATALOGO.capas) ? window.CATALOGO.capas[c.id] : null;
