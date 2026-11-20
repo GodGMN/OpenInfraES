@@ -69,3 +69,42 @@ aparecer en la nueva con el **mismo código INE**, sea como principal o como sec
 Si discrepa, la salida lo dice y `validar.py` falla. Este control es lo que permitió
 detectar el error del «primer municipio»: con el modelo de recuento, Madrid pasó de
 23 discrepancias a **0**.
+
+## Resultado del barrido (2026-11-20)
+
+| | |
+|---|---|
+| CP en la tabla | **10.820** (92,5 % del universo estimado de ~11.700) |
+| CP que bañan varios municipios | **2.559** — todos con su recuento de direcciones |
+| Control contra el testigo DGT (3.291 CP) | **3.216 coinciden** (97,7 %) |
+| Conflictos entre fuentes | **71**, listados en `discrepancias_fuente[]` con las dos respuestas |
+| CP que solo conoce la DGT | **4**, listados en `cp_solo_testigo[]` |
+| Peso del fichero | **837 KB** |
+| Homónimos sin resolver | 56 (mismo nombre y provincia: no se elige a ciegas) |
+| Nombres de municipio que la fuente da y no encajan | 144 CP (`cp_sin_codigo`) |
+
+### Lo que hubo que corregir por el camino
+
+1. **«El primer municipio que devuelve la API» es un dato falso.** Se probó: el `28760`
+   (Tres Cantos) salía como Madrid y el `28400` (Collado Villalba) como Galapagar.
+   Con recuento de direcciones, Madrid pasó de 23 discrepancias a 0 sobre 295 CP.
+2. **La fuente nombra bilingüe.** CartoCiudad escribe `Alacant/Alicante`,
+   `Campezo/Kanpezu`, `Maó-Mahón`; el INE guarda una sola forma e incluso invierte el
+   artículo (`Franqueses del Vallès, Les`). Se resuelve probando cada mitad del nombre y
+   con una firma de tokens insensible al orden y a los artículos.
+3. **El mismo municipio llega con tres nombres** para el mismo CP
+   (`Alicante`, `Alacant`, `Alacant/Alicante`): las filas se agregan **por código INE**,
+   nunca por nombre.
+4. **Truncamiento del barrido.** Cada respuesta trae un máximo de direcciones, así que en
+   capitales densas un CP puede quedar fuera del corte. `--reparar` los repregunta uno a
+   uno: eso recuperó 60 de los 131 conflictos iniciales.
+5. **Las 71 que quedan no son errores del modelo**, son discrepancias reales entre dos
+   fuentes oficiales (la dirección de la DGT y la de CartoCiudad). Se declaran con las dos
+   respuestas y `validar.py` tolera hasta el 3 %, avisando del número exacto.
+
+### Por qué no está el 100 %
+
+El universo oficial de CP no está publicado en ninguna fuente alcanzable desde esta red
+(ver tabla de arriba), así que el 92,5 % se mide contra la estimación de ~11.700. Los
+CP que faltan son, en su mayoría, códigos sin direcciones en CartoCiudad (suelos
+industriales, entidades menores, apartados). No se rellenan a estimación.

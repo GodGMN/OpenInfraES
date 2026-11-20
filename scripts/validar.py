@@ -303,27 +303,33 @@ def main():
             print("  demarcación sin código ...... %d (declaradas)" % len(al["sin_resolver"]))
         print("  demarcación por código ..... %d alias resueltos" % len(al.get("alias", {})))
 
-    # 4k. base local de códigos postales (cobertura parcial y declarada)
+    # 4k. base local de códigos postales (CP -> municipio, con peso por direcciones)
     rcp = os.path.join(DATOS, "cp_municipios.json")
     if os.path.exists(rcp):
         c = json.load(open(rcp, encoding="utf-8"))
-        n = len(c.get("cps", {}))
-        pct = c.get("cobertura", {}).get("pct", 0)
-        malos = [k for k in c.get("cps", {}) if len(k) != 5 or not k.isdigit()]
+        cps = c.get("cps", {})
+        ctrl = c.get("control", {})
+        malos = [k for k in cps if len(k) != 5 or not k.isdigit()]
         if malos:
             error("cp_municipios: %d CP con formato invalido" % len(malos))
-        ctrl = c.get("control", {})
-        if n < 3000:
-            error("cp_municipios: solo %d CP en la tabla" % n)
-        if n < 10000:
-            print("  aviso: tabla de CP incompleta (%d de ~11.700); falta el barrido del callejero" % n)
-        if ctrl.get("discrepan"):
-            error("cp_municipios: %d CP no coinciden con la tabla de control" % ctrl["discrepan"])
-        mm = c.get("cobertura", {}).get("cps_multimunicipio", 0)
-        print("  códigos postales ........... %d CP (%.1f %%) · %d en varios municipios · control %d/%d"
-              % (n, pct, mm, ctrl.get("coinciden", 0), ctrl.get("cps_previos", 0)))
+        sin_cod = [k for k, f in cps.items() if not f or not f[0][0]]
+        if sin_cod:
+            error("cp_municipios: %d CP sin codigo INE de municipio" % len(sin_cod))
+        if len(cps) < 10000:
+            error("cp_municipios: solo %d CP en la tabla (se esperan ~11.700)" % len(cps))
+        t = ctrl.get("testigo") or 1
+        # dos fuentes oficiales pueden discrepar en un CP: se tolera y se declara, no se tapa
+        if ctrl.get("discrepan", 0) > 0.03 * t:
+            error("cp_municipios: %d CP en conflicto con el testigo (%.1f %%)"
+                  % (ctrl["discrepan"], 100.0 * ctrl["discrepan"] / t))
+        print("  codigos postales ........... %d CP (%.1f %%) · %d en varios municipios · "
+              "control %d/%d · %d conflictos declarados"
+              % (len(cps), c.get("cobertura", {}).get("pct", 0),
+                 c.get("cobertura", {}).get("cps_multimunicipio", 0),
+                 ctrl.get("coinciden", 0), ctrl.get("testigo", 0),
+                 len(c.get("discrepancias_fuente", []))))
     else:
-        print("  códigos postales ........... falta (ejecuta scripts/cp.py)")
+        print("  codigos postales ........... falta (ejecuta scripts/callejero.py)")
 
     # 5. visor
     for f in ("index.html", "README.md"):

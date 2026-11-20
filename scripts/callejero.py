@@ -55,16 +55,35 @@ RUIDO = {"de", "del", "la", "el", "los", "las", "y", "e", "en", "a", "o", "as", 
 LIMITE = [5000]
 
 
+def variantes(nombre):
+    """Formas en que la fuente puede nombrar un municipio.
+
+    CartoCiudad escribe «Alacant/Alicante», «Campezo/Kanpezu» o «Maó-Mahón»; el INE
+    guarda una sola forma («Alicante», «Campezo», «Maó-Mahón») e incluso invierte el
+    artículo («Franqueses del Vallès, Les»). Se prueban todas las partes.
+    """
+    v = [nombre]
+    for sep in ("/", "-"):
+        v += [x.strip() for x in nombre.split(sep) if len(x.strip()) > 2]
+    return v
+
+
+def clave(nombre):
+    """Firma del nombre: sin artículos, acentos ni orden («Les Franqueses del Vallès»
+    y «Franqueses del Vallès, Les» dan la misma)."""
+    return "|".join(sorted(norm(nombre).split()))
+
+
 def norm(t):
     t = unicodedata.normalize("NFD", t or "").encode("ascii", "ignore").decode().lower()
     t = re.sub(r"[^a-z0-9 ]", " ", t)
     return " ".join(p for p in t.split() if p and p not in RUIDO)
 
 
-def consulta(cps, intentos=4):
+def consulta(cps, intentos=4, limite=0):
     lista = ",".join("'%s'" % c for c in cps)
     url = ("%s?f=json&limit=%d&properties=%s&filter=%s"
-           % (API, LIMITE[0], urllib.parse.quote(CAMPOS),
+           % (API, limite or LIMITE[0], urllib.parse.quote(CAMPOS),
               urllib.parse.quote("component_PostalDescriptor IN (%s)" % lista)))
     for i in range(intentos):
         try:
@@ -122,9 +141,10 @@ def municipios():
     for f in d["features"]:
         p = f["properties"]
         cod = str(p.get("cod_ine"))
-        idx.setdefault(norm(p.get("nombre")), []).append(
-            (cod, p.get("nombre"), cod[:2], p.get("provincia_nombre"),
-             p.get("poblacion"), p.get("anio_poblacion")))
+        fila = (cod, p.get("nombre"), cod[:2], p.get("provincia_nombre"),
+                p.get("poblacion"), p.get("anio_poblacion"))
+        for v in variantes(p.get("nombre") or ""):
+            idx.setdefault(clave(v), []).append(fila)
     return idx
 
 
@@ -147,21 +167,35 @@ def construir(cuenta):
     for cp, lista in sorted(por_cp.items()):
         lista.sort(key=lambda x: -x[2])
         filas, sin = [], []
+        # la fuente nombra el mismo municipio de varias formas (Alicante / Alacant /
+        # Alacant-Alicante): se agrega POR CÓDIGO, que es la clave de verdad
+        agg = {}
         for mun, prov, n in lista:
-            cands = [c for c in mun_idx.get(norm(mun), []) if c[2] == cp[:2]]
+            cands, usados = [], set()
+            for v in variantes(mun):
+                cands = [c for c in mun_idx.get(clave(v), []) if c[2] == cp[:2]]
+                cands = [c for c in cands if c[0] not in usados]
+                if cands:
+                    break
             if len(cands) == 1:
                 c = cands[0]
-                filas.append([c[0], c[1], c[3], c[4], c[5], n])
+                f = agg.setdefault(c[0], [c[0], c[1], c[3], c[4], c[5], 0])
+                f[5] += n
+                usados.add(c[0])
             elif len(cands) > 1:
-                homonimos.setdefault(cp, []).append({
-                    "municipio": mun,
-                    "candidatos": [{"cod_ine": c[0], "nombre": c[1]} for c in cands]})
+                cods = sorted({c[0] for c in cands})
+                if len(cods) > 1:
+                    homonimos.setdefault(cp, []).append({
+                        "municipio": mun,
+                        "candidatos": [{"cod_ine": c[0], "nombre": c[1]} for c in cands]})
                 for c in cands:
-                    filas.append([c[0], c[1], c[3], c[4], c[5], n])
+                    f = agg.setdefault(c[0], [c[0], c[1], c[3], c[4], c[5], 0])
+                    f[5] += n
+                    usados.add(c[0])
             else:
                 sin.append(mun)
-        if filas:
-            filas.sort(key=lambda x: -x[5])
+        if agg:
+            filas = sorted(agg.values(), key=lambda x: -x[5])
             tabla[cp] = filas
         if sin:
             sin_codigo[cp] = sin
@@ -172,14 +206,22 @@ def escribir(tabla, homonimos, sin_codigo):
     testigo = {}
     if os.path.exists(TESTIGO):
         testigo = json.load(open(TESTIGO, encoding="utf-8")).get("cps", {})
-    coinciden = discrepan = fuera = 0
+    coinciden = 0
+    discrepancias, solo_testigo = [], []
     for cp, filas in testigo.items():
         if cp not in tabla:
-            fuera += 1
+            solo_testigo.append({"cp": cp, "cod_ine_testigo": filas[0][0],
+                                 "municipio_testigo": filas[0][1]})
         elif any(f[0] == filas[0][0] for f in tabla[cp]):
             coinciden += 1
         else:
-            discrepan += 1
+            f0 = tabla[cp][0]
+            discrepancias.append({
+                "cp": cp,
+                "testigo_dgt": {"cod_ine": filas[0][0], "municipio": filas[0][1]},
+                "api_ign": {"cod_ine": f0[0], "municipio": f0[1],
+                            "direcciones": f0[5], "municipios_del_cp": len(tabla[cp])}})
+    discrepan = len(discrepancias)
     multi = sum(1 for f in tabla.values() if len(f) > 1)
     salida = {
         "generado": datetime.datetime.now().isoformat(timespec="seconds"),
@@ -196,19 +238,50 @@ def escribir(tabla, homonimos, sin_codigo):
                       "pct": round(100 * len(tabla) / 11700, 1),
                       "cps_multimunicipio": multi},
         "control": {"testigo": len(testigo), "coinciden": coinciden,
-                    "discrepan": discrepan, "no_aparecen": fuera},
+                    "discrepan": discrepan, "no_aparecen": len(solo_testigo)},
+        "discrepancias_fuente": discrepancias,
+        "cp_solo_testigo": solo_testigo,
         "cp_sin_codigo": dict(list(sin_codigo.items())[:200]),
         "cps": tabla,
     }
     if homonimos:
         salida["homonimos"] = dict(list(homonimos.items())[:200])
-    json.dump(salida, open(SALIDA, "w", encoding="utf-8"), ensure_ascii=False, indent=0)
+    for filas in salida["cps"].values():
+        for f in filas:
+            if isinstance(f[3], float):
+                f[3] = int(f[3])
+    with open(SALIDA, "w", encoding="utf-8") as fh:
+        json.dump(salida, fh, ensure_ascii=False, separators=(",", ":"))
     print("  %d CP (%.1f %%) · multimunicipio %d · homónimos %d · sin código %d"
           % (len(tabla), salida["cobertura"]["pct"], multi, len(homonimos), len(sin_codigo)))
     print("  control testigo: %d coinciden · %d discrepan · %d no aparecen (de %d)"
-          % (coinciden, discrepan, fuera, len(testigo)))
+          % (coinciden, discrepan, len(solo_testigo), len(testigo)))
     print("  %s (%.0f KB)" % (SALIDA, os.path.getsize(SALIDA) / 1024))
     return discrepan
+
+
+def reparar(cuenta):
+    """Repregunta uno a uno los CP que el testigo conoce y la tabla no explica.
+
+    El barrido va por lotes y cada respuesta trae un máximo de direcciones: en capitales
+    densas un CP puede quedar fuera del corte. Preguntar por un solo CP evita el corte.
+    """
+    testigo = json.load(open(TESTIGO, encoding="utf-8"))["cps"]
+    tabla, _, _ = construir(cuenta)
+    problemas = []
+    for cp, filas in testigo.items():
+        cod = filas[0][0]
+        if cp not in tabla or not any(f[0] == cod for f in tabla[cp]):
+            problemas.append(cp)
+    print("  CP a repreguntar: %d" % len(problemas), flush=True)
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        for i, res in enumerate(ex.map(lambda c: consulta([c], limite=300), problemas), 1):
+            for k, n in res.items():
+                cuenta[k] = cuenta.get(k, 0) + n
+            if i % 20 == 0:
+                print("    %d/%d" % (i, len(problemas)), flush=True)
+    guardar(cuenta, 0, 0)
+    return cuenta
 
 
 def main():
@@ -219,6 +292,7 @@ def main():
     ap.add_argument("--desde", type=int, default=1)
     ap.add_argument("--hasta", type=int, default=52)
     ap.add_argument("--unir", action="store_true", help="junta las cachés y escribe la tabla")
+    ap.add_argument("--reparar", action="store_true", help="repregunta uno a uno los CP en conflicto")
     ap.add_argument("--control", action="store_true", help="solo informa del testigo")
     a = ap.parse_args()
     LIMITE[0] = a.limite
@@ -226,6 +300,10 @@ def main():
     if a.control:
         testigo = json.load(open(TESTIGO, encoding="utf-8")) if os.path.exists(TESTIGO) else {"cps": {}}
         print("  testigo: %d CP" % len(testigo.get("cps", {})))
+        return 0
+
+    if a.reparar:
+        escribir(*construir(reparar(cargar_cuenta())))
         return 0
 
     if a.unir:
