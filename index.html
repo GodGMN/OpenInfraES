@@ -1215,7 +1215,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-20e";
+const VER_DATOS = "2026-11-20f";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1612,7 +1612,11 @@ const VALORES = {
   openSpace: "Aire libre", inBuilding: "En edificio",
 };
 
-function valorLegible(v) {
+function valorLegible(v, campo) {
+  // Un código NO es una cifra: "05184" no se convierte en "5.184" ni pierde el cero.
+  if (campo && /^(cod|codigo|id|slug)/i.test(String(campo)) && v !== null && v !== undefined && v !== "") {
+    return String(v);
+  }
   // los arrays de datos (titulares de una nuclear, por ejemplo) se leen en una línea
   if (Array.isArray(v)) {
     const t = v.filter(x => x !== null && x !== undefined && typeof x !== "object")
@@ -1782,7 +1786,7 @@ function abrirPanelDato(p, c, latlng) {
 
   let filas = "", yaVisto = {};
   for (const k of claves) {
-    const v = valorLegible(p[k]);
+    const v = valorLegible(p[k], k);
     if (v === null) continue;
     const firma = nombreCampo(k) + "=" + v;     // «Kilómetro 45» dos veces no informa de nada
     if (yaVisto[firma]) continue;
