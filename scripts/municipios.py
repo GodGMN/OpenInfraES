@@ -39,7 +39,7 @@ TMP = os.environ.get("TMPDIR") or os.environ.get("TEMP") or "/tmp"
 
 LAU_URL = ("https://gisco-services.ec.europa.eu/distribution/v2/lau/geojson/"
            "LAU_RG_01M_2021_4326.geojson")
-INE_PADRON = "https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/29005?nult=1"
+INE_PADRON_CSV = "https://www.ine.es/jaxiT3/files/t/es/csv_bdsc/29005.csv"
 INE_PROV = "https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/2852?nult=1"
 
 # superficie oficial de España (IGN): 505.990 km². Tolerancia del 2 % para la suma de municipios.
@@ -156,52 +156,42 @@ def bajar(url, destino):
 
 
 def padron():
-    """{nombre_normalizado: (población, año)} desde el padrón continuo del INE (API, sin clave)."""
-    import urllib.parse
-    print("  INE · padrón municipal (tabla 29005)")
-    req = urllib.request.Request(INE_PADRON, headers={"User-Agent": "OpenInfraES/1.0"})
+    """{cod_ine: (población, año)} del padrón municipal del INE, EN CSV Y CON CÓDIGO.
+
+    La API Tempus3 (tabla 29005) no da el código del municipio, solo el nombre, y cruzar
+    8.131 municipios por nombre es como se pierden registros: hay homónimos entre provincias
+    («Arroyomolinos» está en Madrid y en Badajoz). La tabla 2879 sí publica la fila con el
+    código INE delante y el año del padrón en su propia columna:
+
+        44001 Ababuj;Total;2025;73
+    """
+    import csv as _csv
+    import io
+    print("  INE · cifras oficiales del padrón por municipio (tabla 29005, CSV 27 MB)")
+    req = urllib.request.Request(INE_PADRON_CSV, headers={"User-Agent": "OpenInfraES/1.0"})
     with urllib.request.urlopen(req, timeout=180) as r:
-        series = json.loads(r.read().decode("utf-8"))
-    salida, dup = {}, 0
-    for sr in series:
-        nom = sr.get("Nombre") or ""
-        bajo = nom.lower()
-        # «Ababuj. Total. Total habitantes. Personas.» — la segunda dimensión es el sexo:
-        # sin exigir «. total.» se cuela la fila de Hombres/Mujeres y la suma se va a la mitad.
-        if "total habitantes" not in bajo or ". total." not in bajo:
+        crudo = r.read().decode("utf-8-sig")            # el CSV trae BOM
+    salida, anios, sin = {}, set(), 0
+    for fila in _csv.DictReader(io.StringIO(crudo), delimiter=";"):
+        mun = (fila.get("Municipios") or "").strip()
+        if not mun or fila.get("Sexo") != "Total":
             continue
-        municipio = nom.split(".")[0].strip()
-        datos = sr.get("Data") or []
-        if not datos or datos[-1].get("Valor") is None:
+        m = re.match(r"^(\d{5})\s+(.*)$", mun)
+        if not m:
+            sin += 1
             continue
-        ultimo = datos[-1]
-        clave = norm_nombre(municipio)
-        if not clave:
+        cod, nombre = m.group(1), m.group(2).strip()
+        try:
+            pob = float((fila.get("Total") or "0").replace(".", "").replace(",", "."))
+            anio = int(fila.get("Periodo") or 0)
+        except ValueError:
             continue
-        valor = (float(ultimo["Valor"]), int(ultimo.get("Anyo") or 0))
-        if clave in salida:
-            dup += 1
-            if salida[clave][0] != valor[0]:
-                salida[clave] = ("AMBIGUO", 0)     # mismo nombre en dos provincias
-            continue
-        salida[clave] = valor
-    print("     %d municipios con padrón (%d claves duplicadas)" % (len(salida), dup))
-    return salida
-
-
-def provincias_ine():
-    """{cod_ine_provincia: población} del INE, para validar la suma municipal por provincia."""
-    print("  INE · población por provincia (tabla 2852)")
-    req = urllib.request.Request(INE_PROV, headers={"User-Agent": "OpenInfraES/1.0"})
-    with urllib.request.urlopen(req, timeout=120) as r:
-        series = json.loads(r.read().decode("utf-8"))
-    salida = {}
-    for sr in series:
-        datos = sr.get("Data") or []
-        if not datos or datos[-1].get("Valor") is None:
-            continue
-        cod = str(sr.get("COD") or "")
-        salida[cod] = float(datos[-1]["Valor"])
+        prev = salida.get(cod)
+        if prev is None or anio >= prev[2]:
+            salida[cod] = (pob, nombre, anio)
+        anios.add(anio)
+    print("     %d municipios con código · años en el fichero: %s · filas sin código: %d"
+          % (len(salida), sorted(anios), sin))
     return salida
 
 
@@ -234,9 +224,7 @@ def main():
     print("  provincias para el cruce: %d" % len(prov))
 
     salida, recibo_mun = [], []
-    sin_padron = 0
-    area_suma = 0.0
-    pob_suma = 0.0
+    sin_padron, area_suma, pob_suma = [], 0.0, 0.0
     vertices_antes = vertices_despues = 0
     for f in es:
         pr = f["properties"]
@@ -244,37 +232,35 @@ def main():
         if len(cod) == 4:
             cod = "0" + cod                      # el INE publica 5 dígitos
         nombre = pr.get("LAU_NAME") or pr.get("NAME_LATN") or ""
-        clave = norm_nombre(nombre)
-        p, anio = pob.get(clave, (None, None))
-        fuente_pob = "INE · padrón"
-        if p == "AMBIGUO":
-            p = None                          # nombre compartido por varios municipios
-        if p is None:
-            p, anio, fuente_pob = pr.get("POP_2021"), 2021, \
-                ("GISCO 2021 (nombre ambiguo)" if clave in pob else "GISCO 2021 (sin padrón)")
-            sin_padron += 1
+        # EL CRUCE ES POR CÓDIGO. El nombre solo se normaliza para buscar y mostrar.
+        pob_val, nombre_ine, anio = pob.get(cod, (None, None, None))
+        if pob_val is None:
+            sin_padron.append(cod)
         area_oficial = float(pr.get("AREA_KM2") or 0)
         g = simplificar(f["geometry"], a.tol)
         if not g:
             continue
         area_geo = esfera_km2(g)
         area_suma += area_oficial
-        pob_suma += float(p or 0)
+        pob_suma += float(pob_val or 0)
         vertices_antes += sum(len(r) for poly in (
             [f["geometry"]["coordinates"]] if f["geometry"]["type"] == "Polygon"
             else f["geometry"]["coordinates"]) for r in poly)
         vertices_despues += sum(len(r) for poly in (
             [g["coordinates"]] if g["type"] == "Polygon" else g["coordinates"]) for r in poly)
         recibo_mun.append({
-            "cod_ine": cod, "nombre": nombre,
-            "poblacion": float(p or 0), "anio_poblacion": anio, "poblacion_fuente": fuente_pob,
+            "cod_ine": cod, "nombre": nombre, "nombre_norm": norm_nombre(nombre), "nombre_ine": nombre_ine,
+            "poblacion": pob_val, "anio_poblacion": anio,
+            "poblacion_fuente": ("INE · padrón %s" % anio) if pob_val is not None else "sin padrón (se declara)",
             "area_km2": round(area_oficial, 2), "area_geometria_km2": round(area_geo, 2),
             "desvio_area_pct": round(100 * (area_geo - area_oficial) / area_oficial, 2) if area_oficial else None,
         })
         salida.append({"type": "Feature", "properties": {
-            "cod_ine": cod, "nombre": nombre, "poblacion": p, "anio_poblacion": anio,
-            "poblacion_fuente": fuente_pob, "area_km2": round(area_oficial, 2),
-            "provincia": cod[:2], "provincia_nombre": prov.get(cod[:2]),
+            "cod_ine": cod, "nombre": nombre, "nombre_norm": norm_nombre(nombre),
+            "poblacion": pob_val, "anio_poblacion": anio,
+            "poblacion_fuente": ("INE · padrón %s" % anio) if pob_val is not None else "sin padrón",
+            "area_km2": round(area_oficial, 2), "provincia": cod[:2],
+            "provincia_nombre": prov.get(cod[:2]),
         }, "geometry": g})
 
     # ---- validaciones duras: si no cuadran, no se escribe nada ----
@@ -305,13 +291,15 @@ def main():
         "geometria": "Eurostat GISCO · LAU 1M (LAU_RG_01M_2021_4326)",
         "geometria_url": LAU_URL,
         "geometria_organismo": "Eurostat · GISCO (unidades administrativas locales)",
-        "poblacion": "INE · Padrón municipal continuo (tabla 29005)",
-        "poblacion_url": INE_PADRON,
+        "poblacion": "INE · Población por municipios y sexo (tabla 2879), CSV con código",
+        "poblacion_url": INE_PADRON_CSV,
         "poblacion_organismo": "INE",
         "licencia": "© EuroGeographics (GISCO) · INE datos abiertos",
         "jerarquia": 1,
         "descargado": __import__("datetime").datetime.now().isoformat(timespec="seconds"),
         "anio_padron": max([x["properties"]["anio_poblacion"] or 0 for x in salida]),
+        "cruce": "por código INE de 5 dígitos (LAU_ID ↔ primera columna del CSV del INE)",
+        "sin_padron": sin_padron,
         "features": len(salida),
         "codigos_ine_unicos": len(set(codigos)),
         "sin_padron": sin_padron,
@@ -339,7 +327,8 @@ def main():
 
     print("  %d municipios · %.0f km² · %.0f hab (padrón %s)"
           % (len(salida), area_suma, pob_suma, recibo["anio_padron"]))
-    print("  sin padrón (se usa GISCO 2021): %d" % sin_padron)
+    print("  sin padrón (se declara, no se estima): %d %s"
+          % (len(sin_padron), (sorted(sin_padron)[:6] if sin_padron else "")))
     print("  vértices %d -> %d (-%.0f%%) · %.1f MB"
           % (vertices_antes, vertices_despues, recibo["vertices"]["reduccion_pct"],
              os.path.getsize(geo) / 1e6))

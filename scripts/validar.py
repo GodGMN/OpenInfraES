@@ -264,6 +264,15 @@ def main():
         if m.get("codigos_ine_unicos") != m.get("features"):
             error("municipios: %d códigos únicos para %d polígonos"
                   % (m.get("codigos_ine_unicos", 0), m.get("features", 0)))
+        # el cruce es por CÓDIGO y cada fila dice de qué año es su población
+        sin_cod = [x for x in m.get("municipios", []) if not re.match(r"^\d{5}$", str(x.get("cod_ine") or ""))]
+        if sin_cod:
+            error("municipios: %d filas sin código INE de 5 dígitos" % len(sin_cod))
+        sin_anio = [x for x in m.get("municipios", []) if not x.get("anio_poblacion")]
+        if sin_anio:
+            error("municipios: %d filas sin año de población (no se publica un dato sin fecha)" % len(sin_anio))
+        if m.get("sin_padron"):
+            error("municipios: %d códigos sin padrón (declararlos o arreglarlos)" % len(m.get("sin_padron")))
         if abs(m.get("area_suma_km2", 0) - 505990) / 505990 > 0.02:
             error("municipios: área %s km² fuera del 2%% de la oficial" % m.get("area_suma_km2"))
         print("  municipios ................. %d · %.0f km² · %.0f hab (padrón %s)"

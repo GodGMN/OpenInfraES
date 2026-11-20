@@ -900,7 +900,7 @@
    "descargado": "2026-11-20",
    "features": 8128,
    "url": "https://www.ine.es",
-   "metodo": "polígonos LAU 1M de Eurostat GISCO cruzados por código INE (LAU_ID) con el padrón municipal continuo del INE (tabla 29005)"
+   "metodo": "polígonos LAU 1M de Eurostat GISCO cruzados POR CÓDIGO INE (LAU_ID) con las cifras oficiales del padrón (INE, tabla 29005 en CSV, columna Municipios = código + nombre)"
   }
  },
  "simplificacion": {

@@ -470,8 +470,8 @@ def main():
             "descargado": (rm.get("descargado") or "")[:10],
             "features": rm.get("features"),
             "url": "https://www.ine.es",
-            "metodo": ("polígonos LAU 1M de Eurostat GISCO cruzados por código INE (LAU_ID) con el "
-                       "padrón municipal continuo del INE (tabla 29005)"),
+            "metodo": ("polígonos LAU 1M de Eurostat GISCO cruzados POR CÓDIGO INE (LAU_ID) con las cifras "
+                       "oficiales del padrón (INE, tabla 29005 en CSV, columna Municipios = código + nombre)"),
         }
 
     sim = leer("simplificado/_recibo.json", {})

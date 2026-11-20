@@ -1215,7 +1215,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-20c";
+const VER_DATOS = "2026-11-20d";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -2126,7 +2126,8 @@ function cargar(c) {
         if (g.type === "Point") arr = g.coordinates;
         else if (g.type === "LineString" && g.coordinates.length) arr = g.coordinates[0];
         if (!arr) return;
-        INDICE.push({ nombre: String(nom), lat: arr[1], lng: arr[0], capa: c.id, props: p });
+        INDICE.push({ nombre: String(nom), alias: p.nombre_norm || null,
+                      lat: arr[1], lng: arr[0], capa: c.id, props: p });
       });
 
       datos[c.id] = feats;      // siempre: el panel derecho analiza el GeoJSON al abrirse
@@ -2326,7 +2327,10 @@ cajaQ.addEventListener("input", () => {
     const hits = [];
     for (const it of INDICE) {
       if (vistos.has(it.nombre + it.capa)) continue;
-      if (it.nombre.toLowerCase().includes(t)) {
+      // se busca también por el nombre normalizado (sin acentos ni artículos): «aguilas» encuentra
+      // «Águilas» y «Coruna» encuentra «A Coruña», que es como la gente escribe
+      const tn = (it.alias || it.nombre).toLowerCase();
+      if (it.nombre.toLowerCase().includes(t) || tn.includes(t)) {
         vistos.add(it.nombre + it.capa);
         hits.push(it);
         if (hits.length >= 9) break;
