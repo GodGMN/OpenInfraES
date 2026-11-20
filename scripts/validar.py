@@ -312,9 +312,16 @@ def main():
         malos = [k for k in c.get("cps", {}) if len(k) != 5 or not k.isdigit()]
         if malos:
             error("cp_municipios: %d CP con formato invalido" % len(malos))
+        ctrl = c.get("control", {})
         if n < 3000:
             error("cp_municipios: solo %d CP en la tabla" % n)
-        print("  códigos postales ........... %d CP (%.1f %% de ~11.700, cobertura declarada)" % (n, pct))
+        if n < 10000:
+            print("  aviso: tabla de CP incompleta (%d de ~11.700); falta el barrido del callejero" % n)
+        if ctrl.get("discrepan"):
+            error("cp_municipios: %d CP no coinciden con la tabla de control" % ctrl["discrepan"])
+        mm = c.get("cobertura", {}).get("cps_multimunicipio", 0)
+        print("  códigos postales ........... %d CP (%.1f %%) · %d en varios municipios · control %d/%d"
+              % (n, pct, mm, ctrl.get("coinciden", 0), ctrl.get("cps_previos", 0)))
     else:
         print("  códigos postales ........... falta (ejecuta scripts/cp.py)")
 

@@ -1215,7 +1215,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-20g";
+const VER_DATOS = "2026-11-20i";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1862,8 +1862,10 @@ function abrirPanelDato(p, c, latlng) {
   let cpDe = null;
   const cpVal = String(p.codigo_postal || "").padStart(5, "0");
   if (/^[0-5][0-9]{4}$/.test(cpVal) && CP_TABLA && CP_TABLA[cpVal] && !p.cod_ine_municipio) {
-    const x = CP_TABLA[cpVal][0];
-    cpDe = { cod: x[0], nombre: x[1], provincia: x[2], poblacion: x[3], anio: x[4] };
+    const filas = CP_TABLA[cpVal];
+    const x = filas[0];
+    cpDe = { cod: x[0], nombre: x[1], provincia: x[2], poblacion: x[3], anio: x[4],
+             otros: filas.slice(1, 4).map(f => f[1]) };
   }
   const resumen = resumenDe(p, c);
   // una coordenada municipal no es la de la instalación: se dice en la ficha, no se supone
@@ -1886,7 +1888,8 @@ function abrirPanelDato(p, c, latlng) {
         `</div>`
       : "") +
     (cpDe ? `<div class="pd-nota">CP ${cpVal} · ${cpDe.nombre}${cpDe.provincia ? " (" + cpDe.provincia + ")" : ""}` +
-            (cpDe.poblacion ? ` · ${nf(cpDe.poblacion)} hab (padrón ${cpDe.anio || "—"})` : "") + `</div>` : "") +
+            (cpDe.poblacion ? ` · ${nf(cpDe.poblacion)} hab (padrón ${cpDe.anio || "—"})` : "") +
+            (cpDe.otros && cpDe.otros.length ? ` · el CP también toca ${cpDe.otros.join(", ")}` : "") + `</div>` : "") +
     (precision ? `<div class="pd-nota">${precision}</div>` : "") +
     `<div class="pd-pie">${btnJson}${btnCsv}${pie}</div>`;
 
@@ -2359,7 +2362,9 @@ cajaQ.addEventListener("input", () => {
     if (/^[0-5][0-9]{4}$/.test(t) && CP_TABLA) {
       const m = CP_TABLA[t] || [];
       cajaR.innerHTML = m.length
-        ? m.map((x, i) => `<div data-cp="${i}">${x[1]}<span>CP ${t} · ${x[2] || ""}</span></div>`).join("")
+        ? m.map((x, i) => `<div data-cp="${i}">${x[1]}${i === 0 ? "" : " <em>(también)</em>"}` +
+            `<span>CP ${t} · ${x[2] || ""}${x[5] ? " · " + nf(x[5]) + " direcciones" : ""}</span></div>`).join("")
+          + (m.length > 1 ? `<div style="color:var(--tenue);padding:6px 10px">Este CP está en ${m.length} municipios: el principal es ${m[0][1]}</div>` : "")
         : `<div style="color:var(--tenue)">CP ${t} no está en la tabla (cobertura parcial)</div>`;
       cajaR.classList.add("on");
       cajaR.querySelectorAll("[data-cp]").forEach(d => d.addEventListener("click", () => {
@@ -2822,8 +2827,10 @@ window.OpenInfraES = {
   cp: (codigo) => {
     const k = String(codigo).padStart(5, "0");
     const m = (CP_TABLA || {})[k];
-    return m ? m.map(x => ({ cod_ine: x[0], municipio: x[1], provincia: x[2],
-                             poblacion: x[3], anio_poblacion: x[4] })) : null;
+    // un CP puede bañar varios términos: el primero es el principal (más direcciones)
+    return m ? m.map((x, i) => ({ cod_ine: x[0], municipio: x[1], provincia: x[2],
+                                  poblacion: x[3], anio_poblacion: x[4],
+                                  direcciones: x[5], principal: i === 0 })) : null;
   },
   irA: (cod, ...resto) => { irAMunicipio(String(cod), ...resto); return "ok"; },
   datos: () => datos,
