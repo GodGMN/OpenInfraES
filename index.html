@@ -289,15 +289,30 @@
   #proyecto .pie-proy { margin-top:18px; padding-top:12px; border-top:1px solid var(--borde);
     font-size:10.6px; color:var(--tenue); line-height:1.6; }
 
-  .lista-grupo { list-style:none; margin:6px 0 0; padding:0; max-height:230px; overflow:auto; }
+  /* Las listas dentro de popups y paneles usaban la barra y el aspecto del navegador: fondo
+     blanco, scroll del sistema y texto recortado. Ahora comparten el lenguaje del visor. */
+  .lista-grupo { list-style:none; margin:8px 0 0; padding:0; max-height:230px; overflow-y:auto;
+    border:1px solid var(--borde); border-radius:4px; background:rgba(255,255,255,.02); }
   .lista-grupo li { border-bottom:1px solid var(--borde); }
-  .lista-grupo li.mas { border:0; color:var(--tenue); font-size:11px; padding:5px 0; }
-  .lista-grupo a { display:block; padding:5px 2px; color:var(--cian); text-decoration:none; font-size:11.8px; }
-  .lista-grupo a:hover { background:rgba(34,211,238,.09); }
+  .lista-grupo li:last-child { border-bottom:0; }
+  .lista-grupo li.mas { border:0; color:var(--tenue); font-size:11px; padding:6px 8px; }
+  .lista-grupo a { display:flex; justify-content:space-between; gap:10px; align-items:baseline;
+    padding:6px 9px; color:var(--tinta); text-decoration:none; font-size:12px; }
+  .lista-grupo a b { color:var(--suave); font-weight:500; font-family:var(--mono); font-size:10.6px;
+    flex:0 0 auto; }
+  .lista-grupo a:hover { background:rgba(34,211,238,.09); color:var(--cian); }
+
+  /* scroll fino y oscuro en TODO: una barra blanca del sistema rompe el tema */
+  * { scrollbar-width:thin; scrollbar-color:rgba(148,163,184,.32) transparent; }
+  ::-webkit-scrollbar { width:8px; height:8px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:rgba(148,163,184,.28); border-radius:8px; }
+  ::-webkit-scrollbar-thumb:hover { background:rgba(34,211,238,.45); }
   .foto { width:100%; border-radius:3px; margin:7px 0 3px; display:block; border:1px solid var(--borde); }
 
   /* panel de informacion a la derecha: que es esta capa */
-  #info-der { position:fixed; top:78px; right:14px; width:290px; max-height:calc(100vh - 160px);
+  #info-der { position:fixed; top:78px; right:14px; width:clamp(250px, 21vw, 310px);
+    max-height:calc(100vh - 140px);
     overflow-y:auto; z-index:1500; display:none; background:var(--panel-solido);
     border:1px solid var(--borde-fuerte); border-radius:4px; padding:14px 15px;
     box-shadow:0 18px 50px rgba(0,0,0,.6); font-size:12px; }
@@ -305,12 +320,12 @@
   #info-der h4 { margin:0 0 2px; font-size:12.6px; letter-spacing:.02em; color:var(--tinta); }
   #info-der .sub { font-size:10px; color:var(--tenue); text-transform:uppercase;
     letter-spacing:.1em; margin-bottom:10px; }
-  #info-der .dato { display:flex; justify-content:space-between; gap:10px; padding:4px 0;
+  #info-der .dato { display:flex; justify-content:space-between; gap:10px; padding:2px 0;
     border-bottom:1px solid var(--borde); font-size:11.4px; }
   #info-der .dato span:first-child { color:var(--tenue); }
   #info-der .dato span:last-child { color:var(--tinta); text-align:right;
     font-variant-numeric:tabular-nums; }
-  #info-der .cifra-g { display:block; font-size:24px; color:var(--cian); margin:2px 0 8px;
+  #info-der .cifra-g { display:block; font-size:21px; color:var(--cian); margin:1px 0 6px;
     font-variant-numeric:tabular-nums; line-height:1; }
   #info-der .cerrar { position:absolute; top:8px; right:8px; background:transparent;
     border:1px solid var(--borde); color:var(--suave); border-radius:2px; width:24px;
@@ -354,11 +369,13 @@
   /* La ficha del elemento es una COLUMNA a la derecha, alta y ancha: se lee entera sin rueda.
      Antes era una caja de 250 px de alto abajo a la izquierda y todo lo interesante quedaba
      en scroll. El panel derecho de la capa (info-der) y ella conviven: ésta se aparta. */
-  #panel-dato { position:fixed; top:78px; right:14px; left:auto; bottom:44px;
-    width:min(470px, 36vw); max-height:none; overflow-y:auto;
+  /* Los cuadros de la derecha: un ancho que se adapta, el alto pegado al contenido (no una
+     columna vacía hasta el pie) y el mismo cromo que el resto del visor. */
+  #panel-dato { position:fixed; top:78px; right:14px; left:auto; bottom:auto;
+    width:clamp(330px, 29vw, 430px); max-height:calc(100vh - 132px); overflow-y:auto;
     background:rgba(12,18,30,.96); border:1px solid var(--borde-fuerte); border-radius:8px;
-    backdrop-filter:blur(14px); box-shadow:0 10px 44px rgba(0,0,0,.6); padding:15px 17px 16px;
-    z-index:1500; font-size:13.4px; color:var(--tinta); transition:right .18s ease; }
+    backdrop-filter:blur(14px); box-shadow:0 10px 44px rgba(0,0,0,.6); padding:12px 14px 13px;
+    z-index:1500; font-size:12.8px; color:var(--tinta); transition:right .18s ease; }
   body:has(#info-der.on) #panel-dato { right:318px; width:min(470px, 32vw); }
   /* la escala y la atribución se apartan para no quedar debajo de la ficha */
   body:has(#panel-dato:not([hidden])) .leaflet-bottom.leaflet-right { right:492px; }
@@ -373,28 +390,28 @@
   #panel-dato-x { position:absolute; top:8px; right:10px; background:transparent; border:0;
     color:var(--suave); font-size:16px; cursor:pointer; padding:2px 6px; }
   #panel-dato-x:hover { color:var(--tinta); }
-  #panel-dato h3 { margin:0 0 4px; font-size:18.5px; font-weight:600; color:var(--tinta);
+  #panel-dato h3 { margin:0 0 3px; font-size:16.5px; font-weight:600; color:var(--tinta);
     padding-right:26px; line-height:1.22; }
-  #panel-dato .pd-cap { font-size:11px; text-transform:uppercase; letter-spacing:.08em;
-    color:var(--suave); margin-bottom:10px; }
+  #panel-dato .pd-cap { font-size:9.6px; letter-spacing:.07em;
+    color:var(--suave); margin-bottom:7px; }
   #panel-dato .pd-cap b { color:var(--cian); font-weight:600; }
-  #panel-dato .pd-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(205px,1fr));
-    gap:2px 22px; margin-bottom:10px; }
-  #panel-dato .pd-k { display:flex; justify-content:space-between; gap:12px; font-size:13.2px;
-    border-bottom:1px dotted rgba(255,255,255,.07); padding:3px 0; }
+  #panel-dato .pd-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:1px 18px; margin-bottom:8px; }
+  #panel-dato .pd-k { display:flex; justify-content:space-between; gap:12px; font-size:12.2px;
+    border-bottom:1px dotted rgba(255,255,255,.07); padding:2px 0; }
   #panel-dato .pd-k span:first-child { color:var(--suave); }
   #panel-dato .pd-k span:last-child { color:var(--tinta); text-align:right;
     font-variant-numeric:tabular-nums; }
-  #panel-dato .pd-pie { display:flex; flex-wrap:wrap; gap:14px; align-items:center;
-    padding-top:9px; border-top:1px solid var(--borde); font-size:11.6px; }
+  #panel-dato .pd-pie { display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    padding-top:7px; border-top:1px solid var(--borde); font-size:11.6px; }
   #panel-dato .pd-pie a { color:var(--cian); text-decoration:none; }
   #panel-dato .pd-pie a:hover { text-decoration:underline; }
   #panel-dato .pd-fuente { color:var(--suave); }
   /* métricas destacadas: los números que importan, en mono y en grande, mismo lenguaje que el resto */
-  #panel-dato .pd-hl { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 11px; }
+  #panel-dato .pd-hl { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 9px; }
   #panel-dato .pd-hl div { background:rgba(56,189,248,.06); border:1px solid var(--borde);
-    border-radius:5px; padding:5px 10px; min-width:86px; }
-  #panel-dato .pd-hl b { display:block; font-family:var(--mono); font-size:17px; font-weight:600;
+    border-radius:5px; padding:4px 9px; min-width:78px; }
+  #panel-dato .pd-hl b { display:block; font-family:var(--mono); font-size:15.5px; font-weight:600;
     color:var(--tinta); line-height:1.15; font-variant-numeric:tabular-nums; }
   #panel-dato .pd-hl span { display:block; font-size:9.2px; text-transform:uppercase; letter-spacing:.08em;
     color:var(--suave); margin-top:2px; }
@@ -409,18 +426,22 @@
     text-transform:uppercase; letter-spacing:.06em; }
   #panel-dato .pd-cerca a b { color:var(--suave); font-weight:500; font-variant-numeric:tabular-nums; }
 
-  #leyenda { position:fixed; right:16px; top:76px; width:220px; max-height:38vh; overflow-y:auto;
+  #leyenda { position:fixed; right:14px; top:78px; width:clamp(180px, 16vw, 230px);
+    max-height:calc(100vh - 200px); overflow-y:auto;
     background:rgba(8,12,20,.97); border:1px solid rgba(255,255,255,.22); border-radius:6px;
     padding:9px 11px; z-index:880; font-size:11.4px; color:var(--tinta);
     backdrop-filter:blur(10px); box-shadow:0 6px 22px rgba(0,0,0,.45); }
   body:has(#info-der.on) #leyenda { right:322px; }
-  #leyenda h5 { margin:0 0 8px; font-size:10.6px; text-transform:uppercase; letter-spacing:.08em;
+  #leyenda-x { position:absolute; top:5px; right:6px; background:transparent; border:0;
+    color:var(--suave); font-size:13px; cursor:pointer; padding:1px 4px; line-height:1; }
+  #leyenda-x:hover { color:var(--tinta); }
+  #leyenda h5 { margin:0 0 6px; padding-right:18px; font-size:10.6px; text-transform:uppercase; letter-spacing:.08em;
     color:var(--suave); font-weight:600; }
-  #leyenda .ly { display:flex; align-items:center; gap:7px; margin-bottom:3px; }
+  #leyenda .ly { display:flex; align-items:center; gap:6px; margin-bottom:2px; }
   #leyenda .ly i { width:13px; height:13px; border-radius:2px; flex:0 0 auto;
     border:1px solid rgba(255,255,255,.45); box-shadow:0 0 0 1px rgba(0,0,0,.4); }
   #leyenda .ly { margin-bottom:4px; }
-  #leyenda .ly span { flex:1; color:var(--tinta); font-size:11.8px; }
+  #leyenda .ly span { flex:1; color:var(--tinta); font-size:11.2px; }
   #leyenda .ly b { color:var(--suave); font-weight:500; font-variant-numeric:tabular-nums; }
 
   /* barra de KPIs: los numeros que resumen el pais ahora mismo, siempre a la vista */
@@ -839,7 +860,7 @@ function engancharGrupo() {
    el dato es, cuanto tiene, de que organismo sale y con que licencia. Sale de
    datos/fuentes.json, no de una tabla escrita a mano. */
 const INFO_DER = document.getElementById("info-der");
-function cerrarInfoDer() { INFO_DER.classList.remove("on"); }
+function cerrarInfoDer() { INFO_DER.classList.remove("on"); actualizarLeyenda(); }
 document.getElementById("cerrar-info-der").addEventListener("click", cerrarInfoDer);
 
 
@@ -931,6 +952,7 @@ function bloqueResumen(id) {
 }
 
 function abrirInfoCapa(id) {
+  cerrarPanelesDerecha("info");
   const c = CAPAS.find(x => x.id === id);
   if (!c) return;
   const f = (FUENTES && FUENTES.capas && FUENTES.capas[id]) || {};
@@ -953,6 +975,7 @@ function abrirInfoCapa(id) {
 }
 
 function abrirInfoGrupo(nombre, lista) {
+  cerrarPanelesDerecha("info");
   const cargadas = lista.filter(c => conteo[c.id]);
   const total = lista.reduce((a, c) => a + (conteo[c.id] || 0), 0);
   const orgs = new Set();
@@ -1314,6 +1337,18 @@ function pintarKPIs() {
    Cuando una capa pinta por un campo (tramos de poblacion, nivel de aviso, tecnologia), la leyenda
    se construye CONTANDO los valores del propio dato: no hay una tabla escrita a mano que se quede
    desfasada cuando cambian los datos. */
+/* La leyenda también se cierra a mano: un cuadro que no se puede quitar estorba. */
+const BOTON_LEYENDA = '<button id="leyenda-x" title="Cerrar la leyenda">✕</button>';
+function engancharCierreLeyenda(el) {
+  const b = document.getElementById("leyenda-x");
+  if (!b) return;
+  b.onclick = () => {
+    window.__leyendaOff = true;          // no vuelve hasta que se encienda otra capa
+    window.__leyendaDe = null;
+    el.hidden = true;
+  };
+}
+
 function pintarLeyenda(c) {
   const el = document.getElementById("leyenda");
   if (!el) return;
@@ -1326,12 +1361,13 @@ function pintarLeyenda(c) {
   if (c.colorPorEscala && c.escala) {
     const e = c.escala;
     window.__leyendaDe = c.id;
-    el.innerHTML = "<h5>" + (c.label || c.id) + "</h5>" +
+    el.innerHTML = BOTON_LEYENDA + "<h5>" + (c.label || c.id) + "</h5>" +
       '<div class="ly"><i style="width:100%;height:9px;border-radius:2px;' +
       'background:linear-gradient(90deg,#34d399,#facc15,#ef4444)"></i></div>' +
       '<div class="ly"><span>' + numES(e.min) + " " + e.unidad + "</span>" +
       '<b>' + numES(e.max) + " " + e.unidad + "</b></div>";
     el.hidden = false;
+    engancharCierreLeyenda(el);
     return;
   }
   if (!c.colorCampo) { el.hidden = true; return; }
@@ -1365,7 +1401,7 @@ function pintarLeyenda(c) {
   const unidad = (c.corteVar || "").indexOf("paro") !== -1 ? " %"
                : (c.corteVar || "").indexOf("densidad") !== -1 ? " hab/km²" : "";
   window.__leyendaDe = c.id;      // para saber a quien hay que ocultar al apagarla
-  el.innerHTML = "<h5>" + (c.label || c.id) + "</h5>" +
+  el.innerHTML = BOTON_LEYENDA + "<h5>" + (c.label || c.id) + "</h5>" +
     pares.map(x => {
       let etiqueta = x.lab;
       if (cortes && cortes.length === 3) {
@@ -1384,6 +1420,7 @@ function pintarLeyenda(c) {
     }).join("") +
     `<div class="ly-total">${nf(pares.reduce((a, x) => a + x.n, 0))} datos</div>`;
   el.hidden = false;
+  engancharCierreLeyenda(el);
 }
 
 /* La leyenda tiene UN dueño, y tiene que estar encendido. Esta funcion es la unica que decide
@@ -1394,6 +1431,10 @@ let ULTIMA_CON_COLOR = null;    // ultima capa con leyenda que se encendio a man
 function actualizarLeyenda() {
   const el = document.getElementById("leyenda");
   if (!el) return;
+  if (window.__leyendaOff) return;      // el usuario la cerró
+  // en la derecha manda el cuadro abierto: la leyenda espera, o se pisarían
+  if (!document.getElementById("panel-dato").hidden ||
+      document.getElementById("info-der").classList.contains("on")) { el.hidden = true; return; }
   const estaOn = id => !!(document.querySelector('[data-capa="' + id + '"]') || {}).checked;
   const conColor = CAPAS.filter(x => x.colorCampo || x.colorPorEscala);
   let dueno = null;
@@ -1579,7 +1620,25 @@ function cercanosA(c, lat, lon, km) {
   return out.sort((a, b) => a.d - b.d).slice(0, 5);
 }
 
+/* En la derecha vive UN cuadro a la vez: al abrir uno se cierra el otro, y la leyenda
+   (que es automática) deja el sitio y vuelve cuando no hay panel. */
+function cerrarPanelesDerecha(excepto) {
+  if (excepto !== "info") {
+    const i = document.getElementById("info-der");
+    if (i) i.classList.remove("on");
+  }
+  if (excepto !== "dato") {
+    const pd = document.getElementById("panel-dato");
+    if (pd) pd.hidden = true;
+  }
+  if (excepto !== "leyenda") {
+    const l = document.getElementById("leyenda");
+    if (l) l.hidden = true;
+  }
+}
+
 function abrirPanelDato(p, c, latlng) {
+  cerrarPanelesDerecha("dato");
   const panel = document.getElementById("panel-dato");
   const cuerpo = document.getElementById("panel-dato-cuerpo");
   if (!panel || !cuerpo) return;
@@ -1711,7 +1770,7 @@ function abrirPanelDato(p, c, latlng) {
 
   panel.hidden = false;
   const x = document.getElementById("panel-dato-x");
-  if (x) x.onclick = () => { panel.hidden = true; };
+  if (x) x.onclick = () => { panel.hidden = true; actualizarLeyenda(); };
 }
 
 
@@ -2008,7 +2067,7 @@ function ponerCapa(id, on, silencioso) {
     cargar(c);
     // siempre al mapa, en cualquier zoom: por debajo de su zoomMin se atenua, no se esconde
     capas[id].addTo(mapa);
-    if (c.colorCampo) ULTIMA_CON_COLOR = id;
+    if (c.colorCampo || c.colorPorEscala) { ULTIMA_CON_COLOR = id; window.__leyendaOff = false; }
   } else {
     mapa.removeLayer(capas[id]);
   }
