@@ -1215,7 +1215,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-20f";
+const VER_DATOS = "2026-11-20g";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1518,6 +1518,7 @@ const ETIQUETA = {
   gravedad: "Gravedad", provincia: "Provincia", municipio: "Municipio",
   capacidad: "Caudal de diseño (m³/día)", qentrada_he: "Habitantes equivalentes",
   anio_poblacion: "Año del padrón", area_km2: "Superficie (km²)",
+  codigo_postal: "Código postal",
   cod_ine_municipio: "Código INE del municipio", municipio_ine: "Municipio",
   poblacion_municipio: "Población del municipio", anio_poblacion_municipio: "Año del padrón",
   provincia_municipio: "Provincia del municipio", cod_demar: "Código de demarcación",
@@ -1857,6 +1858,13 @@ function abrirPanelDato(p, c, latlng) {
       `onerror="this.parentElement.style.display='none'"></a>`
     : "";
 
+  // si el dato trae CP y no municipio, se resuelve con la tabla local (y se dice)
+  let cpDe = null;
+  const cpVal = String(p.codigo_postal || "").padStart(5, "0");
+  if (/^[0-5][0-9]{4}$/.test(cpVal) && CP_TABLA && CP_TABLA[cpVal] && !p.cod_ine_municipio) {
+    const x = CP_TABLA[cpVal][0];
+    cpDe = { cod: x[0], nombre: x[1], provincia: x[2], poblacion: x[3], anio: x[4] };
+  }
   const resumen = resumenDe(p, c);
   // una coordenada municipal no es la de la instalación: se dice en la ficha, no se supone
   const precision = (p.geo_precision === "municipio")
@@ -1877,6 +1885,8 @@ function abrirPanelDato(p, c, latlng) {
           `<b>${x.d < 1 ? Math.round(x.d * 1000) + " m" : x.d.toFixed(1) + " km"}</b></a>`).join("") +
         `</div>`
       : "") +
+    (cpDe ? `<div class="pd-nota">CP ${cpVal} · ${cpDe.nombre}${cpDe.provincia ? " (" + cpDe.provincia + ")" : ""}` +
+            (cpDe.poblacion ? ` · ${nf(cpDe.poblacion)} hab (padrón ${cpDe.anio || "—"})` : "") + `</div>` : "") +
     (precision ? `<div class="pd-nota">${precision}</div>` : "") +
     `<div class="pd-pie">${btnJson}${btnCsv}${pie}</div>`;
 
@@ -2330,6 +2340,13 @@ $("#btn-tema").addEventListener("click", () => {
 });
 
 
+/* ---------------- códigos postales ----------------
+   Tabla local (datos/cp_municipios.json): CP → [cod_ine, municipio, provincia, población, año].
+   Cobertura parcial y declarada en su recibo; el visor no la da por completa. */
+let CP_TABLA = null;
+fetch("datos/cp_municipios.json?v=" + VER_DATOS).then(r => r.json())
+  .then(d => { CP_TABLA = d.cps || {}; }).catch(() => { CP_TABLA = {}; });
+
 /* ---------------- buscador ---------------- */
 const cajaQ = $("#q"), cajaR = $("#resultados");
 let temporizador = null;
@@ -2338,6 +2355,20 @@ cajaQ.addEventListener("input", () => {
   temporizador = setTimeout(() => {
     const t = cajaQ.value.trim().toLowerCase();
     if (t.length < 2) { cajaR.classList.remove("on"); cajaR.innerHTML = ""; return; }
+    // un CP de 5 cifras no se busca por texto: se resuelve a su municipio
+    if (/^[0-5][0-9]{4}$/.test(t) && CP_TABLA) {
+      const m = CP_TABLA[t] || [];
+      cajaR.innerHTML = m.length
+        ? m.map((x, i) => `<div data-cp="${i}">${x[1]}<span>CP ${t} · ${x[2] || ""}</span></div>`).join("")
+        : `<div style="color:var(--tenue)">CP ${t} no está en la tabla (cobertura parcial)</div>`;
+      cajaR.classList.add("on");
+      cajaR.querySelectorAll("[data-cp]").forEach(d => d.addEventListener("click", () => {
+        const x = m[+d.dataset.cp];
+        cajaR.classList.remove("on"); cajaQ.value = "";
+        irAMunicipio(x[0], x[1], x[2], x[3], x[4], t);
+      }));
+      return;
+    }
     const vistos = new Set();
     const hits = [];
     for (const it of INDICE) {
@@ -2752,6 +2783,21 @@ document.querySelectorAll("[data-preset]").forEach(btn => {
 
 aplicarUrl();
 
+/* Lleva el mapa a un municipio por su código (y abre su ficha con el CP de origen). */
+function irAMunicipio(cod, nombre, provincia, pob, anio, cp) {
+  ponerCapa("municipios", true);
+  const intentar = (n) => {
+    const feats = datos["municipios"] || [];
+    const i = feats.findIndex(f => String(f.properties.cod_ine) === String(cod));
+    if (i < 0) { if (n > 0) return setTimeout(() => intentar(n - 1), 400); return; }
+    const f = feats[i];
+    const b = L.geoJSON(f).getBounds();
+    mapa.fitBounds(b, { maxZoom: 12 });
+    abrirFicha(f.properties, CAPAS.find(c => c.id === "municipios"), b.getCenter());
+  };
+  intentar(20);
+}
+
 /* ---------------- API ---------------- */
 window.OpenInfraES = {
   abrir(capaId, i = 0, zoom = 11) {
@@ -2773,6 +2819,13 @@ window.OpenInfraES = {
     return intentar(20);
   },
   capas: () => ({ ...conteo }),
+  cp: (codigo) => {
+    const k = String(codigo).padStart(5, "0");
+    const m = (CP_TABLA || {})[k];
+    return m ? m.map(x => ({ cod_ine: x[0], municipio: x[1], provincia: x[2],
+                             poblacion: x[3], anio_poblacion: x[4] })) : null;
+  },
+  irA: (cod, ...resto) => { irAMunicipio(String(cod), ...resto); return "ok"; },
   datos: () => datos,
   fuentes: () => (typeof FUENTES !== "undefined" ? FUENTES : null),
   estados: () => CAPAS.map(c => {

@@ -303,6 +303,21 @@ def main():
             print("  demarcación sin código ...... %d (declaradas)" % len(al["sin_resolver"]))
         print("  demarcación por código ..... %d alias resueltos" % len(al.get("alias", {})))
 
+    # 4k. base local de códigos postales (cobertura parcial y declarada)
+    rcp = os.path.join(DATOS, "cp_municipios.json")
+    if os.path.exists(rcp):
+        c = json.load(open(rcp, encoding="utf-8"))
+        n = len(c.get("cps", {}))
+        pct = c.get("cobertura", {}).get("pct", 0)
+        malos = [k for k in c.get("cps", {}) if len(k) != 5 or not k.isdigit()]
+        if malos:
+            error("cp_municipios: %d CP con formato invalido" % len(malos))
+        if n < 3000:
+            error("cp_municipios: solo %d CP en la tabla" % n)
+        print("  códigos postales ........... %d CP (%.1f %% de ~11.700, cobertura declarada)" % (n, pct))
+    else:
+        print("  códigos postales ........... falta (ejecuta scripts/cp.py)")
+
     # 5. visor
     for f in ("index.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):
