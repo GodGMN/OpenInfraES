@@ -1506,6 +1506,7 @@ function descargarCapa(c) {
    Al pinchar un elemento no basta con un popup: el dato necesita su contexto. Este panel muestra
    los atributos, de qué capa sale, quién produce el dato y el enlace a la fuente oficial. */
 const CAMPOS_OCULTOS = new Set(["slug","claves","geo_fuente","geo_fuente__f","geo_fuente__v","verif",
+  "nombre_norm",   // clave interna para buscar y cruzar: no es dato
   "fecha_verificacion","color","color_tec","_objeto","objectid","id","gid","osm_id","fuente","source"]);
 
 const ETIQUETA = {
