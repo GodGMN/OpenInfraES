@@ -215,6 +215,11 @@ def main():
         feats = [f for f in feats if str(f["properties"].get("pais", "")).upper() == a.pais.upper()]
         print(f"  filtrado a {a.pais}: {len(feats)} de {antes}")
     salida = os.path.join(DEST, f"irewater_{etiqueta}.geojson")
+        if not feats:
+            # nunca vacia: una capa con 0 features es un fallo de sondeo, no un dato
+            print("  [X] %s: 0 features, no se escribe (revisar zoom/poligonos)" % nombre)
+            continue
+
     json.dump({"type": "FeatureCollection", "features": feats},
               open(salida, "w", encoding="utf-8"), ensure_ascii=False)
 

@@ -91,6 +91,7 @@ checkbox por su cuenta, la leyenda se quedaba abierta sobre una capa ya apagada.
 | [`docs/apis.md`](docs/apis.md) | estado técnico de cada API, con los errores literales |
 | [`docs/PATRON-MCP.md`](docs/PATRON-MCP.md) | convertir un recurso oficial en servidor MCP, con el estudio medido de `ree-mcp` |
 | [`docs/AUDITORIA.md`](docs/AUDITORIA.md) | auditorías del proyecto: qué fallaba, qué se corrigió y cómo se verificó |
+| [`docs/emplazamiento.md`](docs/emplazamiento.md) | **consultar un punto**: el contexto que da el dato abierto y lo que falta, con el probador y sus huecos |
 | [`GUIA.md`](GUIA.md) | reglas de trabajo: cómo añadir una capa, sin editar a mano, sin inventar |
 | `docs/aemet.md` · `docs/dgt.md` · `docs/gtfsrt.md` · `docs/nap.md` | el detalle de cada fuente difícil |
 | `docs/ine.md` · `docs/irewater.md` · `docs/precio.md` · `docs/produccion.md` | demografía, agua, mercado y generación |

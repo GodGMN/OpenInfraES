@@ -159,3 +159,10 @@ de la capa y se declara en el recibo que el valor está en los campos calculados
 
 - `datos/irewater_hib_edar.geojson` — 3.501 puntos, 1,8 MB.
 - `datos/irewater_hib_edar_recibo.json` — conteos y distribución de impacto.
+
+## Capas que devolvieron 0 features (retiradas)
+
+`irewater_hib_uda`, `irewater_hib_regadio` e `irewater_hib_nuts3` se sondearton y volvieron
+vacías (43 y 128 teselas sin contenido). Se han retirado del repo: una capa con `features: 0`
+no es un dato, es un fallo de sondeo. El capturador ya no escribe ficheros vacíos.
+La demanda agraria —lo que de verdad pide un expediente— sigue **pendiente** y declarada.

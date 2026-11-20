@@ -12,6 +12,7 @@ Sale 0 si todo esta en verde.
 import csv
 import json
 import os
+import re
 import sys
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -172,6 +173,84 @@ def main():
         if sin:
             error("fuentes.json: %d capas sin fuente (%s)" % (len(sin), ", ".join(sin[:5])))
         print("  procedencia de datos ........ %d capas documentadas" % d.get("total_capas", 0))
+
+    # 4h. capas del visor: codigos sin traducir, capas vacias y ficheros repetidos
+    html = open(os.path.join(RAIZ, "index.html"), encoding="utf-8").read()
+    ini_dic = html.index("const VALORES = {")
+    fin_dic = html.index("};", ini_dic)
+    traducidos = set(re.findall(r'([A-Za-z_][A-Za-z0-9_]*)\s*:\s*"', html[ini_dic:fin_dic]))
+    camel = re.compile(r"^[a-z]+(?:[A-Z][a-z]+){1,}$")
+    under = re.compile(r"^[a-z]+(?:_[a-z]+){1,}$")
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from cifras import leer_array_capas          # el mismo parser del array que las cifras
+    capas = leer_array_capas(html)
+
+    # (a) un valor con pinta de codigo que no esta en el diccionario saldria crudo en la ficha
+    crudos = {}
+    vistos_fich = set()
+    for c in capas:
+        f = c.get("fichero")
+        if not f or f in vistos_fich:
+            continue
+        vistos_fich.add(f)
+        ruta = os.path.join(RAIZ, f.replace("/", os.sep))
+        if not os.path.exists(ruta):
+            continue
+        try:
+            d = json.load(open(ruta, encoding="utf-8"))
+        except Exception:
+            continue
+        for ft in d.get("features", [])[:5000]:
+            for k, v in (ft.get("properties") or {}).items():
+                if k.endswith("__v") or k.endswith("__f"):
+                    continue
+                if isinstance(v, str) and (camel.match(v) or under.match(v)) and v not in traducidos:
+                    crudos.setdefault(k, set()).add(v)
+    if crudos:
+        detalle = "; ".join("%s: %s" % (k, ", ".join(sorted(v)[:3])) for k, v in list(crudos.items())[:5])
+        error("codigos sin traducir en la ficha (anadelos a VALORES): %s" % detalle)
+    print("  codigos traducidos ......... %d claves · %d campos crudos"
+          % (len(traducidos), len(crudos)))
+
+    # (b) una capa del visor con 0 features no es una capa: o se arregla o se retira
+    vacias = []
+    for c in capas:
+        f = c.get("fichero")
+        if not f:
+            continue                      # xyz/wms: no hay features que contar
+        ruta = os.path.join(RAIZ, f.replace("/", os.sep))
+        if not os.path.exists(ruta):
+            continue
+        try:
+            n = len(json.load(open(ruta, encoding="utf-8")).get("features", []))
+        except Exception:
+            n = -1
+        if n == 0:
+            vacias.append(c["id"])
+    if vacias:
+        error("capas del visor con 0 features: %s" % ", ".join(sorted(set(vacias))))
+    print("  capas vacias .............. %d" % len(set(vacias)))
+
+    # (c) el mismo fichero en dos capas solo vale si cada una lo filtra de otra forma
+    bloque = html[html.index("const CAPAS = ["):]
+    trozos = re.split(r"\n  \{ id:\"", bloque)[1:]
+    usa = {}
+    for t in trozos:
+        cid = t.split('"')[0]
+        mf = re.search(r'fichero:"([^"]+)"', t[:500])
+        if mf:
+            cab = t[:900]
+            usa.setdefault(mf.group(1), []).append((cid, "filtro:" in cab, "colorCampo:" in cab))
+    # dos capas del mismo fichero se aceptan si cada una lo RECORTA (filtro) o lo PINTA por un
+    # campo distinto (colorCampo); lo que no vale es la misma capa dos veces con otro nombre
+    repetidos = {f: l for f, l in usa.items()
+                 if len([x for x in l if not x[1] and not x[2]]) >= 2}
+    if repetidos:
+        error("mismo fichero en varias capas sin filtro que las distinga: %s"
+              % "; ".join("%s (%s)" % (f, ", ".join(x[0] for x in l)) for f, l in list(repetidos.items())[:4]))
+    compartidos = {f: l for f, l in usa.items() if len(l) > 1}
+    print("  ficheros compartidos ...... %d (%d duplicados de verdad)"
+          % (len(compartidos), len(repetidos)))
 
     # 5. visor
     for f in ("index.html", "README.md"):

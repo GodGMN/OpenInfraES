@@ -418,6 +418,7 @@
   #panel-dato .pd-res { margin:0 0 9px; padding:6px 9px; border-left:2px solid var(--cian);
     background:rgba(56,189,248,.07); border-radius:0 4px 4px 0; font-size:12.8px; line-height:1.45;
     color:var(--tinta); }
+  #panel-dato .pd-nota { font-size:10.6px; color:var(--tenue); line-height:1.45; margin:6px 0 8px; }
   #panel-dato .pd-sec { margin:11px 0 3px; font-size:9.8px; text-transform:uppercase; letter-spacing:.09em;
     color:var(--suave); }
   #panel-dato .pd-cerca { display:flex; flex-direction:column; }
@@ -1126,7 +1127,7 @@ const CAPAS = [
   { id:"canales", grupo:"Agua", label:"Canales y acequias", tipo:"linea", on:false, color:"#38bdf8",
     fichero:"datos/simplificado/agua-conducciones.geojson", peso:1.1, opacidad:.5, zoomMin:9,
     filtro:f => !/trasvase|postrasvase/i.test(f.properties.name || "") },
-  { id:"rios", grupo:"Agua", label:"Ríos (caudal en vivo)", tipo:"linea", on:false, color:"#7dd3fc",
+  { id:"rios", grupo:"Agua", label:"Ríos · caudal modelado (GloFAS)", tipo:"linea", on:false, color:"#7dd3fc",
     fichero:"datos/simplificado/rios.geojson", peso:1.6, opacidad:.8, apiCaudal:true },
   { id:"h2", grupo:"Agua", label:"Producción de H₂", tipo:"punto", on:false, color:"#5eead4",
     fichero:"datos/oficial/hidrogeno-produccion.geojson", radio:6 },
@@ -1508,6 +1509,8 @@ const ETIQUETA = {
   subtipo: "Detalle", estado: "Estado", tipo_sitio: "Ubicación", status: "Estado",
   disponibilidad: "Disponibilidad", categoria: "Categoría", fase: "Fase",
   gravedad: "Gravedad", provincia: "Provincia", municipio: "Municipio",
+  capacidad: "Caudal de diseño (m³/día)", qentrada_he: "Habitantes equivalentes",
+  geo_precision: "Precisión de la coordenada", indice_impacto_hidrologico: "Índice de impacto",
   desde: "Desde", hasta: "Hasta", carretera: "Carretera",
   name:"Nombre", nombre:"Nombre", nombre_oficial:"Nombre oficial", nom_demar:"Demarcación",
   technology_normalized:"Tecnología", technology_ree:"Tecnología (REE)", installed_capacity_mw:"Potencia (MW)",
@@ -1830,6 +1833,10 @@ function abrirPanelDato(p, c, latlng) {
     : "";
 
   const resumen = resumenDe(p, c);
+  // una coordenada municipal no es la de la instalación: se dice en la ficha, no se supone
+  const precision = (p.geo_precision === "municipio")
+    ? "Coordenada del núcleo municipal, no de la instalación: la distancia real puede ser mayor."
+    : null;
   cuerpo.innerHTML =
     `<h3>${titulo}</h3>` +
     `<div class="pd-cap"><b>${c.grupo}</b> · ${c.label}</div>` +
@@ -1845,6 +1852,7 @@ function abrirPanelDato(p, c, latlng) {
           `<b>${x.d < 1 ? Math.round(x.d * 1000) + " m" : x.d.toFixed(1) + " km"}</b></a>`).join("") +
         `</div>`
       : "") +
+    (precision ? `<div class="pd-nota">${precision}</div>` : "") +
     `<div class="pd-pie">${btnJson}${btnCsv}${pie}</div>`;
 
   // los enlaces de "cerca" abren ESA capa y su ficha: el dato lleva a otro dato
