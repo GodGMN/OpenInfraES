@@ -252,6 +252,26 @@ def main():
     print("  ficheros compartidos ...... %d (%d duplicados de verdad)"
           % (len(compartidos), len(repetidos)))
 
+    # 4i. municipios: el dato tiene que cuadrar con el país, no solo existir
+    rmun = os.path.join(DATOS, "municipios_recibo.json")
+    if os.path.exists(rmun):
+        m = json.load(open(rmun, encoding="utf-8"))
+        f = m.get("fallos") or []
+        if f:
+            error("municipios: %s" % "; ".join(f))
+        if m.get("features", 0) < 8000:
+            error("municipios: solo %d polígonos" % m.get("features", 0))
+        if m.get("codigos_ine_unicos") != m.get("features"):
+            error("municipios: %d códigos únicos para %d polígonos"
+                  % (m.get("codigos_ine_unicos", 0), m.get("features", 0)))
+        if abs(m.get("area_suma_km2", 0) - 505990) / 505990 > 0.02:
+            error("municipios: área %s km² fuera del 2%% de la oficial" % m.get("area_suma_km2"))
+        print("  municipios ................. %d · %.0f km² · %.0f hab (padrón %s)"
+              % (m.get("features", 0), m.get("area_suma_km2", 0), m.get("poblacion_suma", 0),
+                 m.get("anio_padron")))
+    else:
+        error("falta datos/municipios_recibo.json (ejecuta scripts/municipios.py)")
+
     # 5. visor
     for f in ("index.html", "README.md"):
         if not os.path.exists(os.path.join(RAIZ, f)):

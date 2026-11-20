@@ -1099,6 +1099,10 @@ const CAPAS = [
     fichero:"datos/oficial/desaladoras.geojson", radio:6, siempreIndividual:true,
     escala:{ campo:"capacidad_hm3_anio", min:10, max:300, unidad:"hm³/año" },
     radioPorMagnitud:true, radioMin:4, radioMax:11, colorPorEscala:true },
+  { id:"municipios", grupo:"Demografía", label:"Municipios (polígono y población)", tipo:"poligono",
+    color:"#0ea5e9", fichero:"datos/municipios.geojson", opacidad:.16, peso:1.1, zoomMin:7,
+    popupTitulo:"nombre", colorCampo:"color", corteVar:"municipios_poblacion",
+    campos:["cod_ine","poblacion","anio_poblacion","area_km2","provincia"] },
   { id:"ine-ccaa", grupo:"Demografía", label:"Población por comunidad (INE)", tipo:"poligono", on:false,
     color:"#31a354", fichero:"datos/nuts2_es.geojson", zoomMin:5, opacidad:.62,
     peso:1.1, popupTitulo:"nombre", colorCampo:"color", corteVar:"provincias_poblacion" },
@@ -1210,7 +1214,7 @@ const CAPAS = [
 const ZOOM_DETALLE = 8;
 // Version de los datos: se sube al regenerar los geojson. Sin ella el navegador puede seguir
 // sirviendo de cache un fichero viejo y los cambios no aparecen por mucho que recargues.
-const VER_DATOS = "2026-11-19r";
+const VER_DATOS = "2026-11-20a";
 
 const grupos = {}, capas = {}, conteo = {}, elementos = {}, datos = {}, INDICE = [];
 CAPAS.forEach(c => {
@@ -1403,7 +1407,8 @@ function pintarLeyenda(c) {
 
   const cortes = (window.__cortes && c.corteVar) ? window.__cortes[c.corteVar] : null;
   const unidad = (c.corteVar || "").indexOf("paro") !== -1 ? " %"
-               : (c.corteVar || "").indexOf("densidad") !== -1 ? " hab/km²" : "";
+               : (c.corteVar || "").indexOf("densidad") !== -1 ? " hab/km²"
+               : (c.corteVar || "").indexOf("poblacion") !== -1 ? " hab" : "";
   window.__leyendaDe = c.id;      // para saber a quien hay que ocultar al apagarla
   el.innerHTML = BOTON_LEYENDA + "<h5>" + (c.label || c.id) + "</h5>" +
     pares.map(x => {
@@ -2688,6 +2693,9 @@ setTimeout(pintarKPIs, 2500);   // segundo pase, ya con el catalogo
 setInterval(pintarKPIs, 5 * 60 * 1000);
 fetch("datos/ine_recibo.json?v=" + VER_DATOS).then(r => r.json())
   .then(d => { window.__cortes = d.cortes || {}; }).catch(() => {});
+// cada capa con cuartiles guarda los suyos en SU recibo; la leyenda los lee de aquí
+fetch("datos/municipios_recibo.json?v=" + VER_DATOS).then(r => r.json())
+  .then(d => { window.__cortes = Object.assign(window.__cortes || {}, d.cortes || {}); }).catch(() => {});
 
 document.querySelectorAll("[data-preset]").forEach(btn => {
   btn.addEventListener("click", () => {

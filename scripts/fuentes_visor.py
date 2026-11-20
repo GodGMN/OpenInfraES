@@ -459,6 +459,21 @@ def main():
             "metodo": "tar.gz de GeoJSON de la pagina de avisos (sin clave)",
         }
 
+    # municipios: geometría de Eurostat GISCO y población del padrón del INE
+    rm = leer("municipios_recibo.json", {})
+    if rm:
+        fuentes["municipios"] = {
+            "capa": "municipios", "titulo": "Municipios (polígono y población)",
+            "fuente": "INE · Eurostat GISCO", "editor": "INE / Eurostat",
+            "licencia": rm.get("licencia", "© EuroGeographics · INE datos abiertos"),
+            "actualizado": str(rm.get("anio_padron") or ""),
+            "descargado": (rm.get("descargado") or "")[:10],
+            "features": rm.get("features"),
+            "url": "https://www.ine.es",
+            "metodo": ("polígonos LAU 1M de Eurostat GISCO cruzados por código INE (LAU_ID) con el "
+                       "padrón municipal continuo del INE (tabla 29005)"),
+        }
+
     sim = leer("simplificado/_recibo.json", {})
     simpl = {os.path.basename(c["id"]): c for c in sim.get("capas", [])}
 
