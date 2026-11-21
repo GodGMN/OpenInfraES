@@ -21,40 +21,13 @@
    "kb": 364
   },
   {
-   "id": "oficial/parques-eolicos.geojson",
-   "tolerancia": 0.0006,
-   "features": 1382,
-   "vertices_antes": 133844,
-   "vertices_despues": 31427,
-   "ahorro_pct": 76.5,
-   "kb": 3165
-  },
-  {
-   "id": "oficial/plantas-solares.geojson",
-   "tolerancia": 0.0006,
-   "features": 1330,
-   "vertices_antes": 40543,
-   "vertices_despues": 10886,
-   "ahorro_pct": 73.1,
-   "kb": 2881
-  },
-  {
-   "id": "oficial/generacion-electrica-provincia.geojson",
-   "tolerancia": 0.002,
-   "features": 52,
-   "vertices_antes": 64817,
-   "vertices_despues": 62791,
-   "ahorro_pct": 3.1,
-   "kb": 1583
-  },
-  {
    "id": "oficial/residuos-radiactivos.geojson",
    "tolerancia": 0.0,
    "features": 14,
    "vertices_antes": 14,
    "vertices_despues": 14,
    "ahorro_pct": 0.0,
-   "kb": 68
+   "kb": 71
   },
   {
    "id": "oficial/almacenamiento-petrolifero.geojson",
@@ -63,7 +36,7 @@
    "vertices_antes": 133,
    "vertices_despues": 133,
    "ahorro_pct": 0.0,
-   "kb": 591
+   "kb": 612
   },
   {
    "id": "oficial/red-electrica.geojson",
@@ -72,7 +45,7 @@
    "vertices_antes": 26131,
    "vertices_despues": 20516,
    "ahorro_pct": 21.5,
-   "kb": 1511
+   "kb": 1613
   },
   {
    "id": "oficial/agua-embalsada.geojson",
@@ -99,32 +72,32 @@
    "vertices_antes": 1369,
    "vertices_despues": 541,
    "ahorro_pct": 60.5,
-   "kb": 59
+   "kb": 60
   },
   {
    "id": "agua-conducciones.geojson",
    "tolerancia": 0.0008,
-   "features": 10895,
-   "vertices_antes": 209389,
-   "vertices_despues": 32459,
+   "features": 10918,
+   "vertices_antes": 209423,
+   "vertices_despues": 32505,
    "ahorro_pct": 84.5,
-   "kb": 2868
+   "kb": 2873
   },
   {
    "id": "edar.geojson",
    "tolerancia": 0.0,
-   "features": 3034,
-   "vertices_antes": 3034,
-   "vertices_despues": 3034,
+   "features": 3038,
+   "vertices_antes": 3038,
+   "vertices_despues": 3038,
    "ahorro_pct": 0.0,
-   "kb": 628
+   "kb": 629
   },
   {
    "id": "etap.geojson",
    "tolerancia": 0.0,
-   "features": 1551,
-   "vertices_antes": 1551,
-   "vertices_despues": 1551,
+   "features": 1552,
+   "vertices_antes": 1552,
+   "vertices_despues": 1552,
    "ahorro_pct": 0.0,
    "kb": 317
   },
@@ -132,8 +105,8 @@
    "id": "rios.geojson",
    "tolerancia": 0.0012,
    "features": 260,
-   "vertices_antes": 496532,
-   "vertices_despues": 44458,
+   "vertices_antes": 496633,
+   "vertices_despues": 44469,
    "ahorro_pct": 91.0,
    "kb": 1196
   },
@@ -141,7 +114,7 @@
    "id": "trasvases-union.geojson",
    "tolerancia": 0.0006,
    "features": 8,
-   "vertices_antes": 3424,
+   "vertices_antes": 3423,
    "vertices_despues": 573,
    "ahorro_pct": 83.3,
    "kb": 18

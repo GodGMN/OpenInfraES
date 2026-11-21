@@ -1,14 +1,14 @@
 {
  "edar": {
-  "features": 3034,
-  "con_nombre": 1644,
-  "nombres": 1461,
+  "features": 3038,
+  "con_nombre": 1647,
+  "nombres": 1464,
   "titulo": "EDAR (depuradoras de aguas residuales)",
   "fichero": "edar.geojson",
-  "kb": 628
+  "kb": 629
  },
  "etap": {
-  "features": 1551,
+  "features": 1552,
   "con_nombre": 994,
   "nombres": 945,
   "titulo": "ETAP (plantas potabilizadoras)",
@@ -16,11 +16,11 @@
   "kb": 317
  },
  "agua-conducciones": {
-  "features": 10895,
-  "con_nombre": 10895,
-  "nombres": 1447,
+  "features": 10918,
+  "con_nombre": 10918,
+  "nombres": 1446,
   "titulo": "Conducciones y trasvases de agua",
   "fichero": "agua-conducciones.geojson",
-  "kb": 7282
+  "kb": 7286
  }
 }
