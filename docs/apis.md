@@ -26,6 +26,8 @@ en [`FUENTES.md`](FUENTES.md). Aquí, solo el estado técnico y las trampas.
 | **Renfe** | `gtfsrt.renfe.com/vehicle_positions.pb` | 418 trenes |
 | **Renfe** | `data.renfe.com/api/3/action/package_show?id=estaciones-cercanias-<núcleo>` | estaciones por núcleo |
 | **EMSC-CSEM** | `seismicportal.eu/fdsnws/event/1/query?format=json&...` | 80 sismos en 7 días |
+| **OurAirports** | `davidmegginson.github.io/ourairports-data/airports.csv` | CSV global 12,7 MB → **553 aeródromos ES** |
+| **GDACS** | `gdacs.org/xml/rss.xml` | RSS 654 KB, 213 alertas → **1 en España** (bbox 27-44,5 / -19,5-5) |
 
 ## 2. Responde con clave
 
@@ -50,6 +52,9 @@ en [`FUENTES.md`](FUENTES.md). Aquí, solo el estado técnico y las trampas.
 | Overpass en hora punta | `502` / `504` | backoff y espejos |
 | MITECO con `urllib` | `SSLEOFError` | descargar con `curl` |
 | IGN WMTS sin `Accept: image/*` | `200` con **0 bytes** | cabecera y `Referer` obligatorios |
+| GDACS con `Accept: application/rss+xml` | **`406 Not Acceptable`** | pedir `application/xml,text/xml` |
+| Safecast sin `unit=cpm` | `200` con `unit:"status"` | **no es radiación**: son lecturas del estado del medidor |
+| Overpass (`overpass-api.de`) desde esta red | **`000`** (sin conexión) | probar espejos o QLever antes de dar el dato por perdido |
 
 ## 4. Trampas de formato que cuestan una hora cada una
 

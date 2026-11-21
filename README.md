@@ -99,7 +99,7 @@ checkbox por su cuenta, la leyenda se quedaba abierta sobre una capa ya apagada.
 
 ## Capas del visor
 
-**54 capas en 9 grupos temáticos**, con carga bajo demanda: nada se descarga hasta que lo enciendes.
+**56 capas en 9 grupos temáticos**, con carga bajo demanda: nada se descarga hasta que lo enciendes.
 
 <!-- CIFRAS-GRUPOS:INICIO (lo reescribe scripts/cifras.py) -->
 | Grupo | Capas | Objetos |
@@ -109,11 +109,11 @@ checkbox por su cuenta, la leyenda se quedaba abierta sobre una capa ya apagada.
 | **Gas** | 6 | 843 |
 | **Agua** | 10 | 18.178 |
 | **Demografía** | 5 | 8.199 |
-| **Transporte** | 12 | 18.623 |
+| **Transporte** | 13 | 19.176 |
 | **DGT · Tráfico** | 4 | 16.490 |
 | **Tiempo real** | 3 | 12.241 |
-| **Riesgo** | 2 | 150 |
-| **Total** | **54** | **88.847** |
+| **Riesgo** | 3 | 151 |
+| **Total** | **56** | **89.401** |
 <!-- CIFRAS-GRUPOS:FIN -->
 
 Los objetos se cuentan de los ficheros que usa cada grupo **sin contar dos veces el mismo fichero**
@@ -286,6 +286,8 @@ python scripts/entsoe.py --probar # ENTSO-E (requiere token)
 python scripts/esios_prevision.py # previsión de demanda y eólica (token)
 python scripts/carburantes.py     # 11.433 precios (MITECO)
 python scripts/sismos.py          # EMSC-CSEM
+python scripts/aeropuertos.py     # OurAirports: 553 aeródromos ES (dominio público)
+python scripts/gdacs.py           # GDACS: alertas de desastre, acumulativas 120 días
 python scripts/aemet_geo.py       # avisos con polígono
 python scripts/aemet.py           # avisos por comarca (Meteoalarm)
 python scripts/ine.py             # población y paro (INE Tempus3)
@@ -344,9 +346,9 @@ hay que atribuir a OpenStreetMap y compartir igual. El **código** (visor, scrip
 
 | | |
 |---|---|
-| Capas en el visor | **54** |
-| Capas documentadas en `fuentes.json` | **75** |
-| Organismos citados | **16** — MITECO, MITMA, IGN, REE, DGT, AEMET, CSN, CORES, Enagás, ENRESA, INE, Renfe, Adif, EMSC-CSEM, I-ReWater HUB, OpenStreetMap |
+| Capas en el visor | **56** |
+| Capas documentadas en `fuentes.json` | **77** |
+| Organismos citados | **18** — MITECO, MITMA, IGN, REE, DGT, AEMET, CSN, CORES, Enagás, ENRESA, INE, Renfe, Adif, EMSC-CSEM, I-ReWater HUB, OpenStreetMap |
 | Fuentes sin clave | MITECO, IGN, MITMA, Enagás, CORES, CSN, ENRESA, Renfe, Adif, DGT, AEMET, INE, OMIE, ESIOS (19 indicadores) |
 | Fuentes con clave | NAP de transportes (`ApiKey`), ENTSO-E (token), ESIOS (indicadores cerrados) |
 

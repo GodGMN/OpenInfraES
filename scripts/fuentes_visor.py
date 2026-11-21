@@ -371,6 +371,25 @@ def main():
                              "url": url, "metodo": met}
 
 
+    # fuentes nuevas: aeródromos (OurAirports) y alertas de desastre (GDACS)
+    for capa, fich, titulo, fuente, editor, lic, url, met in (
+        ("aeropuertos", "aeropuertos_recibo.json", "Aeródromos y helipuertos",
+         "OurAirports", "OurAirports (dominio público)", "Dominio público",
+         "https://ourairports.com/data/",
+         "CSV global de aeródromos, filtro iso_country=ES; los cerrados se descartan"),
+        ("alertas-gdacs", "alertas-gdacs_recibo.json", "Alertas de desastre (120 días)",
+         "GDACS — Comisión Europea (JRC)", "GDACS (JRC)", "abierta con atribución",
+         "https://www.gdacs.org/xml/rss.xml",
+         "RSS público acumulativo, bbox de España, ventana de 120 días"),
+    ):
+        r = leer(fich, {})
+        if r:
+            fuentes[capa] = {"capa": capa, "titulo": titulo, "fuente": fuente,
+                             "editor": editor, "licencia": lic,
+                             "actualizado": r.get("fecha_dato") or r.get("desde"),
+                             "descargado": HOY, "features": r.get("features"),
+                             "url": url, "metodo": met}
+
     # --- NAP: paradas de GTFS (Metro, Cercanías, AVE) ---
     for capa, etq, titulo in (
         ("nap-metro", "metro-madrid", "Metro de Madrid (NAP)"),

@@ -167,3 +167,43 @@ NeTEx (30).
 | **NASA FIRMS** | focos de calor por satélite | riesgo de incendio junto a líneas |
 | **Eurostat** | balance energético completo | la base de Prometeo |
 | **INE** | población, renta y hogares por sección censal | la demanda, al detalle |
+
+## 11. OurAirports — aeródromos y helipuertos
+
+- **URL oficial**: <https://ourairports.com/data/> · descarga directa del CSV
+  `https://davidmegginson.github.io/ourairports-data/airports.csv` (~12 MB global).
+- **Cómo se obtiene**: `scripts/aeropuertos.py` baja el CSV, filtra `iso_country=ES`, descarta los
+  `type=closed` y escribe `datos/aeropuertos.geojson` + su recibo.
+- **Licencia**: **dominio público** (no hay restricción de reutilización).
+- **Alimenta**: capa **Aeródromos y helipuertos (553)**: 310 aeródromos, 186 helipuertos, 34 aeropuertos
+  regionales, 21 internacionales, 1 base de hidroaviones y 1 campo de globos. 52 con código IATA y 46 con
+  vuelo regular.
+- **Limitaciones**: es la **infraestructura física**, no el tráfico. Pasajeros y terminales son del MITMA
+  (capa `terminales-aero`): las dos capas no se cruzan ni se suman. 36 aeródromos cerrados quedaron fuera
+  a propósito (siguen en el CSV).
+
+## 12. GDACS — alertas de desastre (Comisión Europea · JRC)
+
+- **URL oficial**: <https://www.gdacs.org> · feed `https://www.gdacs.org/xml/rss.xml`.
+- **Cómo se obtiene**: `scripts/gdacs.py` lee el RSS, filtra por bbox de España y **acumula** por
+  `(tipo, id)` con ventana de 120 días.
+- **Licencia**: abierta con atribución (servicio público de la Comisión Europea).
+- **Alimenta**: capa **Alertas de desastre (120 días)**: inundación, terremoto, ciclón, volcán, sequía e
+  incendio, con su nivel (verde/amarillo/naranja/rojo) **en el dato**, no en el estilo del visor.
+- **Limitaciones**: el RSS solo publica lo vigente, así que sin acumular la capa estaría vacía casi
+  siempre (una capa vacía no es una capa). El feed **no es constante en el formato**: unas alertas traen
+  `geo:lat`/`geo:long` y otras `georss:point` («lat lon»); el capturador soporta las dos. Y devuelve
+  **406** si se le pide `Accept: application/rss+xml`: hay que pedir `application/xml,text/xml`.
+
+## 13. Evaluadas y descartadas (con el número medido)
+
+Esta tabla es parte de la biblioteca: una fuente descartada con su motivo ahorra volver a sondearla.
+
+| Fuente | Qué se probó | Resultado medido (2026-11-21) | Veredicto |
+|---|---|---|---|
+| **Safecast** (radiación, CC0) | `api.safecast.org/measurements.json?unit=cpm` con bbox de España | 2 años → **97 medidas en 1 celda de 5 km**, última **2024-11-21** | fuera: red inactiva en España. Ojo: sin `unit=cpm` devuelve `unit:"status"`, que no es radiación |
+| **TeleGeography** (cables submarinos) | `submarinecablemap.com/api/v3/cable/cable-geo.json` | 756 KB, FeatureCollection válida | fuera: **licencia no libre** (© TeleGeography). Nada «pendiente» entra en el visor |
+| **adsb.lol** (vuelos en vivo, ODbL) | `/api/planes` de un agregador que lo usa | 10.376 aeronaves, 5,3 MB | fuera de este repo: es vigilancia aérea, no infraestructura española. Mejor proyecto propio |
+| **QLever** (`qlever.dev/api/osm-planet`, SPARQL) | consulta de `power=cable` + `location=underwater` con geometría | responde en 4 ms a patrones simples, pero **corta** la consulta con `OPTIONAL` de geometría | queda como vía alternativa a Overpass para consultas **simples**; no para volcados con geometría |
+| **Global Energy Monitor** (plantas) | catálogo de plantas >50 MW | — | no entra: REE y el registro MITECO ya están, y son el productor oficial |
+| **ENTSO-E** (carga de red) | — | — | ya cubierto por `scripts/entsoe.py` |

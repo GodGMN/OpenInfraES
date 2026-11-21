@@ -1,0 +1,16 @@
+{
+ "features": 1,
+ "por_tipo": {
+  "Inundación": 1
+ },
+ "nuevos_en_esta_lectura": 1,
+ "leidos_del_rss": 1,
+ "ventana_dias": 120,
+ "desde": "2026-07-24",
+ "fecha_dato": "2026-11-17T07:43",
+ "fuente": "GDACS (Comisión Europea · JRC)",
+ "url": "https://www.gdacs.org/xml/rss.xml",
+ "fichero": "alertas-gdacs.geojson",
+ "acumulativa": true,
+ "caducados_retirados": 0
+}

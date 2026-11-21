@@ -53,7 +53,9 @@ CADENAS = {
     "estaciones-gas": ("MITECO — registro de carburantes", "Visor Hermes (ArcGIS REST)",
                        "Los flags GNL/GNC/H2 son del registro; el visor filtra a 165 de 11.485."),
     # --- agua (OSM)
-    "irewater-edar": "I-ReWater HUB (Interreg)",
+    "irewater-edar": ("I-ReWater HUB (Interreg) — EDAR de las demarcaciones",
+                      "Descarga directa de la capa del proyecto",
+                      "Capa de proyecto europeo, no inventario oficial del MITECO: se declara como tal."),
     "edar": ("Ayuntamientos / confederaciones (declarado en OSM)", "OpenInfraES ← OSM",
              "No es el inventario oficial del MITECO: es lo que está mapeado en OSM."),
     "etap": ("Confederaciones / ayuntamientos (declarado en OSM)", "OpenInfraES ← OSM", ""),
@@ -66,6 +68,10 @@ CADENAS = {
                           "Fichero crudo del que salen las capas Trasvases y Canales."),
     "rios": ("Confederaciones hidráulicas (geometría OSM)", "OpenInfraES ← OSM",
              "Caudal consultado en vivo a Open-Meteo Flood (GloFAS), que es MODELADO, no aforo."),
+    "aeropuertos": ("OurAirports (base colaborativa de aeródromos)", "Descarga directa del CSV público",
+                    "Dominio público. Es infraestructura física: no trae tráfico ni pasajeros, eso es MITMA."),
+    "alertas-gdacs": ("GDACS — Comisión Europea (JRC)", "Descarga directa del RSS público",
+                      "Acumulativa por (tipo, id) con ventana de 120 días; el nivel de alerta va en el dato."),
 }
 
 
@@ -112,6 +118,7 @@ ORGANISMOS = {
     "nap-ave": "NAP · MITMA",
     "nap-lineas-metro": "NAP · MITMA", "nap-lineas-cercanias": "NAP · MITMA",
     "dgt-camaras": "DGT", "dgt-incidencias": "DGT", "dgt-paneles": "DGT", "dgt-electrolineras": "DGT", "gtfsrt": "Renfe", "aemet-zonas": "AEMET",
+    "aeropuertos": "OurAirports", "alertas-gdacs": "GDACS (JRC · Comisión Europea)",
 }
 
 

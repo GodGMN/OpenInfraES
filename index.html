@@ -1206,6 +1206,19 @@ const CAPAS = [
     color:"#4ade80", fichero:"datos/hermes/estaciones-gas.geojson", radio:5,
     filtro:f => ["Gas_natural_licuado","Gas_natural_comprimido","Hidrogeno"]
                  .some(k => f.properties[k] === "SI") },
+  /* --- aeródromos: infraestructura física (OurAirports, dominio público). No es el tráfico de
+     pasajeros, que es del MITMA (capa terminales-aero): aquí no hay ni un dato de movimiento. --- */
+  { id:"aeropuertos", grupo:"Transporte", label:"Aeródromos y helipuertos", tipo:"punto", on:false,
+    color:"#38bdf8", fichero:"datos/aeropuertos.geojson", radio:4, zoomMin:0,
+    colorCampo:"tipo", colores:{"Aeropuerto internacional":"#f472b6", "Aeropuerto regional":"#fb923c",
+      "Aeródromo":"#38bdf8", "Helipuerto":"#a78bfa", "Base de hidroaviones":"#22d3ee",
+      "Campo de globos":"#94a3b8"},
+    popupTitulo:"nombre" },
+  /* --- alertas GDACS: acumulativas (120 días). El color va EN EL DATO: el nivel de alerta manda
+     sobre la gravedad, y pintarlas todas iguales mentiría sobre ella. --- */
+  { id:"alertas-gdacs", grupo:"Riesgo", label:"Alertas de desastre (120 días)", tipo:"punto", on:false,
+    color:"#22c55e", fichero:"datos/alertas-gdacs.geojson", radio:7, siempreIndividual:true,
+    colorCampo:"color", popupTitulo:"titulo" },
   /* --- ráster oficial. Solo el PNOA publica teselas en EPSG:3857, que es el CRS del mapa.
      La hidrografía del IDEe y el Catastro solo sirven WMS en 4326/25830: mezclar CRS en
      Leaflet pide el bbox en un sistema y coloca el tile en otro, y salen parches de otra zona. --- */
@@ -1538,7 +1551,12 @@ const ETIQUETA = {
   potencia_max_kw:"Potencia máx. (kW)", conectores:"Conectores", direccion:"Dirección",
   titular:"Titular", tipo:"Tipo", categoria:"Categoría", uso:"Uso", estado_registro:"Estado",
   densidad:"Densidad (hab/km²)", paro_pct:"Tasa de paro", superficie_km2:"Superficie (km²)",
-  poblacion:"Población", nuts:"Código NUTS", tecnologia_ree:"Tecnología (REE)"
+  poblacion:"Población", nuts:"Código NUTS", tecnologia_ree:"Tecnología (REE)",
+  // aeródromos (OurAirports) y alertas de desastre (GDACS)
+  iata:"Código IATA", icao:"Código OACI", elevacion_m:"Altitud (m)",
+  servicio_programado:"Vuelo regular", enlace:"Enlace oficial",
+  tipo_evento:"Tipo de evento", nivel:"Nivel de alerta", pais:"País", publicado:"Publicado",
+  titulo:"Título"
 };
 
 function nombreCampo(k) {

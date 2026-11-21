@@ -1,0 +1,19 @@
+{
+ "features": 553,
+ "por_tipo": {
+  "Aeropuerto internacional": 21,
+  "Aeropuerto regional": 34,
+  "Helipuerto": 186,
+  "Aeródromo": 310,
+  "Campo de globos": 1,
+  "Base de hidroaviones": 1
+ },
+ "con_iata": 52,
+ "servicio_programado": 46,
+ "descartados_cerrados": 36,
+ "descartados_sin_coordenadas": 0,
+ "fecha_dato": "2026-11-21",
+ "fuente": "OurAirports",
+ "url": "https://ourairports.com/data/",
+ "fichero": "aeropuertos.geojson"
+}

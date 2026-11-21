@@ -56,6 +56,9 @@ LICENCIA = {
     "OpenStreetMap": ("si", "ODbL 1.0 · comparte igual en bases derivadas",
                       "https://opendatacommons.org/licenses/odbl/1-0/"),
     "I-ReWater HUB": ("si", "CC BY 4.0", "https://i-rewater-hub.com"),
+    "OurAirports": ("si", "Dominio público", "https://ourairports.com/faq/"),
+    "GDACS — Comisión Europea (JRC)": ("si", "Servicio público de la Comisión Europea · atribución",
+                                       "https://www.gdacs.org/About/legal.aspx"),
     "INE": ("si", "Datos abiertos INE con cita", "https://www.ine.es/aviso_legal"),
     "INE / Eurostat": ("si", "INE con cita · Eurostat CC BY 4.0",
                        "https://ec.europa.eu/eurostat/web/main/legal-notice"),
@@ -93,6 +96,8 @@ TTL = {
     "ine-ccaa": (31536000, "anual (padrón)", "foto"),
     "ine-densidad": (31536000, "anual (padrón)", "foto"),
     "ine-paro": (7776000, "trimestral (EPA)", "foto"),
+    "aeropuertos": (604800, "semanal", "foto"),
+    "alertas-gdacs": (10368000, "acumulativa (ventana de 120 días)", "foto"),
 }
 TTL_DEFECTO = (2592000, "mensual o inferior", "foto")
 
