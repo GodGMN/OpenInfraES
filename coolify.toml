@@ -1,0 +1,9 @@
+project = "OpenInfraES-demo"
+domain = "openinfraes.gimeno.dev"
+repo = "GodGMN/OpenInfraES"
+branch = "demo/coolify"
+
+[apps.app]
+dockerfile = "Dockerfile"
+port = 8080
+health = "/index.html"
